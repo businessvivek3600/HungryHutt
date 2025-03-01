@@ -25,7 +25,7 @@ String appName = 'Go Grocer';
 String appShareMessage =
     "I'm inviting you to use $appName, a simple and easy app to find all required products near by your location. Here's my code [CODE] - just enter it while registration.";
 String appVersion = '1.0';
-String baseUrl = 'https://gogrocer.tecmanic.com/api/';
+String baseUrl = 'https://hungryhutt.com/api/';
 int cartCount = 0;
 List<Color> colorList = [
   const Color(0xFF4DD0E1),

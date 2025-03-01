@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -63,7 +65,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
           actions: [
             IconButton(
                 onPressed: () async {
-                  await openBarcodeScanner(_scaffoldKey);
+                  // await openBarcodeScanner(_scaffoldKey);
                 },
                 visualDensity: const VisualDensity(horizontal: -4),
                 icon: Icon(
@@ -254,21 +256,25 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
     try {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
+        debugPrint("API Call: ${global.baseUrl}home_screen_data");  // Log API URL
+
         dynamic result = await apiHelper.getHomeScreenData();
-        if (result != null) {
-          if (result.status == "1") {
-            return result.data;
-          }
+
+        debugPrint("API Response: ${jsonEncode(result)}");  // Log response
+
+        if (result != null && result.status == "1") {
+          return result.data;
         }
       } else {
         showNetworkErrorSnackBar(_scaffoldKey);
       }
     } catch (e) {
-      debugPrint("Exception - dashboard_screen.dart - _getHomeScreenData():$e");
+      debugPrint("Exception - dashboard_screen.dart - _getHomeScreenData(): $e");
     }
 
     throw 'No HomeScreen Data';
   }
+
 
   _init() async {
     try {

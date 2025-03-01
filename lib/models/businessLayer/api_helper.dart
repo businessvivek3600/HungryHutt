@@ -990,13 +990,19 @@ class APIHelper {
     try {
       debugPrint('Near by store id: ${global.nearStoreModel?.id}');
       debugPrint('Current user id: ${global.currentUser?.id}');
+
       Response response;
       var dio = Dio();
       var formData = FormData.fromMap({
         'store_id': global.nearStoreModel?.id,
         'user_id': global.currentUser?.id,
       });
-      response = await dio.post('${global.baseUrl}oneapi',
+
+      String apiUrl = '${global.baseUrl}oneapi'; // API URL being called
+      debugPrint("API Call: $apiUrl");
+      debugPrint("Request Body: ${formData.fields}");
+
+      response = await dio.post(apiUrl,
           queryParameters: {
             'lang': global.languageCode,
           },
@@ -1004,12 +1010,17 @@ class APIHelper {
           options: Options(
             headers: await global.getApiHeaders(false),
           ));
+
+      debugPrint("API Response Status: ${response.statusCode}");
+      debugPrint("API Response Data: ${response.data}");
+
       dynamic recordList;
       if (response.statusCode == 200 && response.data['status'] == '1') {
         recordList = await Isolate.run(() async {
           return HomeScreenData.fromJson(response.data);
         });
       } else {
+        debugPrint("API Error: ${response.statusCode} - ${response.data}");
         recordList = null;
       }
       return getDioResult(response, recordList);
@@ -1017,6 +1028,7 @@ class APIHelper {
       debugPrint("Exception - getHomeScreenData(): $e");
     }
   }
+
 
   Future<dynamic> getMapBoxApiKey() async {
     try {

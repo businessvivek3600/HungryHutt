@@ -1,4 +1,4 @@
-package com.tecmanic.gogrocer.user
+package com.hungryhutt.user
 
 import io.flutter.embedding.android.FlutterActivity
 

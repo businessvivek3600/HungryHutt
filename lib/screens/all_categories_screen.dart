@@ -125,7 +125,9 @@ class _AllCategoriesScreenState extends BaseRouteState {
             page++;
           }
           await apiHelper.getCategoryList(_categoryFilter, page).then((result) async {
+            debugPrint("Raw API Response: $result");
             if (result != null) {
+              debugPrint("Full API Response: ${result.data}");
               if (result.status == "1") {
                 List<CategoryList> tList = result.data;
                 if (tList.isEmpty) {

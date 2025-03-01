@@ -188,7 +188,7 @@ class _PaymentGatewayScreenState extends BaseRouteState<PaymentGatewayScreen> {
                               style: subHeadingStyle,
                             ),
                           ),
-                    global.paymentGateway!.razorpay!.razorpayStatus == 'Yes'
+                    global.paymentGateway?.razorpay?.razorpayStatus == 'Yes'
                         ? ListTile(
                             onTap: () {
                               showOnlyLoaderDialog();
@@ -204,7 +204,7 @@ class _PaymentGatewayScreenState extends BaseRouteState<PaymentGatewayScreen> {
                             ),
                           )
                         : const SizedBox(),
-                    global.paymentGateway!.stripe!.stripeStatus == 'Yes'
+                    global.paymentGateway!.stripe?.stripeStatus == 'Yes'
                         ? ListTile(
                             onTap: () {
                               _cardDialog();
@@ -219,7 +219,7 @@ class _PaymentGatewayScreenState extends BaseRouteState<PaymentGatewayScreen> {
                             ),
                           )
                         : const SizedBox(),
-                    global.paymentGateway!.paystack!.paystackStatus == 'Yes'
+                    global.paymentGateway!.paystack?.paystackStatus == 'Yes'
                         ? ListTile(
                             onTap: () {
                               _cardDialog(paymentCallId: 1);

@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+// import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -325,23 +325,24 @@ class BaseState<T extends Base> extends State<T> with TickerProviderStateMixin, 
     Navigator.pop(context);
   }
 
-  openBarcodeScanner(GlobalKey<ScaffoldState> scaffoldKey) async {
-    try {
-      String barcodeScanRes;
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666',
-        'Cancel',
-        true,
-        ScanMode.BARCODE,
-      );
-      if (barcodeScanRes != '-1') {
-        await _getBarcodeResult(scaffoldKey, barcodeScanRes);
-      }
-    } catch (e) {
-      hideLoader();
-      debugPrint("Exception - business_rule.dart - openBarcodeScanner():$e");
-    }
-  }
+  // openBarcodeScanner(GlobalKey<ScaffoldState> scaffoldKey) async {
+  //   try {
+  //     String barcodeScanRes;
+  //     barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+  //       '#ff6666',
+  //       'Cancel',
+  //       true,
+  //       ScanMode.BARCODE,
+
+  //     );
+  //     if (barcodeScanRes != '-1') {
+  //       await _getBarcodeResult(scaffoldKey, barcodeScanRes);
+  //     }
+  //   } catch (e) {
+  //     hideLoader();
+  //     debugPrint("Exception - business_rule.dart - openBarcodeScanner():$e");
+  //   }
+  // }
 
   sendOTP(String phoneNumber, {int? screenId}) async {
     try {

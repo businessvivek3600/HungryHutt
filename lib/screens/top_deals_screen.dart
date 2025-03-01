@@ -103,7 +103,7 @@ class _TopDealsScreenState extends BaseRouteState {
           actions: [
             IconButton(
                 onPressed: () async {
-                  await openBarcodeScanner(_scaffoldKey);
+                  // await openBarcodeScanner(_scaffoldKey);
                 },
                 icon: Icon(
                   MdiIcons.barcode,

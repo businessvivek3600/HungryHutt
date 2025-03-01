@@ -19,7 +19,7 @@ import 'package:user/screens/splash_screen.dart';
 import 'package:user/theme/style.dart';
 
 import 'networking/my_http_client.dart';
-// import 'firebase_options.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +28,7 @@ void main() async {
       // To generate your app configuration follows step 1 and 2 at the
       // following link: https://firebase.google.com/docs/flutter/setup?platform=ios
       
-      // options: DefaultFirebaseOptions.currentPlatform
+      options: DefaultFirebaseOptions.currentPlatform
     );
   } catch (e) {
     debugPrint(e.toString());
