@@ -96,19 +96,19 @@ class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
                         onPressed: () => Get.to(() => TopDealsScreen(analytics: widget.analytics, observer: widget.observer)),
                       )
                           : const SizedBox(),
-                      const SizedBox(height: 8.0),
-                      global.nearStoreModel != null
-                          ? AppMenuListTile(
-                          label: AppLocalizations.of(context)!.lbl_make_product_request,
-                          leadingIconUrl: ImageConstants.productRequestLogoUrl,
-                          onPressed: () {
-                            if (global.currentUser!.id == null) {
-                              Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
-                            } else {
-                              Get.to(() => ProductRequestScreen(analytics: widget.analytics, observer: widget.observer));
-                            }
-                          })
-                          : const SizedBox(),
+                      // const SizedBox(height: 8.0),
+                      // global.nearStoreModel != null
+                      //     ? AppMenuListTile(
+                      //     label: AppLocalizations.of(context)!.lbl_make_product_request,
+                      //     leadingIconUrl: ImageConstants.productRequestLogoUrl,
+                      //     onPressed: () {
+                      //       if (global.currentUser!.id == null) {
+                      //         Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       } else {
+                      //         Get.to(() => ProductRequestScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       }
+                      //     })
+                      //     : const SizedBox(),
                       const SizedBox(height: 8.0),
                       global.nearStoreModel != null
                           ? AppMenuListTile(
@@ -136,17 +136,17 @@ class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
                           : const SizedBox(),
                       // SizedBox(height: 8.0),
                       const SizedBox(height: 8.0),
-                      AppMenuListTile(
-                          label: "${AppLocalizations.of(context)!.btn_membership}  ",
-                          icon: Icons.card_membership_sharp,
-                          onPressed: () {
-                            if (global.currentUser!.id == null) {
-                              Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
-                            } else {
-                              Get.to(() => MemberShipScreen(analytics: widget.analytics, observer: widget.observer));
-                            }
-                          }),
-                      const SizedBox(height: 8.0),
+                      // AppMenuListTile(
+                      //     label: "${AppLocalizations.of(context)!.btn_membership}  ",
+                      //     icon: Icons.card_membership_sharp,
+                      //     onPressed: () {
+                      //       if (global.currentUser!.id == null) {
+                      //         Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       } else {
+                      //         Get.to(() => MemberShipScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       }
+                      //     }),
+                      // const SizedBox(height: 8.0),
                       AppMenuListTile(
                           label: "${AppLocalizations.of(context)!.lbl_reward}  ",
                           icon: Icons.wallet_giftcard_sharp,
@@ -180,18 +180,18 @@ class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
                             }
                           }),
                       const SizedBox(height: 8.0),
-                      AppMenuListTile(
-                        label: "${AppLocalizations.of(context)!.btn_app_setting}  ",
-                        icon: Icons.settings_outlined,
-                        onPressed: () => Get.to(() => SettingScreen(analytics: widget.analytics, observer: widget.observer)),
-                      ),
-                      const SizedBox(height: 8.0),
-                      AppMenuListTile(
-                        label: "${AppLocalizations.of(context)!.lbl_select_language}  ",
-                        icon: Icons.translate_outlined,
-                        onPressed: () => Get.to(() => ChooseLanguageScreen(analytics: widget.analytics, observer: widget.observer)),
-                      ),
-                      const SizedBox(height: 8.0),
+                      // AppMenuListTile(
+                      //   label: "${AppLocalizations.of(context)!.btn_app_setting}  ",
+                      //   icon: Icons.settings_outlined,
+                      //   onPressed: () => Get.to(() => SettingScreen(analytics: widget.analytics, observer: widget.observer)),
+                      // ),
+                      // const SizedBox(height: 8.0),
+                      // AppMenuListTile(
+                      //   label: "${AppLocalizations.of(context)!.lbl_select_language}  ",
+                      //   icon: Icons.translate_outlined,
+                      //   onPressed: () => Get.to(() => ChooseLanguageScreen(analytics: widget.analytics, observer: widget.observer)),
+                      // ),
+                      // const SizedBox(height: 8.0),
                       global.nearStoreModel != null && global.nearStoreModel!.id != null && global.appInfo!.liveChat != null && global.appInfo!.liveChat == 1
                           ? AppMenuListTile(
                           label: "${AppLocalizations.of(context)!.txt_live_chat}  ",
