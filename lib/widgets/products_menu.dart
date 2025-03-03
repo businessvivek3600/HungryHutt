@@ -47,7 +47,7 @@ class _PopularProductsMenuItemState extends State<PopularProductsMenuItem> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return SizedBox(
-      height: 120,
+      height: 130,
       child: Card(
           elevation: 0,
           child: Padding(

@@ -191,7 +191,7 @@ class _AddAddressScreenState extends BaseRouteState<AddAddressScreen> {
                                   controller: _cCity,
                                   focusNode: _fCity,
                                   hintText: '${AppLocalizations.of(context)!.lbl_city} ',
-                                  readOnly: true,
+                                  // readOnly: true,
                                   onFieldSubmitted: (val) {
                                     FocusScope.of(context).requestFocus(_fState);
                                   },

@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -32,7 +32,7 @@ class DashboardScreen extends BaseRoute {
 }
 
 class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
-  Future<HomeScreenData> _homeScreenData = Future.delayed(const Duration(seconds: 8), () => throw 'No Data');
+  late Future<HomeScreenData?> _homeDataFuture;
   IconData lastTapped = Icons.notifications;
   AnimationController? menuAnimation;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -63,15 +63,15 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
               getCurrentPosition: getCurrentPosition
           ),
           actions: [
-            IconButton(
-                onPressed: () async {
-                  // await openBarcodeScanner(_scaffoldKey);
-                },
-                visualDensity: const VisualDensity(horizontal: -4),
-                icon: Icon(
-                  MdiIcons.barcode,
-                  color: Theme.of(context).colorScheme.primary,
-                )),
+            // IconButton(
+            //     onPressed: () async {
+            //       // await openBarcodeScanner(_scaffoldKey);
+            //     },
+            //     visualDensity: const VisualDensity(horizontal: -4),
+            //     icon: Icon(
+            //       MdiIcons.barcode,
+            //       color: Theme.of(context).colorScheme.primary,
+            //     )),
             IconButton(
               visualDensity: const VisualDensity(horizontal: -4),
               icon: const Icon(Icons.search_outlined),
@@ -95,8 +95,8 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
           onRefresh: () async {
             await _onRefresh();
           },
-          child: FutureBuilder<HomeScreenData>(
-            future: _homeScreenData,
+          child: FutureBuilder<HomeScreenData?>(
+            future:_homeDataFuture,
             builder: (context, snapshot) {
               if(snapshot.connectionState == ConnectionState.waiting) {
                 return const DashboardLoadingView();
@@ -252,27 +252,47 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
     return list;
   }
 
-  Future<HomeScreenData> _getHomeScreenData() async {
+  Future<HomeScreenData?> getHomeScreenData() async {
     try {
-      bool isConnected = await br.checkConnectivity();
-      if (isConnected) {
-        debugPrint("API Call: ${global.baseUrl}home_screen_data");  // Log API URL
+      debugPrint('Near by store id: ${1}');
+      debugPrint('Current user id: ${9}');
 
-        dynamic result = await apiHelper.getHomeScreenData();
+      String apiUrl = '${global.baseUrl}oneapi';
+      debugPrint("API Call: $apiUrl");
 
-        debugPrint("API Response: ${jsonEncode(result)}");  // Log response
 
-        if (result != null && result.status == "1") {
-          return result.data;
+      Map<String, String> body = {
+        'store_id': "${global.nearStoreModel?.id}",
+        'user_id': "${global.currentUser?.id}",
+      };
+
+      debugPrint("Request Body: $body");
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        body: body,
+      );
+
+      debugPrint("API Response Status: ${response.statusCode}");
+      debugPrint("API Response Data: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        if (responseData['status'] == '1') {
+          return HomeScreenData.fromJson(responseData);
+        } else {
+          debugPrint("API Error: ${response.statusCode} - ${responseData}");
+          return null;
         }
       } else {
-        showNetworkErrorSnackBar(_scaffoldKey);
+        debugPrint("HTTP Error: ${response.statusCode}");
+        return null;
       }
     } catch (e) {
-      debugPrint("Exception - dashboard_screen.dart - _getHomeScreenData(): $e");
+      debugPrint("Exception - getHomeScreenData(): $e");
+      return null;
     }
-
-    throw 'No HomeScreen Data';
   }
 
 
@@ -282,7 +302,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
         await getCurrentPosition();
       }
 
-      _homeScreenData = _getHomeScreenData();
+      _homeDataFuture = getHomeScreenData();
 
       if (global.currentUser?.id != null) {
         cartController.getCartList();
