@@ -65,7 +65,8 @@ class APIHelper {
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
-      debugPrint(response.data);
+      // ✅ Debugging API response
+      print("Add Address API Response: ${jsonEncode(response.data)}");
       dynamic recordList;
       if (response.statusCode == 200 && response.data['status'] == '1') {
         recordList = true;
@@ -1491,6 +1492,7 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data['status'] == '1') {
+        print("Login ****************************${response.data}");
         recordList = CurrentUser.fromJson(response.data['data']);
         recordList.token = response.data['token'];
       } else {
@@ -1591,6 +1593,7 @@ class APIHelper {
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("------------GET MY PROFILE--------------------${response.data}");
       dynamic recordList;
       if (response.statusCode == 200) {
         recordList = CurrentUser.fromJson(response.data['data']);

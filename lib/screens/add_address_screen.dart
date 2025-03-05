@@ -427,6 +427,7 @@ class _AddAddressScreenState extends BaseRouteState<AddAddressScreen> {
             tAddress.lng = tList[1];
             if(tAddress.lat!=null && tAddress.lat!=null){
               if (widget.address!.addressId != null) {
+                print("___________Edit Address  Hit");
                 tAddress.addressId = widget.address!.addressId;
                 await apiHelper.editAddress(tAddress).then((result) async {
                   if (result != null) {
@@ -447,20 +448,18 @@ class _AddAddressScreenState extends BaseRouteState<AddAddressScreen> {
                 });
               }
               else {
-                await apiHelper.addAddress(tAddress).then((result) async {
-                  if (result != null) {
-                    if (result.status == "1") {
-                      await global.userProfileController.getUserAddressList();
-                      hideLoader();
-                      if(!mounted) return;
-                      Navigator.of(context).pop();
-                    }
-                  }else{
-                    hideLoader();
-                    showSnackBar(key: _scaffoldKey, snackBarMessage: 'Some error occurred please try again.');
-                  }
-                });
-                setState(() {});
+                print("___________-AddAdress Hit");
+                print("___________-AddAdress Hit");
+                bool success = await apiHelper.addAddress(tAddress);
+                if (success) {
+                  await global.userProfileController.getUserAddressList();
+                  hideLoader();
+                  if (!mounted) return;
+                  Navigator.of(context).pop();
+                } else {
+                  hideLoader();
+                  showSnackBar(key: _scaffoldKey, snackBarMessage: "Failed to add address.");
+                }
               }
             }else{
               hideLoader();
