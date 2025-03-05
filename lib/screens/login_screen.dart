@@ -436,6 +436,7 @@ class _LoginScreenState extends BaseRouteState {
           await apiHelper.loginWithEmail(_cEmail.text.trim(), _cPassword.text.trim())
               .then((result) async {
             if (result != null) {
+
               if (result.status == "1") {
                 global.currentUser = result.data;
                 global.userProfileController.currentUser = global.currentUser;

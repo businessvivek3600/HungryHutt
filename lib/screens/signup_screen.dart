@@ -66,12 +66,13 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Padding(
-                padding: EdgeInsets.only(top: 100),
+                padding: EdgeInsets.only(top: 60),
                 child: Center(
                   child: ProfilePicture(
                     isShow: true,
@@ -267,7 +268,7 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 13, right: 13, top: 5),

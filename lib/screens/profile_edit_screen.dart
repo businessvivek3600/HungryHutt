@@ -381,6 +381,16 @@ class _ProfileEditScreenState extends BaseRouteState {
       _cPhone.text = global.userProfileController.currentUser?.userPhone ?? '';
       _isDataLoaded = true;
       setState(() {});
+      // Print all initialized data
+      print("====== Initialized Data ======");
+      print("User Name: ${_cName.text}");
+      print("User Email: ${_cEmail.text}");
+      print("User Phone: ${_cPhone.text}");
+      print("Selected City: ${_cCity.text} (ID: ${_selectedCity?.cityId})");
+      print("Selected Society: ${_cSociety.text} (ID: ${_selectedSociety?.societyId})");
+      print("City List: ${_citiesList?.map((e) => e).toList()}");
+      print("Society List: ${_societyList?.map((e) => e).toList()}");
+      print("================================");
     } catch (e) {
       debugPrint("Exception - profile_edit_screen.dart - _init(): $e");
     }
@@ -401,6 +411,7 @@ class _ProfileEditScreenState extends BaseRouteState {
           user.userArea = _selectedSociety!.societyId;
           await apiHelper.updateProfile(user).then((result) async {
             if (result != null) {
+              print("Update Profile Response: ${result}");
               if (result.status == "1") {
                 global.userProfileController.currentUser = result.data;
                 global.currentUser = global.userProfileController.currentUser;
