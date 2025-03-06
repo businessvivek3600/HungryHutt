@@ -59,7 +59,7 @@ class HomeScreenData {
           : [];
       catProdList = json['category'] != null
           ? List<CategoryProdList>.from(
-          json["category"].map((x) => CategoryProdList.fromJson(x)))
+              json["category"].map((x) => CategoryProdList.fromJson(x)))
           : [];
     } catch (e) {
       debugPrint(
@@ -86,7 +86,8 @@ class CategoryProdList {
           ? List<Product>.from(json["products"].map((x) => Product.fromJson(x)))
           : [];
     } catch (e) {
-      debugPrint("Exception - CategoryProdList.dart - CategoryProdList.fromJson():$e");
+      debugPrint(
+          "Exception - CategoryProdList.dart - CategoryProdList.fromJson():$e");
     }
   }
 }

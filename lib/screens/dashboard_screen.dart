@@ -254,8 +254,8 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
 
   Future<HomeScreenData?> getHomeScreenData() async {
     try {
-      debugPrint('Near by store id: ${1}');
-      debugPrint('Current user id: ${9}');
+      // debugPrint('Near by store id: ${1}');
+      // debugPrint('Current user id: ${9}');
 
       String apiUrl = '${global.baseUrl}oneapi';
       debugPrint("API Call: $apiUrl");

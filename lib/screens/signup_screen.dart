@@ -267,35 +267,38 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
+  child: SingleChildScrollView(
+    child: Column(
+      mainAxisSize: MainAxisSize.min, // Ensures Column takes minimum space
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 13, right: 13, top: 5),
+          child: BottomButton(
+            loadingState: false,
+            disabledState: false,
+            onPressed: () {
+              _onSignUp();
+            },
+            child: Text(AppLocalizations.of(context)!.btn_signup),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 13, right: 13, top: 5),
-              child: BottomButton(
-                loadingState: false,
-                disabledState: false,
-                onPressed: () {
-                  _onSignUp();
-                },
-                child: Text(AppLocalizations.of(context)!.btn_signup),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(AppLocalizations.of(context)!.lbl_already_have_account),
-                TextButton(
-                  child: Text(AppLocalizations.of(context)!.btn_login),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+            Text(AppLocalizations.of(context)!.lbl_already_have_account),
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.btn_login),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),
-      ),
+      ],
+    ),
+  ),
+),
+
     );
   }
 

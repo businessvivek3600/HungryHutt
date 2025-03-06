@@ -1925,35 +1925,49 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> socialLogin({String? userEmail, String? facebookId, String? type, String? appleId}) async {
-    debugPrint(userEmail);
-    debugPrint(facebookId);
-    // debugPrint(type);
-    // debugPrint(appleId);
+ Future<dynamic> socialLogin({String? userEmail, String? facebookId, String? type, String? appleId}) async {
+    debugPrint("User Email: $userEmail");
+    debugPrint("Facebook ID: $facebookId");
+    debugPrint("Type: $type");
+    debugPrint("Apple ID: $appleId");
+
     try {
       Response response;
       var dio = Dio();
 
-      var formData = FormData.fromMap({"user_email": userEmail, "fb_id": facebookId, "type": type, "apple_id": appleId, 'device_id': global.appDeviceId});
+      var formData = FormData.fromMap({
+        "user_email": userEmail,
+        "fb_id": facebookId,
+        "type": type,
+        "apple_id": appleId,
+        "device_id": global.appDeviceId
+      });
+
       response = await dio.post('${global.baseUrl}social_login',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(false),
           ));
-      // CurrentUser recordList;
-      debugPrint(response.data);
-      dynamic recordList;
-      if (response.statusCode == 200 && response.data['status'] == '1') {
-        recordList = CurrentUser.fromJson(response.data['data']);
-        recordList.token = response.data['token'];
+
+      debugPrint("API Response: ${response.data}"); // Print full API response
+
+      if (response.statusCode == 200) {
+        if (response.data['status'] == '1') {
+          var recordList = CurrentUser.fromJson(response.data['data']);
+          recordList.token = response.data['token'];
+          return getDioResult(response, recordList);
+        } else {
+          return null;
+        }
       } else {
-        recordList = null;
+        return null;
       }
-      return getDioResult(response, recordList);
     } catch (e) {
       debugPrint("Exception - socialLogin(): $e");
+      return null;
     }
   }
+
 
   spotLightProduct(int page, ProductFilter productFilter) async {
     try {
