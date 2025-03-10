@@ -106,8 +106,7 @@ class _DashboardCategoriesState extends State<DashboardCategories> {
                           widget.topCategoryList[index].isSelected = true;
                         }
                       });
-                      Get.to(() => SubCategoriesScreen
-                      (
+                      Get.to(() => SubCategoriesScreen(
                             analytics: widget.analytics,
                             observer: widget.observer,
                             screenHeading: widget.topCategoryList[index].title,
