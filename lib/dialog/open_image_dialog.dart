@@ -75,10 +75,14 @@ class OpenImageDialogState extends BaseState<OpenImageDialog> {
           ? SizedBox(
               height: 50,
               child: DotsIndicator(
+               
                 dotsCount: widget.imageList!.isNotEmpty ? widget.imageList!.length : 1,
+                
                 position: currentIndex!,
+                
                 onTap: (i) {
                   currentIndex = i.toInt();
+                  // print("Current index updated: $currentIndex");
                 },
                 decorator: DotsDecorator(
                   activeSize: const Size(6, 6),
@@ -99,6 +103,7 @@ class OpenImageDialogState extends BaseState<OpenImageDialog> {
   @override
   void initState() {
     super.initState();
+    //  print("Image List at init: ${widget.imageList}");
     if (widget.index != null) {
       pageController = PageController(initialPage: widget.index!);
       currentIndex = widget.index;

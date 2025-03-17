@@ -703,17 +703,21 @@
     "@lbl_reward": {
         "description": "Rewards"
     },
-    "lbl_in_spotlight": "Spotlight",
+    "lbl_secondBanner": "Top Offers",
+    "@lbl_secondBanner": {
+        "description": "Top Offers"
+    },
+    "lbl_in_spotlight": "Trending Items",
     "@lbl_in_spotlight": {
-        "description": "Spotlight"
+        "description": "Trending Items"
     },
-    "lbl_recent_selling": "Recent Selling",
+    "lbl_recent_selling": "Previosly Oredered Items",
     "@lbl_recent_selling": {
-        "description": "Recent Selling"
+        "description": "Previosly Oredered Items"
     },
-    "lbl_whats_new": "What's New",
-    "@lbl_whats_new": {
-        "description": "What's New"
+    "lbl_best_seller": "Best Sellers",
+    "@lbl_best_seller": {
+        "description": "Best Sellers"
     },
     "lbl_deal_products": "Top Deals",
     "@lbl_deal_products": {
@@ -1379,9 +1383,9 @@
     "@lbl_code_copied": {
         "description": "Code copied"
     },
-    "tle_category": "Categories",
+    "tle_category": "Explore Menu",
     "@tle_category": {
-        "description": "Categories"
+        "description": "Explore Menu"
     },
     "tle_bundle_offers": "Bundle Offers",
     "@tle_bundle_offers": {

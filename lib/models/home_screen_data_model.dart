@@ -14,7 +14,7 @@ class HomeScreenData {
   List<Product> dealproduct = [];
   List<Product> topselling = [];
   List<Product> recentSellingProductList = [];
-  List<Product> whatsnewProductList = [];
+  List<Product> bestsellerProductList = [];
   List<Product> spotLightProductList = [];
 
   HomeScreenData();
@@ -50,7 +50,7 @@ class HomeScreenData {
           ? List<Product>.from(
               json["recentselling"].map((x) => Product.fromJson(x)))
           : [];
-      whatsnewProductList = json['whatsnew'] != null
+      bestsellerProductList = json['whatsnew'] != null
           ? List<Product>.from(json["whatsnew"].map((x) => Product.fromJson(x)))
           : [];
       spotLightProductList = json['spotlight'] != null

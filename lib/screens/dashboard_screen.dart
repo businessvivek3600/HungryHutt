@@ -99,6 +99,8 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const DashboardLoadingView();
               } else if (snapshot.connectionState == ConnectionState.done) {
+                // Print full snapshot data
+                print("Full Snapshot Data: ${snapshot.data}");
                 if (global.nearStoreModel != null &&
                     global.nearStoreModel?.id != null &&
                     snapshot.hasData) {
@@ -115,7 +117,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
                           child: DashboardScreenHeading(),
                         ),
                         (snapshot.data?.banner.isNotEmpty ?? false)
-                            ? DashboardBanner(
+                            ? DashboardBanner1(
                                 items: _bannerItems(snapshot.data!))
                             : const SizedBox(),
                         (snapshot.data?.topCat.isNotEmpty ?? false)
@@ -143,48 +145,64 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
                                     snapshot.data!.catProdList,
                               )
                             : const SizedBox.shrink(),
-                        (snapshot.data?.whatsnewProductList.isNotEmpty ?? false)
-                            ?
-                            //     DashboardBundleProducts(
-                            //         analytics: widget.analytics,
-                            //         observer: widget.observer,
-                            //         title:
-                            //             AppLocalizations.of(context)!.lbl_whats_new,
-                            //         categoryName:
-                            //             '${AppLocalizations.of(context)!.lbl_whats_new} ${AppLocalizations.of(context)!.tle_products}',
-                            //         dealProducts:
-                            //             snapshot.data!.whatsnewProductList,
-                            //         screenId: 3,
-                            //       )
-                            //     : const SizedBox(),
-                            // (snapshot.data?.secondBanner.isNotEmpty ?? false)
-                            DashboardBanner(
+                        // (snapshot.data?.ProductList.isNotEmpty ?? false)
+                        // ?
+                        //     DashboardBundleProducts(
+                        //         analytics: widget.analytics,
+                        //         observer: widget.observer,
+                        //         title:
+                        //             AppLocalizations.of(context)!.lbl_whats_new,
+                        //         categoryName:
+                        //             '${AppLocalizations.of(context)!.lbl_whats_new} ${AppLocalizations.of(context)!.tle_products}',
+                        //         dealProducts:
+                        //             snapshot.data!.whatsnewProductList,
+                        //         screenId: 3,
+                        //       )
+                        //     : const SizedBox(),
+                        (snapshot.data?.secondBanner.isNotEmpty ?? false)
+                            ? DashboardBanner2(
                                 margin: const EdgeInsets.only(top: 20),
                                 items: _secondBannerItems(snapshot.data!))
                             : const SizedBox(),
+
                         (snapshot.data?.spotLightProductList.isNotEmpty ??
                                 false)
                             ? DashboardBundleProducts(
                                 analytics: widget.analytics,
                                 observer: widget.observer,
                                 title:
-                                    "${AppLocalizations.of(context)!.lbl_in_spotlight} ${AppLocalizations.of(context)!.tle_products}",
+                                    "${AppLocalizations.of(context)!.lbl_in_spotlight} ",
                                 categoryName:
-                                    '${AppLocalizations.of(context)!.lbl_in_spotlight} ${AppLocalizations.of(context)!.tle_products}',
+                                    '${AppLocalizations.of(context)!.lbl_in_spotlight} ',
                                 dealProducts:
                                     snapshot.data!.spotLightProductList,
                                 screenId: 4,
                               )
                             : const SizedBox(),
+                        (snapshot.data?.bestsellerProductList.isNotEmpty ??
+                                false)
+                            ? DashboardBundleProducts(
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                                title: AppLocalizations.of(context)!
+                                    .lbl_best_seller,
+                                categoryName:
+                                    '${AppLocalizations.of(context)!.lbl_best_seller} ${AppLocalizations.of(context)!.tle_products}',
+                                dealProducts:
+                                    snapshot.data!.bestsellerProductList,
+                                screenId: 3,
+                              )
+                            : const SizedBox(),
+
                         (snapshot.data?.recentSellingProductList.isNotEmpty ??
                                 false)
                             ? DashboardBundleProducts(
                                 analytics: widget.analytics,
                                 observer: widget.observer,
                                 title:
-                                    "${AppLocalizations.of(context)!.lbl_recent_selling} ${AppLocalizations.of(context)!.tle_products}",
+                                    "${AppLocalizations.of(context)!.lbl_recent_selling} ",
                                 categoryName:
-                                    '${AppLocalizations.of(context)!.lbl_recent_selling} ${AppLocalizations.of(context)!.tle_products}',
+                                    '${AppLocalizations.of(context)!.lbl_recent_selling} ',
                                 dealProducts:
                                     snapshot.data!.recentSellingProductList,
                                 screenId: 5,
