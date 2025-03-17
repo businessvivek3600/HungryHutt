@@ -300,58 +300,61 @@ class UserInfoTile extends StatefulWidget {
 }
 
 class _UserInfoTileState extends State<UserInfoTile> {
-
-  _UserInfoTileState();
-
   @override
   Widget build(BuildContext context) {
+    bool isUserLoggedIn = global.currentUser != null && global.currentUser!.id != null;
+
     return Padding(
       padding: const EdgeInsets.only(left: 20.0),
       child: Row(
         children: [
-          global.currentUser!.id != null && global.currentUser!.userImage != null
-              ? UserImage(url: global.appInfo!.imageUrl! + global.currentUser!.userImage!)
+          // Display user image or placeholder
+          (isUserLoggedIn && global.currentUser!.userImage != null)
+              ? UserImage(url: global.appInfo!.imageUrl! + (global.currentUser!.userImage ?? ''))
               : CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 25,
-                  child: Icon(
-                    Icons.person,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: Icon(
+              Icons.person,
+              size: 20,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
           const SizedBox(width: 16),
-          global.currentUser!.id != null
+
+          isUserLoggedIn
               ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      global.currentUser!.name!,
-                      style: widget.textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      global.currentUser!.userPhone!,
-                      style: widget.textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                  ],
-                )
-              : Text(AppLocalizations.of(context)!.txt_Login_SignUp,
-                  style: widget.textTheme.titleMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: FontWeight.bold,
-                  )
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                global.currentUser!.name ?? "Guest",
+                style: widget.textTheme.titleMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                global.currentUser!.userPhone ?? "No phone number",
+                style: widget.textTheme.titleMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+            ],
+          )
+              : Text(
+            AppLocalizations.of(context)!.txt_Login_SignUp,
+            style: widget.textTheme.titleMedium!.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
   }
 }
+
 
 class UserImage extends StatelessWidget {
   final String imageUrl;

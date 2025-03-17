@@ -21,7 +21,7 @@ List<Address> addressList = [];
 String? appDeviceId;
 AppInfo? appInfo = AppInfo();
 AppNotice? appNotice = AppNotice();
-String appName = 'Go Grocer';
+String appName = 'Hungry Hut';
 String appShareMessage =
     "I'm inviting you to use $appName, a simple and easy app to find all required products near by your location. Here's my code [CODE] - just enter it while registration.";
 String appVersion = '1.0';
@@ -59,6 +59,7 @@ List<String> rtlLanguageCodeLList = [
 LocalNotification localNotificationModel = LocalNotification();
 String? locationMessage = '';
 MapBoxModel? mapBox;
+final String?  mapApiKey = 'AIzaSyDJD4uR9IS6X7lg5cX9Hp5Ef0-Xot6M8zQ';
 NearStoreModel? nearStoreModel = NearStoreModel();
 PaymentGateway? paymentGateway = PaymentGateway();
 String? selectedImage;
@@ -75,8 +76,10 @@ Future<Map<String, String>> getApiHeaders(bool authorizationRequired) async {
   if (authorizationRequired) {
     sp = await SharedPreferences.getInstance();
     if (sp!.getString("currentUser") != null) {
+
       CurrentUser currentUser =
           CurrentUser.fromJson(json.decode(sp!.getString("currentUser")!));
+      //print("barrar token ---------------${currentUser.token!}");
       apiHeader.addAll({"Authorization": "Bearer ${currentUser.token!}"});
     }
   }

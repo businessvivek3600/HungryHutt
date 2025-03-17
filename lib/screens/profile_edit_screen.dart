@@ -53,6 +53,7 @@ class _ProfileEditScreenState extends BaseRouteState {
   _ProfileEditScreenState() : super();
   @override
   Widget build(BuildContext context) {
+    print("-------------Edit Profile -------------------- ${global.currentUser!.addresses}");
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       key: _scaffoldKey,

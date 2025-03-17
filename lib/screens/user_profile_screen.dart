@@ -137,6 +137,7 @@ class _UserProfileScreenState extends BaseRouteState {
 
   @override
   Widget build(BuildContext context) {
+    print("userAddress = ${global.userProfileController.addressList}");
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
         appBar: AppBar(
@@ -227,8 +228,7 @@ class _UserProfileScreenState extends BaseRouteState {
                                 heading:
                                     AppLocalizations.of(context)!.txt_address,
                                 onPressed: () {
-                                  global.userProfileController
-                                                  .addressList.isNotEmpty
+                                  global.currentUser!.addresses!.isNotEmpty
                                       ? Get.to(() => AddressListScreen(
                                                 analytics: widget.analytics,
                                                 observer: widget.observer,

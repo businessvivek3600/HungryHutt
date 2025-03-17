@@ -32,7 +32,7 @@ class DashboardScreen extends BaseRoute {
 }
 
 class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
-  late Future<HomeScreenData?> _homeDataFuture;
+  Future<HomeScreenData?> _homeDataFuture = Future.value(null);
   IconData lastTapped = Icons.notifications;
   AnimationController? menuAnimation;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();

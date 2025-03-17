@@ -9,6 +9,7 @@ class Address {
   String? city;
   String? society;
   int? cityId;
+  String? fullAddress;
   int? societyId;
   String? houseNo;
   String? landmark;
@@ -32,6 +33,7 @@ class Address {
       city = json["city"];
       society = json["society"];
       cityId = json["city_id"] != null ? int.parse(json["city_id"].toString()) : null;
+      fullAddress = json["full_address"];
       societyId = json["society_id"] != null ? int.parse(json["society_id"].toString()) : null;
       houseNo = json["house_no"];
       landmark = json["landmark"];
@@ -46,5 +48,28 @@ class Address {
     } catch (e) {
       debugPrint("Exception - address_model.dart - Address.fromJson():$e");
     }
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "address_id": addressId,
+      "type": type,
+      "user_id": userId,
+      "receiver_name": receiverName,
+      "receiver_phone": receiverPhone,
+      "city": city,
+      "society": society,
+      "city_id": cityId,
+      "full_address": fullAddress,
+      "society_id": societyId,
+      "house_no": houseNo,
+      "landmark": landmark,
+      "state": state,
+      "pincode": pincode,
+      "lat": lat,
+      "lng": lng,
+      "select_status": selectStatus,
+      "added_at": addedAt?.toIso8601String(), // Convert DateTime to String
+      "updated_at": updatedAt?.toIso8601String(), // Convert DateTime to String
+    };
   }
 }
