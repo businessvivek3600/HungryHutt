@@ -85,52 +85,54 @@ class _LocationScreenState extends BaseRouteState {
                   hintStyle: Theme.of(context).textTheme.titleMedium,
                   hintText: global.currentLocation ?? ' ${AppLocalizations.of(context)!.txt_no_location_selected}',
                 ),
-                onTap: () async {
-                  if (global.mapby != null) {
-                    if (global.mapby!.mapbox == 1) {
-                      // search through map box
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => searchLocation()));
-                    } else {
-                      // search to google map api
+                  onTap: () async {
+                    debugPrint("Search tapped");
+                    if (global.mapby != null) {
+                      if (global.mapby!.mapbox == 1) {
+                        debugPrint("Using Mapbox");
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => searchLocation()));
+                      } else {
+                        debugPrint("Using Google");
+                        final sessionToken = const Uuid().v4();
+                        final Suggestion? result = await showSearch<Suggestion?>(
+                          context: context,
+                          delegate: AddressSearch(sessionToken),
+                        );
 
-                      final sessionToken = const Uuid().v4();
-                      final Suggestion? result = await showSearch<Suggestion?>(
-                        context: context,
-                        delegate: AddressSearch(sessionToken),
-                      );
-                      if (result != null) {
-                        if (result.description != null) {
+                        if (result != null) {
+                          debugPrint("Selected location: ${result.description}");
                           _cSearch.text = result.description ?? '';
-                          String latlng = await getLocationFromAddress(
-                              result.description!) ?? '';
-                          debugPrint('ℹ️ latlng: $latlng');
+                          String latlng = await getLocationFromAddress(result.description!) ?? '';
+                          debugPrint('LatLng: $latlng');
                           List<String> tList = latlng.split("|");
 
                           _lat = double.parse(tList[0]).toDouble();
                           _lng = double.parse(tList[1]).toDouble();
                           showOnlyLoaderDialog();
-                          final GoogleMapController controller = await _controller
-                              .future;
+                          final GoogleMapController controller = await _controller.future;
                           await controller.animateCamera(
-                              CameraUpdate.newCameraPosition(
-                                  CameraPosition(target: LatLng(_lat!, _lng!),
-                                      tilt: 59.440717697143555,
-                                      zoom: 15)));
+                            CameraUpdate.newCameraPosition(
+                              CameraPosition(
+                                target: LatLng(_lat!, _lng!),
+                                tilt: 59.440717697143555,
+                                zoom: 15,
+                              ),
+                            ),
+                          );
                           await _updateMarker(_lat, _lng).then((_) async {
-                            List<
-                                Placemark> placemarks = await placemarkFromCoordinates(
-                                _lat!, _lng!);
+                            List<Placemark> placemarks = await placemarkFromCoordinates(_lat!, _lng!);
                             setPlace = placemarks[0];
                             hideLoader();
                             _isShowConfirmLocationWidget = true;
                             setState(() {});
                           });
-                          setState(() {});
+                        } else {
+                          debugPrint("No location selected");
                         }
                       }
                     }
-                  }
-                },
+                  },
+
               )),
           body: _isDataLoaded
               ? Stack(

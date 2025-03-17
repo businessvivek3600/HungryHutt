@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:user/models/address_model.dart';
 
 class CurrentUser {
   int? id;
@@ -36,6 +37,7 @@ class CurrentUser {
   int? totalOrders;
   double? totalSpend;
   double? totalSaved;
+  List<Address>? addresses;
 
 
 
@@ -73,6 +75,13 @@ class CurrentUser {
       totalOrders = json['total_orders'] != null ? int.parse('${json['total_orders']}') : null;
       totalSpend = json['total_spent'] != null ? double.parse('${json['total_spent']}') : null;
       totalSaved = json['total_save'] != null ? double.parse('${json['total_save']}') : null;
+      if (json['addresses'] != null) {
+        addresses = (json['addresses'] as List)
+            .map((address) => Address.fromJson(address))
+            .toList();
+      } else {
+        addresses = [];
+      }
     } catch (e) {
       debugPrint("Exception - user_model.dart - User.fromJson():$e");
     }
@@ -106,6 +115,7 @@ class CurrentUser {
         'created_at': createdAt,
         'updated_at': updatedAt,
         'token': token,
+    'addresses': addresses?.map((address) => address.toJson()).toList()
       };
 
   @override

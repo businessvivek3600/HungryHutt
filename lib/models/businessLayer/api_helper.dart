@@ -47,39 +47,59 @@ import 'package:user/models/wallet_model.dart';
 import 'package:user/utils/stream_formatter.dart';
 import 'package:http/http.dart' as http;
 
+
 class APIHelper {
   static final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  CollectionReference userChatCollectionRef = FirebaseFirestore.instance.collection("chats");
-  CollectionReference storeCollectionRef = FirebaseFirestore.instance.collection("store");
+  CollectionReference userChatCollectionRef =
+      FirebaseFirestore.instance.collection("chats");
+  CollectionReference storeCollectionRef =
+      FirebaseFirestore.instance.collection("store");
 
   String? url;
 
-  Future<dynamic> addAddress(Address address) async {
+  Future<bool> addAddress(Map<String, String> requestData) async {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'type': address.type, 'receiver_name': address.receiverName, 'receiver_phone': address.receiverPhone, 'city_name': address.city, 'society_name': address.society, 'house_no': address.houseNo, 'landmark': address.landmark, 'state': address.state, 'pin': address.pincode, 'lat': address.lat, 'lng': address.lng});
 
-      response = await dio.post('${global.baseUrl}add_address',
-          data: formData,
-          options: Options(
-            headers: await global.getApiHeaders(true),
-          ));
-      // ✅ Debugging API response
-      print("Add Address API Response: ${jsonEncode(response.data)}");
-      dynamic recordList;
+      var formData = FormData.fromMap({
+        'user_id': global.currentUser!.id.toString(),
+        'receiver_name': requestData['receiver_name'],
+        'receiver_phone': requestData['receiver_phone'],
+        'full_address': requestData['address'],
+        'lat': requestData['lat'],
+        'lng': requestData['lng'],
+        'type': requestData['type'],
+      });
+
+      // ✅ Print the data being sent to the API
+      print("📤 Sending data to API: ${formData.fields}");
+
+      response = await dio.post(
+        '${global.baseUrl}add_address',
+        data: formData,
+        options: Options(
+          headers: await global.getApiHeaders(true),
+        ),
+      );
+
+      // ✅ Print the API Response
+      print("✅ API Response: ${response.statusCode} - ${jsonEncode(response.data)}");
+
       if (response.statusCode == 200 && response.data['status'] == '1') {
-        recordList = true;
+        return true; // ✅ Success
       } else {
-        recordList = null;
+        return false; // ❌ Failure
       }
-      return getDioResult(response, recordList);
     } catch (e) {
-      debugPrint("Exception - addAddress(): $e");
+      debugPrint("❌ Exception - addAddress(): $e");
+      return false; // ✅ Return false in case of an error
     }
   }
 
-  Future<dynamic> addProductRating(int? varientId, double rating, String description) async {
+
+  Future<dynamic> addProductRating(
+      int? varientId, double rating, String description) async {
     try {
       Response response;
       var dio = Dio();
@@ -115,7 +135,11 @@ class APIHelper {
       // Add product to wishlist and remove from wishlist same API no need to pass any flag logic is handled from backend
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'varient_id': varientId, 'store_id': global.nearStoreModel!.id});
+      var formData = FormData.fromMap({
+        'user_id': global.currentUser!.id,
+        'varient_id': varientId,
+        'store_id': global.nearStoreModel!.id
+      });
       response = await dio.post('${global.baseUrl}add_rem_wishlist',
           queryParameters: {
             'lang': global.languageCode,
@@ -170,7 +194,10 @@ class APIHelper {
       // Add all the  product from wishlist to cart
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'store_id': global.nearStoreModel!.id});
+      var formData = FormData.fromMap({
+        'user_id': global.currentUser!.id,
+        'store_id': global.nearStoreModel!.id
+      });
       response = await dio.post('${global.baseUrl}wishlist_to_cart',
           queryParameters: {
             'lang': global.languageCode,
@@ -216,7 +243,8 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'cart_id': cartId, 'coupon_code': couponCode});
+      var formData =
+          FormData.fromMap({'cart_id': cartId, 'coupon_code': couponCode});
 
       response = await dio.post('${global.baseUrl}apply_coupon',
           data: formData,
@@ -262,7 +290,8 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'ean_code': code, 'store_id': global.nearStoreModel!.id});
+      var formData = FormData.fromMap(
+          {'ean_code': code, 'store_id': global.nearStoreModel!.id});
       response = await dio.post('${global.baseUrl}search',
           data: formData,
           options: Options(
@@ -280,7 +309,8 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> buyMembership(String buyStatus, String paymentGateway, String? transactionId, int? planId) async {
+  Future<dynamic> buyMembership(String buyStatus, String paymentGateway,
+      String? transactionId, int? planId) async {
     try {
       Response response;
       var dio = Dio();
@@ -313,7 +343,8 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'store_id': storeId});
+      var formData = FormData.fromMap(
+          {'user_id': global.currentUser!.id, 'store_id': storeId});
       response = await dio.post('${global.baseUrl}callback_req',
           queryParameters: {
             'lang': global.languageCode,
@@ -334,7 +365,18 @@ class APIHelper {
     }
   }
 
-  Future<bool> callOnFcmApiSendPushNotifications({List<String?>? userToken, String? title, String? body, String? route, String? imageUrl, String? chatId, String? firstName, String? lastName, String? storeId, String? userId, String? globalUserToken}) async {
+  Future<bool> callOnFcmApiSendPushNotifications(
+      {List<String?>? userToken,
+      String? title,
+      String? body,
+      String? route,
+      String? imageUrl,
+      String? chatId,
+      String? firstName,
+      String? lastName,
+      String? storeId,
+      String? userId,
+      String? globalUserToken}) async {
     final data = {
       "registration_ids": userToken,
       "notification": {
@@ -354,13 +396,28 @@ class APIHelper {
           "notificationType": '52',
         },
       },
-      "data": {"click_action": "FLUTTER_NOTIFICATION_CLICK", "storeId": '$storeId', "route": '$route', "imageUrl": '$imageUrl', "chatId": '$chatId', "firstName": '$firstName', "lastName": '$lastName', "userId": '$userId', "userToken": globalUserToken}
+      "data": {
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "storeId": '$storeId',
+        "route": '$route',
+        "imageUrl": '$imageUrl',
+        "chatId": '$chatId',
+        "firstName": '$firstName',
+        "lastName": '$lastName',
+        "userId": '$userId',
+        "userToken": globalUserToken
+      }
     };
     final headers = {
       'content-type': 'application/json',
-      'Authorization': 'key=${global.appInfo!.userServerKey}' // 'key=YOUR_SERVER_KEY'
+      'Authorization':
+          'key=${global.appInfo!.userServerKey}' // 'key=YOUR_SERVER_KEY'
     };
-    final response = await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'), body: json.encode(data), encoding: Encoding.getByName('utf-8'), headers: headers);
+    final response = await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        body: json.encode(data),
+        encoding: Encoding.getByName('utf-8'),
+        headers: headers);
     if (response.statusCode == 200) {
       // on success do sth
       debugPrint('Send');
@@ -376,7 +433,8 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_phone': phoneNumber, 'user_password': password});
+      var formData = FormData.fromMap(
+          {'user_phone': phoneNumber, 'user_password': password});
       response = await dio.post('${global.baseUrl}change_password',
           data: formData,
           options: Options(
@@ -394,19 +452,33 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> checkout({String? cartId, String? paymentStatus, String? paymentMethod, String? wallet, String? paymentId, String? paymentGateway}) async {
+  Future<dynamic> checkout(
+      {String? cartId,
+      String? paymentStatus,
+      String? paymentMethod,
+      String? wallet,
+      String? paymentId,
+      String? paymentGateway}) async {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'cart_id': cartId, 'payment_method': paymentMethod, 'payment_status': paymentStatus, 'wallet': wallet, 'payment_id': paymentId, 'payment_gateway': paymentGateway});
-
+      var formData = FormData.fromMap({
+        'cart_id': cartId,
+        'payment_method': paymentMethod,
+        'payment_status': paymentStatus,
+        'wallet': wallet,
+        'payment_id': paymentId,
+        'payment_gateway': paymentGateway
+      });
+print("checkout post data----${formData.fields}");
       response = await dio.post('${global.baseUrl}checkout',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
       dynamic recordList;
-      if ((response.statusCode == 200 && response.data["status"] == '1') || (response.statusCode == 200 && response.data["status"] == '2')) {
+      if ((response.statusCode == 200 && response.data["status"] == '1') ||
+          (response.statusCode == 200 && response.data["status"] == '2')) {
         recordList = models.Order.fromJson(response.data["data"]);
       } else {
         recordList = null;
@@ -422,24 +494,45 @@ class APIHelper {
     try {
       dynamic storeData;
       ChatStore? chatStore = ChatStore();
-      storeData = await FirebaseFirestore.instance.collectionGroup("store").where('storeId', isEqualTo: storeId).where('userId', isEqualTo: userId).limit(1).snapshots().transform(StreamFormatter.transformer(ChatStore.fromJson)).first;
+      storeData = await FirebaseFirestore.instance
+          .collectionGroup("store")
+          .where('storeId', isEqualTo: storeId)
+          .where('userId', isEqualTo: userId)
+          .limit(1)
+          .snapshots()
+          .transform(StreamFormatter.transformer(ChatStore.fromJson))
+          .first;
       chatStore = storeData.isNotEmpty ? storeData[0] : null;
       if (chatStore != null && chatStore.chatId != null) {
         isExist = EmailExist(id: chatStore.chatId, isEMailExist: true);
       } else {
-        storeData = await FirebaseFirestore.instance.collectionGroup("store").where('storeId', isEqualTo: userId.toString()).where('userId', isEqualTo: storeId.toString()).limit(1).snapshots().transform(StreamFormatter.transformer(ChatStore.fromJson)).first;
+        storeData = await FirebaseFirestore.instance
+            .collectionGroup("store")
+            .where('storeId', isEqualTo: userId.toString())
+            .where('userId', isEqualTo: storeId.toString())
+            .limit(1)
+            .snapshots()
+            .transform(StreamFormatter.transformer(ChatStore.fromJson))
+            .first;
         chatStore = storeData.isNotEmpty ? storeData[0] : null;
         if (chatStore != null && chatStore.chatId != null) {
           isExist = EmailExist(id: chatStore.chatId, isEMailExist: true);
         } else {
           String chatId = '${userId}_$storeId';
 
-          chatStore = ChatStore(chatId: chatId, createdAt: DateTime.now(), storeId: storeId, userId: userId, name: global.currentUser!.name, userProfileImageUrl: global.currentUser!.userImage, userFcmToken: await FirebaseMessaging.instance.getToken());
+          chatStore = ChatStore(
+              chatId: chatId,
+              createdAt: DateTime.now(),
+              storeId: storeId,
+              userId: userId,
+              name: global.currentUser!.name,
+              userProfileImageUrl: global.currentUser!.userImage,
+              userFcmToken: await FirebaseMessaging.instance.getToken());
 
           //add store
           try {
             await storeCollectionRef.add(chatStore.toJson());
-          } catch(e) {
+          } catch (e) {
             debugPrint('Create store exception$e');
           }
           isExist = EmailExist(id: chatId, isEMailExist: false);
@@ -532,7 +625,21 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'address_id': address.addressId, 'user_id': global.currentUser!.id, 'type': address.type, 'receiver_name': address.receiverName, 'receiver_phone': address.receiverPhone, 'city_name': address.city, 'society_name': address.society, 'house_no': address.houseNo, 'landmark': address.landmark, 'state': address.state, 'pin': address.pincode, 'lat': address.lat, 'lng': address.lng});
+      var formData = FormData.fromMap({
+        'address_id': address.addressId,
+        'user_id': global.currentUser!.id,
+        'type': address.type,
+        'receiver_name': address.receiverName,
+        'receiver_phone': address.receiverPhone,
+        'city_name': address.city,
+        'society_name': address.society,
+        'house_no': address.houseNo,
+        'landmark': address.landmark,
+        'state': address.state,
+        'pin': address.pincode,
+        'lat': address.lat,
+        'lng': address.lng
+      });
 
       response = await dio.post('${global.baseUrl}edit_address',
           data: formData,
@@ -562,7 +669,8 @@ class APIHelper {
             headers: await global.getApiHeaders(false),
           ));
       dynamic recordList;
-      if (response.statusCode == 200 && response.data['status'].toString() == '1') {
+      if (response.statusCode == 200 &&
+          response.data['status'].toString() == '1') {
         recordList = true;
       } else {
         recordList = null;
@@ -610,7 +718,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<models.Order>.from(response.data["data"].map((x) => models.Order.fromJson(x)));
+        recordList = List<models.Order>.from(
+            response.data["data"].map((x) => models.Order.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -621,29 +730,50 @@ class APIHelper {
   }
 
   Future<dynamic> getAddressList() async {
-    debugPrint('${global.currentUser!.id}');
-    debugPrint('${global.nearStoreModel!.id}');
+    debugPrint("📤 Sending API Request to: ${global.baseUrl}show_address");
+
+    Map<String, dynamic> requestData = {
+      'user_id': global.currentUser!.id,
+      'store_id': global.nearStoreModel!.id,
+    };
+
+    debugPrint("📝 Request Data: $requestData");
+
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'store_id': global.nearStoreModel!.id});
+      var formData = FormData.fromMap(requestData);
+
       response = await dio.post('${global.baseUrl}show_address',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
-      debugPrint(response.data);
-      dynamic recordList;
-      if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Address>.from(response.data["data"].map((x) => Address.fromJson(x)));
+
+      debugPrint("📥 Raw API Response: ${response.data}");
+
+      if (response.statusCode == 200) {
+        if (response.data["status"] == '1' && response.data["data"] is List) {
+          List<Address> recordList = response.data["data"]
+              .map<Address>((x) => Address.fromJson(x))
+              .toList();
+
+          debugPrint("✅ Address List Parsed: ${recordList.length} addresses found");
+          return recordList;
+        } else {
+          debugPrint("⚠️ API Response Error: ${response.data['message']}");
+          return null;
+        }
       } else {
-        recordList = null;
+        debugPrint("❌ HTTP Error: ${response.statusCode}");
+        return null;
       }
-      return getDioResult(response, recordList);
     } catch (e) {
-      debugPrint("Exception - getAddressList(): $e");
+      debugPrint("❗ Exception - getAddressList(): $e");
+      return null;
     }
   }
+
 
   Future<dynamic> getAllNotification(int page) async {
     try {
@@ -657,7 +787,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<NotificationModel>.from(response.data["data"].map((x) => NotificationModel.fromJson(x)));
+        recordList = List<NotificationModel>.from(
+            response.data["data"].map((x) => NotificationModel.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -773,7 +904,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<CancelReason>.from(response.data["data"].map((x) => CancelReason.fromJson(x)));
+        recordList = List<CancelReason>.from(
+            response.data["data"].map((x) => CancelReason.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -783,7 +915,8 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> getCategoryList(CategoryFilter categoryFilter, int page) async {
+  Future<dynamic> getCategoryList(
+      CategoryFilter categoryFilter, int page) async {
     try {
       Response response;
       var dio = Dio();
@@ -800,7 +933,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<CategoryList>.from(response.data["data"].map((x) => CategoryList.fromJson(x)));
+        recordList = List<CategoryList>.from(
+            response.data["data"].map((x) => CategoryList.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -810,7 +944,8 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> getCategoryProducts(int? catId, int page, ProductFilter productFilter) async {
+  Future<dynamic> getCategoryProducts(
+      int? catId, int page, ProductFilter productFilter) async {
     try {
       Response response;
       var dio = Dio();
@@ -835,7 +970,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -845,9 +981,16 @@ class APIHelper {
     }
   }
 
-  Stream<List<MessagesModel>>? getChatMessages(String? idUser, String globalId) {
+  Stream<List<MessagesModel>>? getChatMessages(
+      String? idUser, String globalId) {
     try {
-      return FirebaseFirestore.instance.collection('chats/$idUser/userschat').doc(globalId).collection('messages').orderBy("createdAt", descending: true).snapshots().transform(StreamFormatter.transformer(MessagesModel.fromJson));
+      return FirebaseFirestore.instance
+          .collection('chats/$idUser/userschat')
+          .doc(globalId)
+          .collection('messages')
+          .orderBy("createdAt", descending: true)
+          .snapshots()
+          .transform(StreamFormatter.transformer(MessagesModel.fromJson));
     } catch (err) {
       debugPrint("Exception - api_helper.dart - getChatMessages()$err");
       return null;
@@ -865,7 +1008,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200) {
-        recordList = List<City>.from(response.data["data"].map((x) => City.fromJson(x)));
+        recordList =
+            List<City>.from(response.data["data"].map((x) => City.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -890,7 +1034,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<models.Order>.from(response.data["data"].map((x) => models.Order.fromJson(x)));
+        recordList = List<models.Order>.from(
+            response.data["data"].map((x) => models.Order.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -904,7 +1049,8 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'cart_id': cartId});
+      var formData = FormData.fromMap(
+          {'user_id': global.currentUser!.id, 'cart_id': cartId});
       response = await dio.post('${global.baseUrl}couponlist',
           data: formData,
           options: Options(
@@ -912,7 +1058,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Coupon>.from(response.data["data"].map((x) => Coupon.fromJson(x)));
+        recordList = List<Coupon>.from(
+            response.data["data"].map((x) => Coupon.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -946,7 +1093,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -989,7 +1137,6 @@ class APIHelper {
 
   Future<dynamic> getHomeScreenData() async {
     try {
-      debugPrint('Near by store id: ${global.nearStoreModel?.id}');
       debugPrint('Current user id: ${global.currentUser?.id}');
 
       Response response;
@@ -1029,7 +1176,6 @@ class APIHelper {
       debugPrint("Exception - getHomeScreenData(): $e");
     }
   }
-
 
   Future<dynamic> getMapBoxApiKey() async {
     try {
@@ -1085,7 +1231,8 @@ class APIHelper {
       dynamic recordList;
       debugPrint(response.data);
       if (response.statusCode == 200) {
-        recordList = List<MembershipModel>.from(response.data["data"].map((x) => MembershipModel.fromJson(x)));
+        recordList = List<MembershipModel>.from(
+            response.data["data"].map((x) => MembershipModel.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1097,6 +1244,7 @@ class APIHelper {
 
   Future<dynamic> getNearbyStore() async {
     try {
+      print("Get NEAr by Store LAt : ${global.lat} - ${global.lng}}");
       Response response;
       var dio = Dio();
       var formData = FormData.fromMap({'lat': global.lat, 'lng': global.lng});
@@ -1131,7 +1279,7 @@ class APIHelper {
           ));
       debugPrint(response.data);
       dynamic recordList;
-      if (response.statusCode == 200 && response.data['status']!=null) {
+      if (response.statusCode == 200 && response.data['status'] != null) {
         recordList = PaymentGateway.fromJson(response.data);
       } else {
         response.data['status'] = '0';
@@ -1147,7 +1295,11 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'product_id': productId, 'store_id': global.nearStoreModel!.id});
+      var formData = FormData.fromMap({
+        'user_id': global.currentUser!.id,
+        'product_id': productId,
+        'store_id': global.nearStoreModel!.id
+      });
 
       response = await dio.post('${global.baseUrl}product_det',
           data: formData,
@@ -1166,11 +1318,24 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> getproductSearchResult(String? keyWord, ProductFilter productFilter) async {
+  Future<dynamic> getproductSearchResult(
+      String? keyWord, ProductFilter productFilter) async {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'store_id': global.nearStoreModel!.id, 'keyword': keyWord, 'user_id': global.currentUser!.id, 'byname': productFilter.byname, 'min_price': productFilter.minPrice, 'max_price': productFilter.maxPrice, 'stock': productFilter.stock, 'min_discount': productFilter.minDiscount, 'max_discount': productFilter.maxDiscount, 'min_rating': productFilter.minRating, 'max_rating': productFilter.maxRating});
+      var formData = FormData.fromMap({
+        'store_id': global.nearStoreModel!.id,
+        'keyword': keyWord,
+        'user_id': global.currentUser!.id,
+        'byname': productFilter.byname,
+        'min_price': productFilter.minPrice,
+        'max_price': productFilter.maxPrice,
+        'stock': productFilter.stock,
+        'min_discount': productFilter.minDiscount,
+        'max_discount': productFilter.maxDiscount,
+        'min_rating': productFilter.minRating,
+        'max_rating': productFilter.maxRating
+      });
 
       response = await dio.post('${global.baseUrl}searchbystore',
           data: formData,
@@ -1179,7 +1344,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1201,7 +1367,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Society>.from(response.data["data"].map((x) => Society.fromJson(x)));
+        recordList = List<Society>.from(
+            response.data["data"].map((x) => Society.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1223,7 +1390,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Society>.from(response.data["data"].map((x) => Society.fromJson(x)));
+        recordList = List<Society>.from(
+            response.data["data"].map((x) => Society.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1237,7 +1405,10 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'store_id': global.nearStoreModel!.id});
+      var formData = FormData.fromMap({
+        'user_id': global.currentUser!.id,
+        'store_id': global.nearStoreModel!.id
+      });
       response = await dio.post('${global.baseUrl}storecoupons',
           data: formData,
           options: Options(
@@ -1245,7 +1416,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Coupon>.from(response.data["data"].map((x) => Coupon.fromJson(x)));
+        recordList = List<Coupon>.from(
+            response.data["data"].map((x) => Coupon.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1259,7 +1431,8 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'store_id': global.nearStoreModel!.id, 'cat_id': catId});
+      var formData = FormData.fromMap(
+          {'store_id': global.nearStoreModel!.id, 'cat_id': catId});
 
       response = await dio.post('${global.baseUrl}subcatee?page=$page',
           data: formData,
@@ -1268,7 +1441,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<SubCategory>.from(response.data["data"].map((x) => SubCategory.fromJson(x)));
+        recordList = List<SubCategory>.from(
+            response.data["data"].map((x) => SubCategory.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1278,7 +1452,8 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> getTagProducts(String? tagName, int page, ProductFilter productFilter) async {
+  Future<dynamic> getTagProducts(
+      String? tagName, int page, ProductFilter productFilter) async {
     try {
       Response response;
       var dio = Dio();
@@ -1303,7 +1478,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1317,17 +1493,23 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'store_id': global.nearStoreModel!.id, 'selected_date': selectedDate});
+      var formData = FormData.fromMap({
+        'store_id': global.nearStoreModel!.id,
+        'selected_date': selectedDate
+      });
 
-      response = await dio.post('${global.baseUrl}timeslot',
-          data: formData,
-          options: Options(
-            headers: await global.getApiHeaders(true),
-          )).timeout(const Duration(seconds: 60));
+      response = await dio
+          .post('${global.baseUrl}timeslot',
+              data: formData,
+              options: Options(
+                headers: await global.getApiHeaders(true),
+              ))
+          .timeout(const Duration(seconds: 60));
       dynamic recordList;
       debugPrint(response.data);
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<TimeSlot>.from(response.data["data"].map((x) => TimeSlot.fromJson(x)));
+        recordList = List<TimeSlot>.from(
+            response.data["data"].map((x) => TimeSlot.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1337,7 +1519,8 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> getTopSellingProducts(int page, ProductFilter productFilter) async {
+  Future<dynamic> getTopSellingProducts(
+      int page, ProductFilter productFilter) async {
     try {
       Response response;
       var dio = Dio();
@@ -1361,7 +1544,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1378,14 +1562,16 @@ class APIHelper {
       var formData = FormData.fromMap({
         "user_id": global.currentUser!.id,
       });
-      response = await dio.post('${global.baseUrl}wallet_recharge_history?page=$page',
-          data: formData,
-          options: Options(
-            headers: await global.getApiHeaders(true),
-          ));
+      response =
+          await dio.post('${global.baseUrl}wallet_recharge_history?page=$page',
+              data: formData,
+              options: Options(
+                headers: await global.getApiHeaders(true),
+              ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Wallet>.from(response.data["data"].map((x) => Wallet.fromJson(x)));
+        recordList = List<Wallet>.from(
+            response.data["data"].map((x) => Wallet.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1409,7 +1595,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Wallet>.from(response.data["data"].map((x) => Wallet.fromJson(x)));
+        recordList = List<Wallet>.from(
+            response.data["data"].map((x) => Wallet.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1442,7 +1629,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200) {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1481,7 +1669,11 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'email': email, 'password': password, 'device_id': global.appDeviceId});
+      var formData = FormData.fromMap({
+        'email': email,
+        'password': password,
+        'device_id': global.appDeviceId
+      });
       response = await dio.post('${global.baseUrl}login_with_email',
           queryParameters: {
             'lang': global.languageCode,
@@ -1504,11 +1696,16 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> makeOrder({DateTime? selectedDate, String? selectedTime}) async {
+  Future<dynamic> makeOrder(
+      {DateTime? selectedDate, String? selectedTime}) async {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'delivery_date': selectedDate, 'time_slot': selectedTime});
+      var formData = FormData.fromMap({
+        'user_id': global.currentUser!.id,
+        // 'delivery_date': selectedDate,
+        // 'time_slot': selectedTime
+      });
 
       response = await dio.post('${global.baseUrl}make_order',
           data: formData,
@@ -1535,7 +1732,9 @@ class APIHelper {
         'user_id': global.currentUser!.id,
         'store_id': global.nearStoreModel!.id,
         'address_id': addressId,
-        'orderlist': imageFile != null ? await MultipartFile.fromFile(imageFile.path.toString()) : null,
+        'orderlist': imageFile != null
+            ? await MultipartFile.fromFile(imageFile.path.toString())
+            : null,
       });
 
       response = await dio.post('${global.baseUrl}orderlist',
@@ -1630,7 +1829,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1640,7 +1840,8 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> rechargeWallet(String rechargeStatus, double amount, String? paymentId, String paymentGateway) async {
+  Future<dynamic> rechargeWallet(String rechargeStatus, double amount,
+      String? paymentId, String paymentGateway) async {
     try {
       Response response;
       var dio = Dio();
@@ -1721,7 +1922,8 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'cart_id': cartId});
+      var formData = FormData.fromMap(
+          {'user_id': global.currentUser!.id, 'cart_id': cartId});
 
       response = await dio.post('${global.baseUrl}reorder',
           data: formData,
@@ -1778,6 +1980,7 @@ class APIHelper {
             headers: await global.getApiHeaders(true),
           ));
       dynamic recordList;
+      print("************************select address hit");
       if (response.statusCode == 200 && response.data["status"] == '1') {
         recordList = response.data;
       } else {
@@ -1793,7 +1996,8 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_id': global.currentUser!.id, 'feedback': feedback});
+      var formData = FormData.fromMap(
+          {'user_id': global.currentUser!.id, 'feedback': feedback});
       response = await dio.post('${global.baseUrl}user_feedback',
           queryParameters: {
             'lang': global.languageCode,
@@ -1822,11 +2026,13 @@ class APIHelper {
         'user_id': global.currentUser!.id,
       });
 
-      response = await dio.post('${global.baseUrl}show_cart',
-          data: formData,
-          options: Options(
-            headers: await global.getApiHeaders(true),
-          )).timeout(const Duration(seconds: 60));
+      response = await dio
+          .post('${global.baseUrl}show_cart',
+              data: formData,
+              options: Options(
+                headers: await global.getApiHeaders(true),
+              ))
+          .timeout(const Duration(seconds: 60));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
         recordList = Cart.fromJson(response.data["data"]);
@@ -1854,7 +2060,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<RecentSearch>.from(response.data["data"].map((x) => RecentSearch.fromJson(x)));
+        recordList = List<RecentSearch>.from(
+            response.data["data"].map((x) => RecentSearch.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1879,7 +2086,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -1901,7 +2109,9 @@ class APIHelper {
         'user_city': user.userCity,
         'user_area': user.userArea,
         'device_id': global.appDeviceId,
-        'user_image': user.userImageFile != null ? await MultipartFile.fromFile(user.userImageFile!.path.toString()) : null,
+        'user_image': user.userImageFile != null
+            ? await MultipartFile.fromFile(user.userImageFile!.path.toString())
+            : null,
         'fb_id': user.fbId,
         'referral_code': user.referralCode,
         'apple_id': user.appleId,
@@ -1924,8 +2134,13 @@ class APIHelper {
       debugPrint("Exception - signUp(): $e");
     }
   }
-
- Future<dynamic> socialLogin({String? userEmail, String? facebookId, String? type, String? appleId}) async {
+  Future<dynamic> socialLogin(
+      {String? userEmail,
+      String? facebookId,
+      String? type,
+      String? appleId,
+      String? name,
+      String? image}) async {
     debugPrint("User Email: $userEmail");
     debugPrint("Facebook ID: $facebookId");
     debugPrint("Type: $type");
@@ -1937,10 +2152,13 @@ class APIHelper {
 
       var formData = FormData.fromMap({
         "user_email": userEmail,
+
+        "user_name": name,
+        "user_image": image,
         "fb_id": facebookId,
         "type": type,
         "apple_id": appleId,
-        "device_id": global.appDeviceId
+        "device_id": global.appDeviceId,
       });
 
       response = await dio.post('${global.baseUrl}social_login',
@@ -1949,12 +2167,17 @@ class APIHelper {
             headers: await global.getApiHeaders(false),
           ));
 
-      debugPrint("API Response: ${response.data}"); // Print full API response
-
+      debugPrint("API Response: ${response.data}");
       if (response.statusCode == 200) {
         if (response.data['status'] == '1') {
           var recordList = CurrentUser.fromJson(response.data['data']);
-          recordList.token = response.data['token'];
+
+          if (response.data['token'] is String) {
+            recordList.token = response.data['token'];
+          } else {
+            debugPrint("Unexpected token type: ${response.data['token']}");
+            recordList.token = null; // Handle properly
+          }
           return getDioResult(response, recordList);
         } else {
           return null;
@@ -1992,11 +2215,12 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
-      return  getDioResult(response, recordList);
+      return getDioResult(response, recordList);
     } catch (e) {
       debugPrint("Exception - spotLightProduct(): $e");
     }
@@ -2055,28 +2279,55 @@ class APIHelper {
 
   Future updateFirebaseUser(CurrentUser? user) async {
     try {
-      List<QueryDocumentSnapshot> storeData = (await FirebaseFirestore.instance.collectionGroup("store").where('storeId', isEqualTo: global.nearStoreModel!.id).where('userId', isEqualTo: global.currentUser!.id).get()).docs.toList();
+      List<QueryDocumentSnapshot> storeData = (await FirebaseFirestore.instance
+              .collectionGroup("store")
+              .where('storeId', isEqualTo: global.nearStoreModel!.id)
+              .where('userId', isEqualTo: global.currentUser!.id)
+              .get())
+          .docs
+          .toList();
       if (storeData.isNotEmpty) {
-        FirebaseFirestore.instance.collection("store").doc(storeData[0].id).update({"name": user!.name, "userProfileImageUrl": user.userImage, "updatedAt": DateTime.now().toUtc()});
+        FirebaseFirestore.instance
+            .collection("store")
+            .doc(storeData[0].id)
+            .update({
+          "name": user!.name,
+          "userProfileImageUrl": user.userImage,
+          "updatedAt": DateTime.now().toUtc()
+        });
       }
     } catch (e) {
       debugPrint("Exception - updateFirebaseUser()$e");
     }
   }
 
-  Future updateFirebaseUserFcmToken(int? userId, String? updatedFcmToken) async {
+  Future updateFirebaseUserFcmToken(
+      int? userId, String? updatedFcmToken) async {
     try {
       int? storeId = global.nearStoreModel?.id;
-      List<QueryDocumentSnapshot> storeData = (await FirebaseFirestore.instance.collectionGroup("store").where('storeId', isEqualTo: storeId).where('userId', isEqualTo: userId).get()).docs.toList();
+      List<QueryDocumentSnapshot> storeData = (await FirebaseFirestore.instance
+              .collectionGroup("store")
+              .where('storeId', isEqualTo: storeId)
+              .where('userId', isEqualTo: userId)
+              .get())
+          .docs
+          .toList();
       if (storeData.isNotEmpty) {
-        FirebaseFirestore.instance.collection("store").doc(storeData[0].id).update({"userFcmToken": updatedFcmToken, "updatedAt": DateTime.now().toUtc()});
+        FirebaseFirestore.instance
+            .collection("store")
+            .doc(storeData[0].id)
+            .update({
+          "userFcmToken": updatedFcmToken,
+          "updatedAt": DateTime.now().toUtc()
+        });
       }
     } catch (e) {
       debugPrint("Exception - updateFirebaseUser()$e");
     }
   }
 
-  Future updateImageMesageURL(String? chatId, String userId, String? messageId, String url) async {
+  Future updateImageMesageURL(
+      String? chatId, String userId, String? messageId, String url) async {
     try {
       var myDoc = FirebaseFirestore.instance
           // .collection('chats/$chatId/messages')
@@ -2105,7 +2356,9 @@ class APIHelper {
         'user_city': user.userCity,
         'user_area': user.userArea,
         'device_id': global.appDeviceId,
-        'user_image': user.userImageFile != null ? await MultipartFile.fromFile(user.userImageFile!.path.toString()) : null,
+        'user_image': user.userImageFile != null
+            ? await MultipartFile.fromFile(user.userImageFile!.path.toString())
+            : null,
         'user_id': global.currentUser!.id,
       });
 
@@ -2128,14 +2381,16 @@ class APIHelper {
     }
   }
 
-  Future<String?> uploadImageToStorage(XFile image, String? chatId, String userid, MessagesModel anonymous) async {
+  Future<String?> uploadImageToStorage(XFile image, String? chatId,
+      String userid, MessagesModel anonymous) async {
     try {
       var messageR = await uploadMessage(chatId, userid, anonymous, false, '');
       var fileName = DateTime.now().microsecondsSinceEpoch.toString();
       var refImg = FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask = refImg.putFile(File(image.path));
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
-      await updateImageMesageURL(chatId, global.currentUser!.id.toString(), messageR['user1'], imageUrl);
+      await updateImageMesageURL(chatId, global.currentUser!.id.toString(),
+          messageR['user1'], imageUrl);
       await updateImageMesageURL(chatId, userid, messageR['user2'], imageUrl);
 
       return url;
@@ -2145,12 +2400,21 @@ class APIHelper {
     }
   }
 
-  Future uploadMessage(String? idUser, String userId, MessagesModel anonymous, bool isAlreadychat, String imageUrl) async {
+  Future uploadMessage(String? idUser, String userId, MessagesModel anonymous,
+      bool isAlreadychat, String imageUrl) async {
     try {
       final String globalId = global.currentUser!.id.toString();
       // if (!isAlreadychat && userChat.chatId != null) {}
-      final refMessages = userChatCollectionRef.doc(idUser).collection('userschat').doc(globalId).collection('messages');
-      final refMessages1 = userChatCollectionRef.doc(idUser).collection('userschat').doc(userId).collection('messages');
+      final refMessages = userChatCollectionRef
+          .doc(idUser)
+          .collection('userschat')
+          .doc(globalId)
+          .collection('messages');
+      final refMessages1 = userChatCollectionRef
+          .doc(idUser)
+          .collection('userschat')
+          .doc(userId)
+          .collection('messages');
       final newMessage1 = anonymous;
       final newMessage2 = anonymous;
 
@@ -2163,7 +2427,7 @@ class APIHelper {
           'user1': messageResult.id,
           'user2': message1Result.id,
         };
-      } catch(e) {
+      } catch (e) {
         debugPrint('send mess exception$e');
       }
     } catch (err) {
@@ -2195,11 +2459,17 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> verifyPhone(String? phone, String otp, String? referralCode) async {
+  Future<dynamic> verifyPhone(
+      String? phone, String otp, String? referralCode) async {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_phone': phone, 'otp': otp, 'referral_code': referralCode, 'device_id': global.appDeviceId});
+      var formData = FormData.fromMap({
+        'user_phone': phone,
+        'otp': otp,
+        'referral_code': referralCode,
+        'device_id': global.appDeviceId
+      });
       response = await dio.post('${global.baseUrl}verify_phone',
           data: formData,
           options: Options(
@@ -2218,18 +2488,25 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> verifyViaFirebase(String? phone, String? status, String? referralCode) async {
+  Future<dynamic> verifyViaFirebase(
+      String? phone, String? status, String? referralCode) async {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'user_phone': phone, 'status': status, 'referral_code': referralCode, 'device_id': global.appDeviceId});
+      var formData = FormData.fromMap({
+        'user_phone': phone,
+        'status': status,
+        'referral_code': referralCode,
+        'device_id': global.appDeviceId
+      });
       response = await dio.post('${global.baseUrl}verify_via_firebase',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(false),
           ));
       dynamic recordList;
-      if (response.statusCode == 200 && response.data["status"].toString() == "1") {
+      if (response.statusCode == 200 &&
+          response.data["status"].toString() == "1") {
         recordList = CurrentUser.fromJson(response.data["data"]);
 
         recordList.token = response.data["token"];
@@ -2265,7 +2542,8 @@ class APIHelper {
           ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Product>.from(response.data["data"].map((x) => Product.fromJson(x)));
+        recordList = List<Product>.from(
+            response.data["data"].map((x) => Product.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -2274,6 +2552,7 @@ class APIHelper {
       debugPrint("Exception - whatsnewProduct(): $e");
     }
   }
+
   Future<dynamic> getProductRating(int page, int? varientId) async {
     try {
       Response response;
@@ -2282,14 +2561,16 @@ class APIHelper {
         'store_id': global.nearStoreModel!.id,
         'varient_id': varientId,
       });
-      response = await dio.post('${global.baseUrl}get_product_rating?page=$page',
-          data: formData,
-          options: Options(
-            headers: await global.getApiHeaders(true),
-          ));
+      response =
+          await dio.post('${global.baseUrl}get_product_rating?page=$page',
+              data: formData,
+              options: Options(
+                headers: await global.getApiHeaders(true),
+              ));
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = List<Rate>.from(response.data["data"].map((x) => Rate.fromJson(x)));
+        recordList =
+            List<Rate>.from(response.data["data"].map((x) => Rate.fromJson(x)));
       } else {
         recordList = null;
       }
@@ -2298,7 +2579,6 @@ class APIHelper {
       debugPrint("Exception - getProductRating(): $e");
     }
   }
-
 }
 
 class EmailExist {

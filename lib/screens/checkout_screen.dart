@@ -30,19 +30,34 @@ class CheckoutScreen extends BaseRoute {
 class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
   GlobalKey<ScaffoldState>? _scaffoldKey;
   Address? _selectedAddress = Address();
-  List<TimeSlot>? _timeSlotList = [];
-  DateTime? _selectedDate;
-  TimeSlot? _selectedTimeSlot;
-  late DateTime _openingTime;
-  late DateTime _closingTime;
-  bool _isClosingTime = false;
+  List<Address> _addressList = [];
+  bool _isLoading = true;
+  // final List<TimeSlot>? _timeSlotList = [];
+  // DateTime? _selectedDate;
+  // TimeSlot? _selectedTimeSlot;
+  // late DateTime _openingTime;
+  // late DateTime _closingTime;
+  // final bool _isClosingTime = false;
   final ScrollController _scrollController = ScrollController();
   Order? orderDetails;
 
   MembershipStatus? _membershipStatus = MembershipStatus();
 
   _CheckoutScreenState();
+  Future<void> _fetchAddresses() async {
+    var addressList = await apiHelper.getAddressList();
+    if (addressList != null && addressList.isNotEmpty) {
+      setState(() {
+        _addressList = addressList;
+        _selectedAddress = _addressList.first;
+      });
 
+
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -70,300 +85,61 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    global.userProfileController.addressList.isNotEmpty
-                        ? "${AppLocalizations.of(context)!.lbl_shipping_to} Shipping to "
-                        : AppLocalizations.of(context)!.txt_no_address,
-                    style: subHeadingStyle,
-                  ),
+                  ///---- address container
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.3,
                     width: MediaQuery.of(context).size.width,
-                    child: global.userProfileController.addressList.isNotEmpty
+                    child: _addressList.isNotEmpty
                         ? ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: global.userProfileController.addressList.length,
-                            itemBuilder: (BuildContext ctx, int index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 6.0),
-                                child: InkWell(
-                                  onTap: () {
-                                    // setState(() {});
-                                  },
-                                  child: AddressInfoCard(
-                                    analytics: widget.analytics,
-                                    observer: widget.observer,
-                                    key: UniqueKey(),
-                                    address: global.userProfileController
-                                        .addressList[index],
-                                    isSelected: global.userProfileController
-                                        .addressList[index].isSelected,
-                                    value: global.userProfileController
-                                        .addressList[index],
-                                    groupValue: _selectedAddress,
-                                    onChanged: (value) {
-                                      _selectAddressForCheckout(
-                                          selectedAddressId: value?.addressId,
-                                          addressSelected: value,
-                                          index: index);
-                                      // setState(() {
-                                      //   _selectedAddress = value;
-                                      //   global.userProfileController.addressList[index].isSelected =
-                                      //   !global.userProfileController
-                                      //       .addressList[index].isSelected;
-                                      // });
-                                    },
-                                  ),
-                                ),
-                              );
-                            })
-                        :
-                          TextButton.icon(
-                              onPressed: () {
-                                Get.to(() => AddAddressScreen(
-                                  Address(),
+                      shrinkWrap: true,
+                      itemCount: _addressList.length,
+                      itemBuilder: (BuildContext ctx, int index) {
+                        Address address = _addressList[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6.0),
+                          child:
+                                AddressInfoCard(
                                   analytics: widget.analytics,
                                   observer: widget.observer,
-                                  screenId: 0,
-                                ))!
-                                    .then((value) {
-                                  setState(() {});
-                                });
-                              },
-                              icon: const Icon(Icons.add),
-                              label: Text(AppLocalizations.of(context)!.tle_add_new_address,
-                                style: textTheme.titleMedium!.copyWith(
-                                  fontSize: 14,
-                                )
-                              )
-                          ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8, horizontal: 12.0),
-                    child: global.userProfileController.addressList.isNotEmpty
-                        ? InkWell(
-                            onTap: () {
-                              Get.to(() => AddAddressScreen(
-                                        Address(),
-                                        analytics: widget.analytics,
-                                        observer: widget.observer,
-                                        screenId: 0,
-                                      ))!
-                                  .then((value) {
-                                setState(() {});
-                              });
-                            },
-                            child: Text(
-                              "${AppLocalizations.of(context)!.tle_add_new_address} ",
-                              style: textTheme.titleMedium!.copyWith(
-                                fontSize: 14,
-                              ),
-                            ),
-                          )
-                        : const SizedBox(),
-                  ),
-                  _isClosingTime == false &&
-                          global.nearStoreModel?.storeOpeningTime != null &&
-                      (global.nearStoreModel?.storeOpeningTime?.isNotEmpty ?? false) &&
-                          global.nearStoreModel!.storeClosingTime != null &&
-                      (global.nearStoreModel?.storeClosingTime?.isNotEmpty ?? false) &&
-                          DateTime.now().isAfter(_openingTime) &&
-                          DateTime.now().isBefore(
-                              _closingTime.subtract(const Duration(hours: 1)))
-                      ? SizedBox(
-                          height: 50,
-                          width: double.infinity,
-                          child: SwitchListTile(
-                            tileColor: Theme.of(context).colorScheme.primaryContainer,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            value: _membershipStatus!.status == 'running'
-                                ? true
-                                : false,
-                            activeColor: Theme.of(context).colorScheme.primary,
-                            onChanged: (val) async {
-                              if (_isClosingTime == false &&
-                                  global.nearStoreModel?.storeOpeningTime !=
-                                      null &&
-                                  (global.nearStoreModel?.storeOpeningTime?.isNotEmpty ?? false) &&
-                                  global.nearStoreModel?.storeClosingTime !=
-                                      null &&
-                                  global.nearStoreModel?.storeClosingTime !=
-                                      '' &&
-                                  DateTime.now().isAfter(_openingTime) &&
-                                  DateTime.now().isBefore(_closingTime
-                                      .subtract(const Duration(hours: 1)))) {
-                                if (val) {
-                                  await _checkMembershipStatus();
-                                } else {
-                                  _membershipStatus!.status = 'Pending';
-                                  if (_scrollController.hasClients) {
-                                    Future.delayed(const Duration(milliseconds: 50),
-                                        () {
-                                      _scrollController.jumpTo(_scrollController
-                                          .position.maxScrollExtent);
+                                  key: UniqueKey(),
+                                  address: address,
+                                  isSelected: _selectedAddress == address,
+                                  value: address,
+                                  groupValue: _selectedAddress,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedAddress = value!;
                                     });
-                                  }
-                                }
-                              } else {
-                                _isClosingTime = true;
-                              }
-
-                              setState(() {});
-                            },
-                            title: Text(
-                              _membershipStatus!.status == 'running'
-                                  ? AppLocalizations.of(context)!.btn_instant_delivery
-                                  : AppLocalizations.of(context)!.btn_req_instant_delivery,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge?.copyWith(fontSize: 15, color: Theme.of(context).colorScheme.onPrimaryContainer),
-                            ),
-                          ),
-                        )
-                      : SizedBox(
-                          height: 60,
-                          width: double.infinity,
-                          child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                    'Instant delivery not available as store closing time is near.'),
-                              ))),
-                  _membershipStatus!.status != 'running'
-                      ? Padding(
-                          padding:
-                              const EdgeInsets.only(top: 24.0, bottom: 8.0),
-                          child: Text(
-                            AppLocalizations.of(context)!.txt_preferred_time,
-                            style: subHeadingStyle,
-                          ),
-                        )
-                      : const SizedBox(),
-                  _membershipStatus!.status != 'running'
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            InkWell(
-                              onTap: () async {
-                                _selectedDate = await showDatePicker(
-                                  context: context,
-                                  firstDate:
-                                      DateTime.now().add(const Duration(days: 1)),
-                                  initialDate:
-                                      DateTime.now().add(const Duration(days: 1)),
-                                  lastDate:
-                                      DateTime.now().add(const Duration(days: 10)),
-                                  initialDatePickerMode: DatePickerMode.day,
-                                  currentDate:
-                                      DateTime.now().add(const Duration(days: 1)),
-                                  builder:
-                                      (BuildContext context, Widget? child) {
-                                    return Theme(
-                                      data: Theme.of(context),
-                                      child: child!,
-                                    );
+                                    _selectAddressForCheckout(selectedAddressId:_selectedAddress?.addressId ?? 0 , addressSelected: value);
                                   },
-                                );
-                                if (_selectedDate != null) {
-                                  await _getTimeSlotList();
-                                }
-                                setState(() {});
-                              },
-                              child: DateTimeSelector(
-                                key: UniqueKey(),
-                                heading:
-                                    "${AppLocalizations.of(context)!.lbl_date} ",
-                                selectedDate: _selectedDate,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 80,
-                                color: Theme.of(context).colorScheme.secondaryContainer,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        '${AppLocalizations.of(context)!.txt_time} ',
-                                        style: textTheme.bodySmall,
-                                      ),
-                                      const Spacer(),
-                                      SizedBox(
-                                        height: 40,
-                                        child: Center(
-                                          child: DropdownButton(
-                                            value: _selectedTimeSlot,
-                                            isExpanded: false,
-                                            isDense: true,
-                                            icon: Icon(
-                                              Icons.keyboard_arrow_down,
-                                              color: Theme.of(context).colorScheme.onSecondaryContainer,
-                                            ),
-                                            underline: const SizedBox(),
-                                            hint: Text(
-                                              '${AppLocalizations.of(context)!.lbl_select_time_slot} ',
-                                              style:
-                                                  textTheme.bodyLarge!.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            items: _timeSlotList!.map<
-                                                    DropdownMenuItem<TimeSlot>>(
-                                                (TimeSlot timeSlot) {
-                                              return DropdownMenuItem<TimeSlot>(
-                                                value: timeSlot,
-                                                enabled:
-                                                    timeSlot.availibility ==
-                                                            "available"
-                                                        ? true
-                                                        : false,
-                                                child: Text(
-                                                  timeSlot.timeslot!,
-                                                  style: timeSlot
-                                                              .availibility ==
-                                                          "available"
-                                                      ? textTheme.bodyLarge!
-                                                          .copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )
-                                                      : textTheme.bodyLarge!
-                                                          .copyWith(
-                                                          color:
-                                                              Colors.grey[400],
-                                                        ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (dynamic value) {
-                                              setState(() {
-                                                _selectedTimeSlot = value;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                 ),
-                              ),
-                            )
-                          ],
-                        )
-                      : const SizedBox(),
+
+                        );
+                      },
+                    )
+                        : TextButton.icon(
+                      onPressed: () {
+                        Get.to(() => AddAddressScreen(
+                          Address(),
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                          screenId: 0,
+                        ))!.then((value) {
+                          setState(() {
+                            _fetchAddresses(); // Refresh address list after adding
+                          });
+                        });
+                      },
+                      icon: const Icon(Icons.add),
+                      label: Text(
+                        AppLocalizations.of(context)!.tle_add_new_address,
+                        style: textTheme.titleMedium!.copyWith(fontSize: 14),
+                      ),
+                    ),
+                  ),
+
+
+                  /// --commented code
                 ],
               ),
             ),
@@ -445,14 +221,15 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
   @override
   void initState() {
     super.initState();
+    _fetchAddresses();
     if (global.nearStoreModel!.storeOpeningTime != null &&
         global.nearStoreModel!.storeOpeningTime != '' &&
         global.nearStoreModel!.storeClosingTime != null &&
         global.nearStoreModel!.storeClosingTime != '') {
-      _openingTime = DateFormat('yyyy-MM-dd hh:mm a')
-          .parse(global.nearStoreModel!.storeOpeningTime!.toUpperCase());
-      _closingTime = DateFormat('yyyy-MM-dd hh:mm a')
-          .parse(global.nearStoreModel!.storeClosingTime!.toUpperCase());
+      // _openingTime = DateFormat('yyyy-MM-dd hh:mm a')
+      //     .parse(global.nearStoreModel!.storeOpeningTime!.toUpperCase());
+      // _closingTime = DateFormat('yyyy-MM-dd hh:mm a')
+      //     .parse(global.nearStoreModel!.storeClosingTime!.toUpperCase());
     }
   }
 
@@ -468,32 +245,32 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
     }
   }
 
-  _getTimeSlotList() async {
-    try {
-      showOnlyLoaderDialog();
-      bool isConnected = await br.checkConnectivity();
-      if (isConnected) {
-        await apiHelper.getTimeSlot(_selectedDate).then((result) async {
-          _selectedTimeSlot = TimeSlot();
-          if (result != null) {
-            if (result.status == "1") {
-              _timeSlotList = result.data;
-              _selectedTimeSlot = _timeSlotList![0];
-            } else {
-              showSnackBar(key: _scaffoldKey, snackBarMessage: result.message);
-              _timeSlotList = [];
-            }
-          }
-          setState(() {});
-        });
-      } else {
-        showNetworkErrorSnackBar(_scaffoldKey);
-      }
-      hideLoader();
-    } catch (e) {
-      debugPrint("Exception - checkout_screen.dart - _getTimeSlotList():$e");
-    }
-  }
+  // _getTimeSlotList() async {
+  //   try {
+  //     showOnlyLoaderDialog();
+  //     bool isConnected = await br.checkConnectivity();
+  //     if (isConnected) {
+  //       await apiHelper.getTimeSlot(_selectedDate).then((result) async {
+  //         _selectedTimeSlot = TimeSlot();
+  //         if (result != null) {
+  //           if (result.status == "1") {
+  //             _timeSlotList = result.data;
+  //             _selectedTimeSlot = _timeSlotList![0];
+  //           } else {
+  //             showSnackBar(key: _scaffoldKey, snackBarMessage: result.message);
+  //             _timeSlotList = [];
+  //           }
+  //         }
+  //         setState(() {});
+  //       });
+  //     } else {
+  //       showNetworkErrorSnackBar(_scaffoldKey);
+  //     }
+  //     hideLoader();
+  //   } catch (e) {
+  //     debugPrint("Exception - checkout_screen.dart - _getTimeSlotList():$e");
+  //   }
+  // }
 
   _makeOrder() async {
     try {
@@ -512,47 +289,50 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
         //   ),
         //   duration: Duration(seconds: 2),
         // ));
-      } else if (_selectedDate == null &&
-          _membershipStatus?.status != 'running') {
-        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //   backgroundColor: Theme
-        //       .of(context)
-        //       .colorScheme.primary,
-        //   content: Text(
-        //     '${AppLocalizations
-        //         .of(context)
-        //         .txt_select_date}',
-        //     textAlign: TextAlign.center,
-        //   ),
-        //   duration: Duration(seconds: 2),
-        // ));
-        showToast(AppLocalizations.of(context)!.txt_select_date);
-      } else if (_selectedTimeSlot?.timeslot == null &&
-          _membershipStatus?.status != 'running') {
-        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        //   backgroundColor: Theme
-        //       .of(context)
-        //       .colorScheme.primary,
-        //   content: Text(
-        //     '${AppLocalizations
-        //         .of(context)
-        //         .txt_select_time_slot}',
-        //     textAlign: TextAlign.center,
-        //   ),
-        //   duration: Duration(seconds: 2),
-        // ));
-        showToast(AppLocalizations.of(context)!.txt_select_time_slot);
-      } else {
+      }
+      // else if (_selectedDate == null &&
+      //     _membershipStatus?.status != 'running') {
+      //   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   //   backgroundColor: Theme
+      //   //       .of(context)
+      //   //       .colorScheme.primary,
+      //   //   content: Text(
+      //   //     '${AppLocalizations
+      //   //         .of(context)
+      //   //         .txt_select_date}',
+      //   //     textAlign: TextAlign.center,
+      //   //   ),
+      //   //   duration: Duration(seconds: 2),
+      //   // ));
+      //   showToast(AppLocalizations.of(context)!.txt_select_date);
+      // } else if (_selectedTimeSlot?.timeslot == null &&
+      //     _membershipStatus?.status != 'running') {
+      //   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   //   backgroundColor: Theme
+      //   //       .of(context)
+      //   //       .colorScheme.primary,
+      //   //   content: Text(
+      //   //     '${AppLocalizations
+      //   //         .of(context)
+      //   //         .txt_select_time_slot}',
+      //   //     textAlign: TextAlign.center,
+      //   //   ),
+      //   //   duration: Duration(seconds: 2),
+      //   // ));
+      //   showToast(AppLocalizations.of(context)!.txt_select_time_slot);
+      // }
+      else {
         // debugPrint(_selectedTimeSlot.timeslot);
         showOnlyLoaderDialog();
         bool isConnected = await br.checkConnectivity();
         if (isConnected) {
           await apiHelper
               .makeOrder(
-                  selectedDate: _selectedDate,
-                  selectedTime: _membershipStatus!.status == 'running'
-                      ? 'instant'
-                      : _selectedTimeSlot!.timeslot)
+                  // selectedDate: _selectedDate,
+                  // selectedTime: _membershipStatus!.status == 'running'
+                  //     ? 'instant'
+                  //     : _selectedTimeSlot!.timeslot
+                )
               .then((result) async {
             if (result != null) {
               if (result.status == "1") {
@@ -632,3 +412,204 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
     }
   }
 }
+ ///_commented code-
+// _isClosingTime == false &&
+//         global.nearStoreModel?.storeOpeningTime != null &&
+//     (global.nearStoreModel?.storeOpeningTime?.isNotEmpty ?? false) &&
+//         global.nearStoreModel!.storeClosingTime != null &&
+//     (global.nearStoreModel?.storeClosingTime?.isNotEmpty ?? false) &&
+//         DateTime.now().isAfter(_openingTime) &&
+//         DateTime.now().isBefore(
+//             _closingTime.subtract(const Duration(hours: 1)))
+//     ? SizedBox(
+//         height: 50,
+//         width: double.infinity,
+//         child: SwitchListTile(
+//           tileColor: Theme.of(context).colorScheme.primaryContainer,
+//           shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(10)),
+//           value: _membershipStatus!.status == 'running'
+//               ? true
+//               : false,
+//           activeColor: Theme.of(context).colorScheme.primary,
+//           onChanged: (val) async {
+//             if (_isClosingTime == false &&
+//                 global.nearStoreModel?.storeOpeningTime !=
+//                     null &&
+//                 (global.nearStoreModel?.storeOpeningTime?.isNotEmpty ?? false) &&
+//                 global.nearStoreModel?.storeClosingTime !=
+//                     null &&
+//                 global.nearStoreModel?.storeClosingTime !=
+//                     '' &&
+//                 DateTime.now().isAfter(_openingTime) &&
+//                 DateTime.now().isBefore(_closingTime
+//                     .subtract(const Duration(hours: 1)))) {
+//               if (val) {
+//                 await _checkMembershipStatus();
+//               } else {
+//                 _membershipStatus!.status = 'Pending';
+//                 if (_scrollController.hasClients) {
+//                   Future.delayed(const Duration(milliseconds: 50),
+//                       () {
+//                     _scrollController.jumpTo(_scrollController
+//                         .position.maxScrollExtent);
+//                   });
+//                 }
+//               }
+//             } else {
+//               _isClosingTime = true;
+//             }
+//
+//             setState(() {});
+//           },
+//           title: Text(
+//             _membershipStatus!.status == 'running'
+//                 ? AppLocalizations.of(context)!.btn_instant_delivery
+//                 : AppLocalizations.of(context)!.btn_req_instant_delivery,
+//             style: Theme.of(context)
+//                 .textTheme
+//                 .labelLarge?.copyWith(fontSize: 15, color: Theme.of(context).colorScheme.onPrimaryContainer),
+//           ),
+//         ),
+//       )
+//     : SizedBox(
+//         height: 60,
+//         width: double.infinity,
+//         child: Card(
+//             shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(10)),
+//             child: const Padding(
+//               padding: EdgeInsets.all(8.0),
+//               child: Text(
+//                   'Instant delivery not available as store closing time is near.'),
+//             ))),
+// _membershipStatus!.status != 'running'
+//     ? Padding(
+//         padding:
+//             const EdgeInsets.only(top: 24.0, bottom: 8.0),
+//         child: Text(
+//           AppLocalizations.of(context)!.txt_preferred_time,
+//           style: subHeadingStyle,
+//         ),
+//       )
+//     : const SizedBox(),
+// _membershipStatus!.status != 'running'
+//     ? Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           InkWell(
+//             onTap: () async {
+//               _selectedDate = await showDatePicker(
+//                 context: context,
+//                 firstDate:
+//                     DateTime.now().add(const Duration(days: 1)),
+//                 initialDate:
+//                     DateTime.now().add(const Duration(days: 1)),
+//                 lastDate:
+//                     DateTime.now().add(const Duration(days: 10)),
+//                 initialDatePickerMode: DatePickerMode.day,
+//                 currentDate:
+//                     DateTime.now().add(const Duration(days: 1)),
+//                 builder:
+//                     (BuildContext context, Widget? child) {
+//                   return Theme(
+//                     data: Theme.of(context),
+//                     child: child!,
+//                   );
+//                 },
+//               );
+//               if (_selectedDate != null) {
+//                 await _getTimeSlotList();
+//               }
+//               setState(() {});
+//             },
+//             child: DateTimeSelector(
+//               key: UniqueKey(),
+//               heading:
+//                   "${AppLocalizations.of(context)!.lbl_date} ",
+//               selectedDate: _selectedDate,
+//             ),
+//           ),
+//           const SizedBox(
+//             width: 10,
+//           ),
+//           Expanded(
+//             child: Container(
+//               height: 80,
+//               color: Theme.of(context).colorScheme.secondaryContainer,
+//               child: Padding(
+//                 padding: const EdgeInsets.all(8.0),
+//                 child: Column(
+//                   crossAxisAlignment:
+//                       CrossAxisAlignment.start,
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Text(
+//                       '${AppLocalizations.of(context)!.txt_time} ',
+//                       style: textTheme.bodySmall,
+//                     ),
+//                     const Spacer(),
+//                     SizedBox(
+//                       height: 40,
+//                       child: Center(
+//                         child: DropdownButton(
+//                           value: _selectedTimeSlot,
+//                           isExpanded: false,
+//                           isDense: true,
+//                           icon: Icon(
+//                             Icons.keyboard_arrow_down,
+//                             color: Theme.of(context).colorScheme.onSecondaryContainer,
+//                           ),
+//                           underline: const SizedBox(),
+//                           hint: Text(
+//                             '${AppLocalizations.of(context)!.lbl_select_time_slot} ',
+//                             style:
+//                                 textTheme.bodyLarge!.copyWith(
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                           items: _timeSlotList!.map<
+//                                   DropdownMenuItem<TimeSlot>>(
+//                               (TimeSlot timeSlot) {
+//                             return DropdownMenuItem<TimeSlot>(
+//                               value: timeSlot,
+//                               enabled:
+//                                   timeSlot.availibility ==
+//                                           "available"
+//                                       ? true
+//                                       : false,
+//                               child: Text(
+//                                 timeSlot.timeslot!,
+//                                 style: timeSlot
+//                                             .availibility ==
+//                                         "available"
+//                                     ? textTheme.bodyLarge!
+//                                         .copyWith(
+//                                         fontWeight:
+//                                             FontWeight.bold,
+//                                       )
+//                                     : textTheme.bodyLarge!
+//                                         .copyWith(
+//                                         color:
+//                                             Colors.grey[400],
+//                                       ),
+//                               ),
+//                             );
+//                           }).toList(),
+//                           onChanged: (dynamic value) {
+//                             setState(() {
+//                               _selectedTimeSlot = value;
+//                             });
+//                           },
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           )
+//         ],
+//       )
+//     : const SizedBox(),

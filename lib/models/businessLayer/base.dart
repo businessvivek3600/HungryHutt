@@ -473,7 +473,7 @@ class BaseState<T extends Base> extends State<T> with TickerProviderStateMixin, 
           result.authentication.then((googleKey) async {
             if (_googleSignIn.currentUser != null) {
               showOnlyLoaderDialog();
-              await apiHelper.socialLogin(userEmail: _googleSignIn.currentUser!.email, type: 'google').then((result) async {
+              await apiHelper.socialLogin(userEmail: _googleSignIn.currentUser!.email, type: 'google',name: _googleSignIn.currentUser!.displayName,image:_googleSignIn.currentUser!.photoUrl).then((result) async {
                 if (result != null) {
                   if (result.status == "1") {
                     global.currentUser = result.data;
@@ -508,36 +508,36 @@ class BaseState<T extends Base> extends State<T> with TickerProviderStateMixin, 
     }
   }
 
-  _getBarcodeResult(GlobalKey<ScaffoldState> scaffoldKey, String code) async {
-    try {
-      bool isConnected = await br.checkConnectivity();
-      if (isConnected) {
-        showOnlyLoaderDialog();
-        await apiHelper.barcodeScanResult(code).then((result) async {
-          if (result != null) {
-            if (result.status == "1") {
-              hideLoader();
-              if(!mounted) return;
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ProductDescriptionScreen(productDetail: result.data, analytics: widget.analytics, observer: widget.observer),
-                ),
-              );
-            } else {
-              hideLoader();
-
-              showSnackBar(key: scaffoldKey, snackBarMessage: '${result.message}');
-            }
-          } else {
-            hideLoader();
-          }
-        });
-      } else {
-        showNetworkErrorSnackBar(scaffoldKey);
-      }
-    } catch (e) {
-      hideLoader();
-      debugPrint("Exception - base.dart - _getBarcodeResult():$e");
-    }
-  }
+  // _getBarcodeResult(GlobalKey<ScaffoldState> scaffoldKey, String code) async {
+  //   try {
+  //     bool isConnected = await br.checkConnectivity();
+  //     if (isConnected) {
+  //       showOnlyLoaderDialog();
+  //       await apiHelper.barcodeScanResult(code).then((result) async {
+  //         if (result != null) {
+  //           if (result.status == "1") {
+  //             hideLoader();
+  //             if(!mounted) return;
+  //             Navigator.of(context).push(
+  //               MaterialPageRoute(
+  //                 builder: (context) => ProductDescriptionScreen(productDetail: result.data, analytics: widget.analytics, observer: widget.observer),
+  //               ),
+  //             );
+  //           } else {
+  //             hideLoader();
+  //
+  //             showSnackBar(key: scaffoldKey, snackBarMessage: '${result.message}');
+  //           }
+  //         } else {
+  //           hideLoader();
+  //         }
+  //       });
+  //     } else {
+  //       showNetworkErrorSnackBar(scaffoldKey);
+  //     }
+  //   } catch (e) {
+  //     hideLoader();
+  //     debugPrint("Exception - base.dart - _getBarcodeResult():$e");
+  //   }
+  // }
 }
