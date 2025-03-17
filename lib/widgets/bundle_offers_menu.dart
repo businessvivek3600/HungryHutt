@@ -20,7 +20,12 @@ class BundleOffersMenu extends StatefulWidget {
   final List<Product>? categoryProductList;
   final Function(int)? onSelected;
 
-  const BundleOffersMenu({super.key, this.onSelected, this.categoryProductList, this.analytics, this.observer});
+  const BundleOffersMenu(
+      {super.key,
+      this.onSelected,
+      this.categoryProductList,
+      this.analytics,
+      this.observer});
 
   @override
   State<BundleOffersMenu> createState() => _BundleOffersMenuState();
@@ -31,7 +36,8 @@ class BundleOffersMenuItem extends StatefulWidget {
 
   final dynamic analytics;
   final dynamic observer;
-  const BundleOffersMenuItem({super.key, required this.product, this.analytics, this.observer});
+  const BundleOffersMenuItem(
+      {super.key, required this.product, this.analytics, this.observer});
 
   @override
   State<BundleOffersMenuItem> createState() => _BundleOffersMenuItemState();
@@ -53,14 +59,16 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
           builder: (value) => Card(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     width: 1.5,
                   ),
                   borderRadius: BorderRadius.circular(4.0),
                 ),
                 elevation: 0,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 12, right: 12, bottom: 10, top: 10),
+                  padding: const EdgeInsets.only(
+                      left: 12, right: 12, bottom: 10, top: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -69,7 +77,8 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                         child: Container(
                           alignment: Alignment.center,
                           child: CachedNetworkImage(
-                            imageUrl: global.appInfo!.imageUrl! + widget.product.productImage!,
+                            imageUrl: global.appInfo!.imageUrl! +
+                                widget.product.productImage!,
                             imageBuilder: (context, imageProvider) => Container(
                               width: (screenWidth * 0.53) - 24,
                               alignment: Alignment.center,
@@ -78,25 +87,36 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                 image: imageProvider,
                               )),
                               child: Visibility(
-                                visible: widget.product.stock! > 0 ? false : true,
+                                visible:
+                                    widget.product.stock! > 0 ? false : true,
                                 child: Container(
                                   alignment: Alignment.center,
-                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.6), borderRadius: BorderRadius.circular(5)),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.6),
+                                      borderRadius: BorderRadius.circular(5)),
                                   padding: const EdgeInsets.all(5),
                                   child: Center(
                                     child: Transform.rotate(
                                       angle: 12,
                                       child: Text(
-                                        AppLocalizations.of(context)!.txt_out_of_stock,
+                                        AppLocalizations.of(context)!
+                                            .txt_out_of_stock,
                                         textAlign: TextAlign.center,
-                                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                            placeholder: (context, url) => const SizedBox(child: Center(child: CircularProgressIndicator())),
+                            placeholder: (context, url) => const SizedBox(
+                                child:
+                                    Center(child: CircularProgressIndicator())),
                             errorWidget: (context, url, error) => SizedBox(
                               child: Center(
                                 child: Icon(
@@ -121,26 +141,35 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.start,
                                 maxLines: 1,
-                                style: textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold, fontSize: 13),
+                                style: textTheme.bodyLarge!.copyWith(
+                                    fontWeight: FontWeight.bold, fontSize: 13),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 5),
                               child: Text(
-                                widget.product.type != null && widget.product.type != '' ? widget.product.type! : '',
+                                widget.product.type != null &&
+                                        widget.product.type != ''
+                                    ? widget.product.type!
+                                    : '',
                                 textAlign: TextAlign.start,
                                 overflow: TextOverflow.ellipsis,
-                                style: normalCaptionStyle(context).copyWith(fontSize: 11),
+                                style: normalCaptionStyle(context)
+                                    .copyWith(fontSize: 11),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 5),
                               child: Text(
-                                widget.product.description != null && widget.product.description != '' ? widget.product.description! : '',
+                                widget.product.description != null &&
+                                        widget.product.description != ''
+                                    ? widget.product.description!
+                                    : '',
                                 textAlign: TextAlign.start,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
-                                style: normalCaptionStyle(context).copyWith(fontSize: 12),
+                                style: normalCaptionStyle(context)
+                                    .copyWith(fontSize: 12),
                               ),
                             ),
                             Row(
@@ -150,77 +179,104 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                   children: [
                                     Text(
                                       "${global.appInfo!.currencySign} ${widget.product.price}",
-                                      style: textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold, fontSize: 14),
+                                      style: textTheme.bodyLarge!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
                                     ),
                                     widget.product.price == widget.product.mrp
                                         ? const SizedBox()
                                         : Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: Text(
-                                        "${global.appInfo!.currencySign}${widget.product.mrp}",
-                                        style: textTheme.labelSmall!.copyWith(decoration: TextDecoration.lineThrough, fontSize: 11),
-                                      ),
-                                    ),
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
+                                            child: Text(
+                                              "${global.appInfo!.currencySign}${widget.product.mrp}",
+                                              style: textTheme.labelSmall!
+                                                  .copyWith(
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                      fontSize: 11),
+                                            ),
+                                          ),
                                   ],
                                 ),
                                 widget.product.stock! > 0
                                     ? InkWell(
-                                  onTap: () async {
-                                    if (global.currentUser!.id == null) {
-                                      Get.to(LoginScreen(
-                                        analytics: widget.analytics,
-                                        observer: widget.observer,
-                                      ));
-                                    } else {
-                                      _showVarientModalBottomSheet(textTheme, cartController);
-                                    }
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.all(3),
-                                    color: Theme.of(context).colorScheme.secondaryContainer,
-                                    child: Icon(
-                                      Icons.add,
-                                      size: 15.0,
-                                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                                    ),
-                                  ),
-                                )
+                                        onTap: () async {
+                                          if (global.currentUser!.id == null) {
+                                            Get.to(LoginScreen(
+                                              analytics: widget.analytics,
+                                              observer: widget.observer,
+                                            ));
+                                          } else {
+                                            _showVarientModalBottomSheet(
+                                                textTheme, cartController);
+                                          }
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          padding: const EdgeInsets.all(3),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondaryContainer,
+                                          child: Icon(
+                                            Icons.add,
+                                            size: 15.0,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSecondaryContainer,
+                                          ),
+                                        ),
+                                      )
                                     : const SizedBox()
                               ],
                             ),
-                            widget.product.rating != null && widget.product.rating! > 0
+                            widget.product.rating != null &&
+                                    widget.product.rating! > 0
                                 ? Padding(
-                              padding: const EdgeInsets.only(top: 3),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    size: 10,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                                  RichText(
-                                    text: TextSpan(
-                                      text: "${widget.product.rating} ",
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11),
+                                    padding: const EdgeInsets.only(top: 3),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        TextSpan(
-                                          text: '|',
-                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11),
+                                        Icon(
+                                          Icons.star,
+                                          size: 10,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                         ),
-                                        TextSpan(
-                                          text: ' ${widget.product.ratingCount} ${AppLocalizations.of(context)!.txt_ratings}',
-                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11),
-                                        )
+                                        RichText(
+                                          text: TextSpan(
+                                            text: "${widget.product.rating} ",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(fontSize: 11),
+                                            children: [
+                                              TextSpan(
+                                                text: '|',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .copyWith(fontSize: 11),
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    ' ${widget.product.ratingCount} ${AppLocalizations.of(context)!.txt_ratings}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .copyWith(fontSize: 11),
+                                              )
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            )
+                                  )
                                 : const SizedBox(),
                           ],
                         ),
@@ -273,14 +329,31 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                           '${widget.product.varient[i].description}',
                           trimLines: 2,
                           trimMode: TrimMode.Line,
-                          trimCollapsedText: AppLocalizations.of(context)!.txt_show_more,
-                          trimExpandedText: AppLocalizations.of(context)!.txt_show_less,
-                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 16),
-                          lessStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 16),
-                          moreStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 16),
+                          trimCollapsedText:
+                              AppLocalizations.of(context)!.txt_show_more,
+                          trimExpandedText:
+                              AppLocalizations.of(context)!.txt_show_less,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(fontSize: 16),
+                          lessStyle: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(fontSize: 16),
+                          moreStyle: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(fontSize: 16),
                         ),
-                        subtitle: Text('${widget.product.varient[i].quantity} ${widget.product.varient[i].unit} / ${global.appInfo!.currencySign} ${widget.product.varient[i].price}  ', style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 15)),
-                        trailing: widget.product.varient[i].cartQty == null || widget.product.varient[i].cartQty == 0
+                        subtitle: Text(
+                            '${widget.product.varient[i].quantity} ${widget.product.varient[i].unit} / ${global.appInfo!.currencySign} ${widget.product.varient[i].price}  ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontSize: 15)),
+                        trailing: widget.product.varient[i].cartQty == null ||
+                                widget.product.varient[i].cartQty == 0
                             ? InkWell(
                                 onTap: () async {
                                   if (global.currentUser!.id == null) {
@@ -292,8 +365,11 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                     _qty = 1;
                                     showOnlyLoaderDialog();
                                     ATCMS? isSuccess;
-                                    isSuccess = await value.addToCart(widget.product, _qty, false, varient: widget.product.varient[i]);
-                                    if (isSuccess!.isSuccess != null && context.mounted) {
+                                    isSuccess = await value.addToCart(
+                                        widget.product, _qty, false,
+                                        varient: widget.product.varient[i]);
+                                    if (isSuccess!.isSuccess != null &&
+                                        context.mounted) {
                                       Navigator.of(context).pop();
                                     }
                                     showToast(isSuccess.message!);
@@ -304,32 +380,45 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                   height: 23,
                                   width: 23,
                                   alignment: Alignment.center,
-                                  color: Theme.of(context).colorScheme.primaryContainer,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
                                   child: Icon(
                                     Icons.add,
                                     size: 17.0,
-                                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer,
                                   ),
                                 ),
                               )
                             : Padding(
-                                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                                padding:
+                                    const EdgeInsets.only(top: 5, bottom: 5),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     InkWell(
                                       onTap: () async {
-                                        if (widget.product.varient[i].cartQty != null && widget.product.varient[i].cartQty == 1) {
+                                        if (widget.product.varient[i].cartQty !=
+                                                null &&
+                                            widget.product.varient[i].cartQty ==
+                                                1) {
                                           _qty = 0;
                                         } else {
-                                          _qty = widget.product.varient[i].cartQty! - 1;
+                                          _qty = widget
+                                                  .product.varient[i].cartQty! -
+                                              1;
                                         }
 
                                         showOnlyLoaderDialog();
                                         ATCMS? isSuccess;
-                                        isSuccess = await value.addToCart(widget.product, _qty, true, varient: widget.product.varient[i]);
+                                        isSuccess = await value.addToCart(
+                                            widget.product, _qty, true,
+                                            varient: widget.product.varient[i]);
 
-                                        if (isSuccess!.isSuccess != null && context.mounted) {
+                                        if (isSuccess!.isSuccess != null &&
+                                            context.mounted) {
                                           Navigator.of(context).pop();
                                         }
                                         showToast(isSuccess.message!);
@@ -339,17 +428,25 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                           height: 23,
                                           width: 23,
                                           alignment: Alignment.center,
-                                          color: Theme.of(context).colorScheme.primaryContainer,
-                                          child: widget.product.varient[i].cartQty == 1
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                          child: widget.product.varient[i]
+                                                      .cartQty ==
+                                                  1
                                               ? Icon(
                                                   Icons.delete,
                                                   size: 17.0,
-                                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimaryContainer,
                                                 )
                                               : Icon(
                                                   MdiIcons.minus,
                                                   size: 17.0,
-                                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimaryContainer,
                                                 )),
                                     ),
                                     const SizedBox(
@@ -361,9 +458,13 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                       decoration: BoxDecoration(
                                         border: Border.all(
                                           width: 1.0,
-                                          color: Theme.of(context).colorScheme.primary,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                         ),
-                                        borderRadius: const BorderRadius.all(Radius.circular(5.0) //                 <--- border radius here
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(
+                                                5.0) //                 <--- border radius here
                                             ),
                                       ),
                                       child: Center(
@@ -371,7 +472,9 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                           "${widget.product.varient[i].cartQty}",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: Theme.of(context).colorScheme.primary,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
                                             fontSize: 16,
                                           ),
                                         ),
@@ -382,12 +485,17 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                     ),
                                     InkWell(
                                       onTap: () async {
-                                        _qty = widget.product.varient[i].cartQty! + 1;
+                                        _qty =
+                                            widget.product.varient[i].cartQty! +
+                                                1;
 
                                         showOnlyLoaderDialog();
                                         ATCMS? isSuccess;
-                                        isSuccess = await value.addToCart(widget.product, _qty, false, varient: widget.product.varient[i]);
-                                        if (isSuccess!.isSuccess != null && context.mounted) {
+                                        isSuccess = await value.addToCart(
+                                            widget.product, _qty, false,
+                                            varient: widget.product.varient[i]);
+                                        if (isSuccess!.isSuccess != null &&
+                                            context.mounted) {
                                           Navigator.of(context).pop();
                                         }
                                         showToast(isSuccess.message!);
@@ -397,7 +505,9 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
                                           height: 23,
                                           width: 23,
                                           alignment: Alignment.center,
-                                          color: Theme.of(context).colorScheme.primaryContainer,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
                                           child: Icon(
                                             MdiIcons.plus,
                                             size: 17,
@@ -431,7 +541,7 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
       showOnlyLoaderDialog();
       await apiHelper.addRemoveWishList(varientId).then((result) async {
         if (result != null) {
-          if(!mounted) return;
+          if (!mounted) return;
           if (result.status == "1" || result.status == "2") {
             isAddedSuccesFully = true;
             Navigator.pop(context);
@@ -439,13 +549,16 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
             isAddedSuccesFully = false;
             Navigator.pop(context);
 
-            showSnackBar(snackBarMessage: '${AppLocalizations.of(context)!.txt_please_try_again_after_sometime} ');
+            showSnackBar(
+                snackBarMessage:
+                    '${AppLocalizations.of(context)!.txt_please_try_again_after_sometime} ');
           }
         }
       });
       return isAddedSuccesFully;
     } catch (e) {
-      debugPrint("Exception - bundle_offers_menu.dart - addRemoveWishList():$e");
+      debugPrint(
+          "Exception - bundle_offers_menu.dart - addRemoveWishList():$e");
       return isAddedSuccesFully;
     }
   }
@@ -453,13 +566,16 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.width*1/2/1,
+      height: MediaQuery.of(context).size.width * 1 / 2 / 1,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: widget.categoryProductList!.length,
           itemBuilder: (context, index) {
             return InkWell(
-              onTap: () => Get.to(() => ProductDescriptionScreen(analytics: widget.analytics, observer: widget.observer, productId: widget.categoryProductList![index].productId)),
+              onTap: () => Get.to(() => ProductDescriptionScreen(
+                  analytics: widget.analytics,
+                  observer: widget.observer,
+                  productId: widget.categoryProductList![index].productId)),
               child: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Stack(
@@ -474,29 +590,38 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
                       top: 0,
                       child: Padding(
                         padding: const EdgeInsets.all(6),
-                        child: widget.categoryProductList![index].discount != null && widget.categoryProductList![index].discount! > 0
+                        child: widget.categoryProductList![index].discount !=
+                                    null &&
+                                widget.categoryProductList![index].discount! > 0
                             ? Container(
-                          height: 16,
-                          width: 60,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(4),
-                              bottomRight: Radius.circular(4),
-                            ),
-                          ),
-                          child: Text(
-                            "${widget.categoryProductList![index].discount} % OFF",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).primaryTextTheme.bodySmall!.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            ),
-                          ),
-                        )
+                                height: 16,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    bottomRight: Radius.circular(4),
+                                  ),
+                                ),
+                                child: Text(
+                                  "${widget.categoryProductList![index].discount} % OFF",
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .primaryTextTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer,
+                                      ),
+                                ),
+                              )
                             : const SizedBox(
-                          height: 16,
-                          width: 60,
-                        ),
+                                height: 16,
+                                width: 60,
+                              ),
                       ),
                     ),
                     Positioned(
@@ -505,25 +630,25 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
                       child: IconButton(
                         icon: widget.categoryProductList![index].isFavourite
                             ? Icon(
-                          MdiIcons.heart,
-                          size: 20,
-                          color: Colors.red,
-                        )
+                                MdiIcons.heart,
+                                size: 20,
+                                color: Colors.red,
+                              )
                             : Icon(
-                          MdiIcons.heartOutline,
-                          size: 20,
-                          color: Colors.red,
-                        ),
+                                MdiIcons.heartOutline,
+                                size: 20,
+                                color: Colors.red,
+                              ),
                         onPressed: () async {
                           if (global.currentUser!.id == null) {
                             Future.delayed(Duration.zero, () {
-                              if(!context.mounted) return;
+                              if (!context.mounted) return;
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                     builder: (context) => LoginScreen(
-                                      analytics: widget.analytics,
-                                      observer: widget.observer,
-                                    )),
+                                          analytics: widget.analytics,
+                                          observer: widget.observer,
+                                        )),
                               );
                             });
                           } else {
@@ -531,7 +656,9 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
                               widget.categoryProductList![index].varientId,
                             );
                             if (isAdded) {
-                              widget.categoryProductList![index].isFavourite = !widget.categoryProductList![index].isFavourite;
+                              widget.categoryProductList![index].isFavourite =
+                                  !widget
+                                      .categoryProductList![index].isFavourite;
                             }
 
                             setState(() {});

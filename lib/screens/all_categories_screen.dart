@@ -10,7 +10,11 @@ import 'package:user/screens/sub_categories_screen.dart';
 import 'package:user/widgets/select_category_card.dart';
 
 class AllCategoriesScreen extends BaseRoute {
-  const AllCategoriesScreen({super.key, super.analytics, super.observer, super.routeName = 'AllCategoriesScreen'});
+  const AllCategoriesScreen(
+      {super.key,
+      super.analytics,
+      super.observer,
+      super.routeName = 'AllCategoriesScreen'});
 
   @override
   BaseRouteState createState() => _AllCategoriesScreenState();
@@ -49,7 +53,8 @@ class _AllCategoriesScreenState extends BaseRouteState {
           onRefresh: () async {
             await _onRefresh();
           },
-          child: global.nearStoreModel != null && global.nearStoreModel!.id != null
+          child: global.nearStoreModel != null &&
+                  global.nearStoreModel!.id != null
               ? Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: _isDataLoaded
@@ -57,26 +62,32 @@ class _AllCategoriesScreenState extends BaseRouteState {
                           ? GridView.builder(
                               controller: _scrollController,
                               itemCount: _categoryList.length,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
                                 mainAxisSpacing: 16.0,
                                 crossAxisSpacing: 12.0,
-                                childAspectRatio: 1/1,
+                                childAspectRatio: 1 / 1,
                               ),
-                              itemBuilder: (context, index) => SelectCategoryCard(
+                              itemBuilder: (context, index) =>
+                                  SelectCategoryCard(
                                 key: UniqueKey(),
                                 category: _categoryList[index],
                                 isSelected: _categoryList[index].isSelected,
                                 borderRadius: 0,
                                 onPressed: () {
                                   setState(() {
-                                    _categoryList.map((e) => e.isSelected = false).toList();
+                                    _categoryList
+                                        .map((e) => e.isSelected = false)
+                                        .toList();
                                     _selectedIndex = index;
                                     if (_selectedIndex == index) {
                                       _categoryList[index].isSelected = true;
                                     }
                                   });
-                                  if (_categoryList[index].subcategory.isNotEmpty) {
+                                  if (_categoryList[index]
+                                      .subcategory
+                                      .isNotEmpty) {
                                     Get.to(SubCategoriesScreen(
                                       analytics: widget.analytics,
                                       observer: widget.observer,
@@ -84,13 +95,17 @@ class _AllCategoriesScreenState extends BaseRouteState {
                                       categoryId: _categoryList[index].catId,
                                     ));
                                   } else {
-                                    showSnackBar(key: _scaffoldKey, snackBarMessage: ' ${AppLocalizations.of(context)!.txt_nothing_to_show}');
+                                    showSnackBar(
+                                        key: _scaffoldKey,
+                                        snackBarMessage:
+                                            ' ${AppLocalizations.of(context)!.txt_nothing_to_show}');
                                   }
                                 },
                               ),
                             )
                           : Center(
-                              child: Text(AppLocalizations.of(context)!.txt_nothing_to_show),
+                              child: Text(AppLocalizations.of(context)!
+                                  .txt_nothing_to_show),
                             )
                       : _shimmer(),
                 )
@@ -124,7 +139,9 @@ class _AllCategoriesScreenState extends BaseRouteState {
           } else {
             page++;
           }
-          await apiHelper.getCategoryList(_categoryFilter, page).then((result) async {
+          await apiHelper
+              .getCategoryList(_categoryFilter, page)
+              .then((result) async {
             debugPrint("Raw API Response: $result");
             if (result != null) {
               debugPrint("Full API Response: ${result.data}");
@@ -145,7 +162,8 @@ class _AllCategoriesScreenState extends BaseRouteState {
         showNetworkErrorSnackBar(_scaffoldKey);
       }
     } catch (e) {
-      debugPrint("Exception - all_categories_screen.dart - _getCategoryList():$e");
+      debugPrint(
+          "Exception - all_categories_screen.dart - _getCategoryList():$e");
     }
   }
 
@@ -153,7 +171,9 @@ class _AllCategoriesScreenState extends BaseRouteState {
     try {
       await _getCategoryList();
       _scrollController.addListener(() async {
-        if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isMoreDataLoaded) {
+        if (_scrollController.position.pixels ==
+                _scrollController.position.maxScrollExtent &&
+            !_isMoreDataLoaded) {
           setState(() {
             _isMoreDataLoaded = true;
           });
@@ -195,7 +215,8 @@ class _AllCategoriesScreenState extends BaseRouteState {
                 crossAxisSpacing: 12.0,
                 childAspectRatio: 0.7,
               ),
-              itemBuilder: (context, index) => const SizedBox(height: 130, width: 90, child: Card()))),
+              itemBuilder: (context, index) =>
+                  const SizedBox(height: 130, width: 90, child: Card()))),
     );
   }
 }

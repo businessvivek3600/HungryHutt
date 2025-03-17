@@ -14,7 +14,7 @@ class HomeScreenData {
   List<Product> dealproduct = [];
   List<Product> topselling = [];
   List<Product> recentSellingProductList = [];
-  List<Product> whatsnewProductList = [];
+  List<Product> bestsellerProductList = [];
   List<Product> spotLightProductList = [];
 
   HomeScreenData();
@@ -50,7 +50,7 @@ class HomeScreenData {
           ? List<Product>.from(
               json["recentselling"].map((x) => Product.fromJson(x)))
           : [];
-      whatsnewProductList = json['whatsnew'] != null
+      bestsellerProductList = json['whatsnew'] != null
           ? List<Product>.from(json["whatsnew"].map((x) => Product.fromJson(x)))
           : [];
       spotLightProductList = json['spotlight'] != null
@@ -59,7 +59,7 @@ class HomeScreenData {
           : [];
       catProdList = json['category'] != null
           ? List<CategoryProdList>.from(
-          json["category"].map((x) => CategoryProdList.fromJson(x)))
+              json["category"].map((x) => CategoryProdList.fromJson(x)))
           : [];
     } catch (e) {
       debugPrint(
@@ -86,7 +86,8 @@ class CategoryProdList {
           ? List<Product>.from(json["products"].map((x) => Product.fromJson(x)))
           : [];
     } catch (e) {
-      debugPrint("Exception - CategoryProdList.dart - CategoryProdList.fromJson():$e");
+      debugPrint(
+          "Exception - CategoryProdList.dart - CategoryProdList.fromJson():$e");
     }
   }
 }

@@ -14,7 +14,11 @@ class DashboardProductListByCategory extends StatelessWidget {
   final FirebaseAnalyticsObserver? observer;
   final List<CategoryProdList> productListByCategory;
 
-  const DashboardProductListByCategory({super.key, this.analytics, this.observer, required this.productListByCategory});
+  const DashboardProductListByCategory(
+      {super.key,
+      this.analytics,
+      this.observer,
+      required this.productListByCategory});
 
   @override
   Widget build(BuildContext context) {
@@ -46,16 +50,20 @@ class DashboardProductListByCategory extends StatelessWidget {
                         InkWell(
                           onTap: () {
                             Get.to(() => ProductListScreen(
-                              analytics: analytics,
-                              observer: observer,
-                              screenId: 0,
-                              categoryName: productListByCategory[index].catTitle,
-                              categoryId: productListByCategory[index].catId,
-                            ));
+                                  analytics: analytics,
+                                  observer: observer,
+                                  screenId: 0,
+                                  categoryName:
+                                      productListByCategory[index].catTitle,
+                                  categoryId:
+                                      productListByCategory[index].catId,
+                                ));
                           },
                           child: Text(
                             "${AppLocalizations.of(context)!.btn_view_all} ",
-                            style: textTheme.bodySmall!.copyWith(color: Theme.of(context).colorScheme.primary, fontSize: 14),
+                            style: textTheme.bodySmall!.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 14),
                           ),
                         ),
                       ],
@@ -66,7 +74,8 @@ class DashboardProductListByCategory extends StatelessWidget {
                         "${productListByCategory[index].description}",
                         textAlign: TextAlign.start,
                         maxLines: 2,
-                        style: normalCaptionStyle(context).copyWith(fontSize: 11),
+                        style:
+                            normalCaptionStyle(context).copyWith(fontSize: 11),
                       ),
                     ),
                   ],

@@ -16,15 +16,14 @@ class DashboardBundleProducts extends StatelessWidget {
   final List<Product> dealProducts;
   final int? screenId;
 
-  const DashboardBundleProducts({
-    super.key,
-    this.analytics,
-    this.observer,
-    required this.title,
-    required this.categoryName,
-    required this.dealProducts,
-    this.screenId
-  });
+  const DashboardBundleProducts(
+      {super.key,
+      this.analytics,
+      this.observer,
+      required this.title,
+      required this.categoryName,
+      required this.dealProducts,
+      this.screenId});
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +47,17 @@ class DashboardBundleProducts extends StatelessWidget {
               InkWell(
                 onTap: () {
                   Get.to(() => ProductListScreen(
-                    analytics: analytics,
-                    observer: observer,
-                    screenId: screenId,
-                    categoryName: categoryName,
-                  ));
+                        analytics: analytics,
+                        observer: observer,
+                        screenId: screenId,
+                        categoryName: categoryName,
+                      ));
                 },
                 child: Text(
                   "${AppLocalizations.of(context)!.btn_view_all} ",
-                  style: textTheme.bodySmall!.copyWith(color: Theme.of(context).colorScheme.primary, fontSize: 14),
+                  style: textTheme.bodySmall!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 14),
                 ),
               ),
             ],

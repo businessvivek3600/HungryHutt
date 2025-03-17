@@ -428,7 +428,7 @@ class APIHelper {
       return false;
     }
   }
-
+ 
   Future<dynamic> changePassword(String? phoneNumber, String password) async {
     try {
       Response response;
@@ -2134,7 +2134,6 @@ print("checkout post data----${formData.fields}");
       debugPrint("Exception - signUp(): $e");
     }
   }
-
   Future<dynamic> socialLogin(
       {String? userEmail,
       String? facebookId,
@@ -2153,6 +2152,7 @@ print("checkout post data----${formData.fields}");
 
       var formData = FormData.fromMap({
         "user_email": userEmail,
+
         "user_name": name,
         "user_image": image,
         "fb_id": facebookId,
@@ -2168,10 +2168,10 @@ print("checkout post data----${formData.fields}");
           ));
 
       debugPrint("API Response: ${response.data}");
-
       if (response.statusCode == 200) {
         if (response.data['status'] == '1') {
           var recordList = CurrentUser.fromJson(response.data['data']);
+
           if (response.data['token'] is String) {
             recordList.token = response.data['token'];
           } else {
@@ -2190,6 +2190,7 @@ print("checkout post data----${formData.fields}");
       return null;
     }
   }
+
 
   spotLightProduct(int page, ProductFilter productFilter) async {
     try {

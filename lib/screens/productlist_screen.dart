@@ -21,7 +21,14 @@ class ProductListScreen extends BaseRoute {
   final int? screenId;
   final int? categoryId;
   final String? categoryName;
-  const ProductListScreen({super.key, super.analytics, super.observer, super.routeName = 'ProductListScreen', this.screenId, this.categoryId, this.categoryName});
+  const ProductListScreen(
+      {super.key,
+      super.analytics,
+      super.observer,
+      super.routeName = 'ProductListScreen',
+      this.screenId,
+      this.categoryId,
+      this.categoryName});
 
   @override
   BaseRouteState<ProductListScreen> createState() => _ProductListScreenState();
@@ -84,8 +91,11 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
                           top: 0,
                           child: CircleAvatar(
                             radius: 12,
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            child: Text(global.cartCount != 0 ? '${global.cartCount}' : ''),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            child: Text(global.cartCount != 0
+                                ? '${global.cartCount}'
+                                : ''),
                           ),
                         )
                       : const SizedBox(),
@@ -136,7 +146,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
                         ),
                       )),
                 )
-              : Center(child: Text(AppLocalizations.of(context)!.txt_nothing_to_show))
+              : Center(
+                  child:
+                      Text(AppLocalizations.of(context)!.txt_nothing_to_show))
           : _shimmer(),
     );
   }
@@ -152,7 +164,10 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (context) => Padding(padding: const EdgeInsets.only(top: 100), child: FilterScreen(_productFilter, isProductAvailable: _productsList.isNotEmpty ? true : false)),
+        builder: (context) => Padding(
+            padding: const EdgeInsets.only(top: 100),
+            child: FilterScreen(_productFilter,
+                isProductAvailable: _productsList.isNotEmpty ? true : false)),
       ).then((value) async {
         if (value != null) {
           _isDataLoaded = false;
@@ -182,7 +197,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         } else {
           page++;
         }
-        await apiHelper.getCategoryProducts(widget.categoryId, page, _productFilter).then((result) async {
+        await apiHelper
+            .getCategoryProducts(widget.categoryId, page, _productFilter)
+            .then((result) async {
           if (result != null) {
             if (result.status == "1") {
               List<Product> tList = result.data;
@@ -198,7 +215,8 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         });
       }
     } catch (e) {
-      debugPrint("Exception - productlist_screen.dart - _getCategoryProduct():$e");
+      debugPrint(
+          "Exception - productlist_screen.dart - _getCategoryProduct():$e");
     }
   }
 
@@ -213,7 +231,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         } else {
           page++;
         }
-        await apiHelper.getDealProducts(page, _productFilter).then((result) async {
+        await apiHelper
+            .getDealProducts(page, _productFilter)
+            .then((result) async {
           if (result != null) {
             if (result.status == "1") {
               List<Product> tList = result.data;
@@ -253,7 +273,8 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
           await _getTopSellingProduct();
         }
 
-        _productFilter.maxPriceValue = _productsList.isNotEmpty ? _productsList[0].maxprice : 0;
+        _productFilter.maxPriceValue =
+            _productsList.isNotEmpty ? _productsList[0].maxprice : 0;
       } else {
         showNetworkErrorSnackBar(_scaffoldKey);
       }
@@ -273,7 +294,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         } else {
           page++;
         }
-        await apiHelper.recentSellingProduct(page, _productFilter).then((result) async {
+        await apiHelper
+            .recentSellingProduct(page, _productFilter)
+            .then((result) async {
           if (result != null) {
             if (result.status == "1") {
               List<Product> tList = result.data;
@@ -289,7 +312,8 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         });
       }
     } catch (e) {
-      debugPrint("Exception - productlist_screen.dart - _getRecentSellingProduct():$e");
+      debugPrint(
+          "Exception - productlist_screen.dart - _getRecentSellingProduct():$e");
     }
   }
 
@@ -304,7 +328,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         } else {
           page++;
         }
-        await apiHelper.spotLightProduct(page, _productFilter).then((result) async {
+        await apiHelper
+            .spotLightProduct(page, _productFilter)
+            .then((result) async {
           if (result != null) {
             if (result.status == "1") {
               List<Product> tList = result.data;
@@ -320,7 +346,8 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         });
       }
     } catch (e) {
-      debugPrint("Exception - productlist_screen.dart - _getSpotLightProduct():$e");
+      debugPrint(
+          "Exception - productlist_screen.dart - _getSpotLightProduct():$e");
     }
   }
 
@@ -335,7 +362,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         } else {
           page++;
         }
-        await apiHelper.getTagProducts(widget.categoryName, page, _productFilter).then((result) async {
+        await apiHelper
+            .getTagProducts(widget.categoryName, page, _productFilter)
+            .then((result) async {
           if (result != null) {
             if (result.status == "1") {
               List<Product> tList = result.data;
@@ -366,7 +395,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         } else {
           page++;
         }
-        await apiHelper.getTopSellingProducts(page, _productFilter).then((result) async {
+        await apiHelper
+            .getTopSellingProducts(page, _productFilter)
+            .then((result) async {
           if (result != null) {
             if (result.status == "1") {
               List<Product> tList = result.data;
@@ -382,7 +413,8 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         });
       }
     } catch (e) {
-      debugPrint("Exception - productlist_screen.dart - _getTopSellingProduct():$e");
+      debugPrint(
+          "Exception - productlist_screen.dart - _getTopSellingProduct():$e");
     }
   }
 
@@ -397,7 +429,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         } else {
           page++;
         }
-        await apiHelper.whatsnewProduct(page, _productFilter).then((result) async {
+        await apiHelper
+            .whatsnewProduct(page, _productFilter)
+            .then((result) async {
           if (result != null) {
             if (result.status == "1") {
               List<Product> tList = result.data;
@@ -413,7 +447,8 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
         });
       }
     } catch (e) {
-      debugPrint("Exception - productlist_screen.dart - _getWhatsNewProduct():$e");
+      debugPrint(
+          "Exception - productlist_screen.dart - _getWhatsNewProduct():$e");
     }
   }
 
@@ -421,7 +456,9 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
     try {
       await _getProductList();
       _scrollController.addListener(() async {
-        if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isMoreDataLoaded) {
+        if (_scrollController.position.pixels ==
+                _scrollController.position.maxScrollExtent &&
+            !_isMoreDataLoaded) {
           setState(() {
             _isMoreDataLoaded = true;
           });
@@ -460,7 +497,10 @@ class _ProductListScreenState extends BaseRouteState<ProductListScreen> {
               itemCount: 15,
               scrollDirection: Axis.vertical,
               itemBuilder: (BuildContext context, int index) {
-                return SizedBox(height: 100 * MediaQuery.of(context).size.height / 830, width: MediaQuery.of(context).size.width, child: const Card());
+                return SizedBox(
+                    height: 100 * MediaQuery.of(context).size.height / 830,
+                    width: MediaQuery.of(context).size.width,
+                    child: const Card());
               })),
     );
   }
