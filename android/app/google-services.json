@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "349191821542",
+    "project_id": "hungry-hutt-user",
+    "storage_bucket": "hungry-hutt-user.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349191821542:android:923ce55d6278f6358ec327",
+        "android_client_info": {
+          "package_name": "com.hungryhutt.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "349191821542-kaolo5h58nv348jn5sumukpio8ehv2tj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hungryhutt.user",
+            "certificate_hash": "fa07be49f7244d74e152e5ecadb22aefdb951adc"
+          }
+        },
+        {
+          "client_id": "349191821542-2567t7e55pvt89gvhqotmsnpuvv1ahv2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6F3rNvltDn5UyIDnZZwYOSKveXf9ZOO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "349191821542-2567t7e55pvt89gvhqotmsnpuvv1ahv2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "349191821542-6bjfclurn4lmgvmup3aq6v1qf1783u49.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hungryhutt.user"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
