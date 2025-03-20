@@ -77,7 +77,7 @@ class _AppState extends State<App> {
           return GetMaterialApp(
               navigatorObservers: <NavigatorObserver>[observer],
               debugShowCheckedModeBanner: false,
-              title: "Go Grocer",
+              title: "Hungry Hutt",
               locale: Get.deviceLocale,
               supportedLocales: L10n.all,
               localizationsDelegates: const [

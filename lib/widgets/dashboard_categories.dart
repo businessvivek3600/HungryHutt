@@ -10,6 +10,8 @@ import 'package:user/screens/all_categories_screen.dart';
 import 'package:user/screens/sub_categories_screen.dart';
 import 'package:user/widgets/select_category_card.dart';
 
+import 'gradient_heading_row.dart';
+
 class DashboardCategories extends StatefulWidget {
   final FirebaseAnalytics? analytics;
   final FirebaseAnalyticsObserver? observer;
@@ -59,56 +61,7 @@ class _DashboardCategoriesState extends State<DashboardCategories> {
           child: Column(
             children: [
               // Explore Menu with Centered Text and Lines
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 2,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerRight,
-                            end: Alignment.centerLeft,
-                            colors: [
-                               // Dark Gray
-                              Colors.black,
-                              Colors.black54, // Light Gray
-                              Colors.black12,// Black
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        "Explore Menu",
-                        style: textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        height: 2,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerRight,
-                            end: Alignment.centerLeft,
-                            colors: [
-                              Colors.black12, // Light Gray
-                              Colors.black54, // Dark Gray
-                              Colors.black,   // Black
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              buildGradientHeadingRow(context,"Explore Menu"),
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.all(10),
