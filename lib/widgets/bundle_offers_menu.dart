@@ -52,241 +52,120 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
-      width: screenWidth * 0.53,
+      width: screenWidth * 0.6,
       child: GetBuilder<CartController>(
-          init: cartController,
-          builder: (value) => Card(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.circular(4.0),
+        init: cartController,
+        builder: (value) => Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14.0),
+          ),
+          elevation: 2,
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: CachedNetworkImageProvider(
+                  global.appInfo!.imageUrl! + widget.product.productImage!,
                 ),
-                elevation: 0,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 12, right: 12, bottom: 10, top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Container(
-                          alignment: Alignment.center,
-                          child: CachedNetworkImage(
-                            imageUrl: global.appInfo!.imageUrl! +
-                                widget.product.productImage!,
-                            imageBuilder: (context, imageProvider) => Container(
-                              width: (screenWidth * 0.53) - 24,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                image: imageProvider,
-                              )),
-                              child: Visibility(
-                                visible:
-                                    widget.product.stock! > 0 ? false : true,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.6),
-                                      borderRadius: BorderRadius.circular(5)),
-                                  padding: const EdgeInsets.all(5),
-                                  child: Center(
-                                    child: Transform.rotate(
-                                      angle: 12,
-                                      child: Text(
-                                        AppLocalizations.of(context)!
-                                            .txt_out_of_stock,
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            placeholder: (context, url) => const SizedBox(
-                                child:
-                                    Center(child: CircularProgressIndicator())),
-                            errorWidget: (context, url, error) => SizedBox(
-                              child: Center(
-                                child: Icon(
-                                  Icons.image,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.4),
+                  BlendMode.darken,
+                ),
+              ),
+              borderRadius: BorderRadius.circular(14.0),
+            ),
+            padding: const EdgeInsets.all(8.0),
+            child:  Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Text(
+                //   widget.product.productName!,
+                //   overflow: TextOverflow.ellipsis,
+                //   maxLines: 1,
+                //   style: textTheme.bodyLarge!.copyWith(
+                //     fontWeight: FontWeight.bold,
+                //     fontSize: 16,
+                //     color: Colors.white,
+                //   ),
+                // ),
+                // const SizedBox(height: 5),
+                //
+                // Text(
+                //   widget.product.description ?? '',
+                //   maxLines: 2,
+                //   overflow: TextOverflow.ellipsis,
+                //   style: textTheme.bodySmall!.copyWith(
+                //     fontSize: 12,
+                //     color: Colors.white, // ✅ Set text color to white
+                //   ),
+                // ),
+                //
+                // const SizedBox(height: 8),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "${global.appInfo!.currencySign} ${widget.product.price}",
+                      style: textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Colors.white, // ✅ Set text color to white
                       ),
-                      Expanded(
-                        flex: 6,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 2.0),
-                              child: Text(
-                                widget.product.productName!,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.start,
-                                maxLines: 1,
-                                style: textTheme.bodyLarge!.copyWith(
-                                    fontWeight: FontWeight.bold, fontSize: 13),
-                              ),
+                    ),
+                    // widget.product.price != widget.product.mrp
+                    //     ? Text(
+                    //   "${global.appInfo!.currencySign}${widget.product.mrp}",
+                    //   style: textTheme.labelSmall!.copyWith(
+                    //     decoration: TextDecoration.lineThrough,
+                    //     fontSize: 12,
+                    //     color: Colors.redAccent,
+                    //   ),
+                    // )
+                    //     : const SizedBox(),
+                    GestureDetector(
+                      onTap: () {
+                        // Your add button logic here
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white, // White background
+                          borderRadius: BorderRadius.circular(10), // Rounded corners
+                          border: Border.all(color: const Color(0xffe54740), width: 0.5), // Green border
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12, // Shadow color
+                              blurRadius: 2, // Slight shadow effect
+                              spreadRadius: 1,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Text(
-                                widget.product.type != null &&
-                                        widget.product.type != ''
-                                    ? widget.product.type!
-                                    : '',
-                                textAlign: TextAlign.start,
-                                overflow: TextOverflow.ellipsis,
-                                style: normalCaptionStyle(context)
-                                    .copyWith(fontSize: 11),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 5),
-                              child: Text(
-                                widget.product.description != null &&
-                                        widget.product.description != ''
-                                    ? widget.product.description!
-                                    : '',
-                                textAlign: TextAlign.start,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: normalCaptionStyle(context)
-                                    .copyWith(fontSize: 12),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "${global.appInfo!.currencySign} ${widget.product.price}",
-                                      style: textTheme.bodyLarge!.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14),
-                                    ),
-                                    widget.product.price == widget.product.mrp
-                                        ? const SizedBox()
-                                        : Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child: Text(
-                                              "${global.appInfo!.currencySign}${widget.product.mrp}",
-                                              style: textTheme.labelSmall!
-                                                  .copyWith(
-                                                      decoration: TextDecoration
-                                                          .lineThrough,
-                                                      fontSize: 11),
-                                            ),
-                                          ),
-                                  ],
-                                ),
-                                widget.product.stock! > 0
-                                    ? InkWell(
-                                        onTap: () async {
-                                          if (global.currentUser!.id == null) {
-                                            Get.to(LoginScreen(
-                                              analytics: widget.analytics,
-                                              observer: widget.observer,
-                                            ));
-                                          } else {
-                                            _showVarientModalBottomSheet(
-                                                textTheme, cartController);
-                                          }
-                                        },
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          padding: const EdgeInsets.all(3),
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondaryContainer,
-                                          child: Icon(
-                                            Icons.add,
-                                            size: 15.0,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSecondaryContainer,
-                                          ),
-                                        ),
-                                      )
-                                    : const SizedBox()
-                              ],
-                            ),
-                            widget.product.rating != null &&
-                                    widget.product.rating! > 0
-                                ? Padding(
-                                    padding: const EdgeInsets.only(top: 3),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.star,
-                                          size: 10,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            text: "${widget.product.rating} ",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall!
-                                                .copyWith(fontSize: 11),
-                                            children: [
-                                              TextSpan(
-                                                text: '|',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .copyWith(fontSize: 11),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    ' ${widget.product.ratingCount} ${AppLocalizations.of(context)!.txt_ratings}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .copyWith(fontSize: 11),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : const SizedBox(),
                           ],
                         ),
-                      )
-                    ],
-                  ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Add", style: TextStyle(color: Color(0xffe54740), fontSize: 12,fontWeight: FontWeight.w600)),
+                            SizedBox(width: 4), // Space between text and icon
+                            Icon(Icons.add, color: Color(0xffe54740), size: 16),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-              )),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
+
 
   showOnlyLoaderDialog() {
     return showDialog(
@@ -565,6 +444,7 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return SizedBox(
       height: MediaQuery.of(context).size.width * 1 / 2 / 1,
       child: ListView.builder(
@@ -577,7 +457,7 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
                   observer: widget.observer,
                   productId: widget.categoryProductList![index].productId)),
               child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Stack(
                   children: [
                     BundleOffersMenuItem(
@@ -589,83 +469,121 @@ class _BundleOffersMenuState extends State<BundleOffersMenu> {
                       left: 0,
                       top: 0,
                       child: Padding(
-                        padding: const EdgeInsets.all(6),
+                        padding: const EdgeInsets.all(10),
                         child: widget.categoryProductList![index].discount !=
                                     null &&
                                 widget.categoryProductList![index].discount! > 0
-                            ? Container(
-                                height: 16,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(4),
-                                    bottomRight: Radius.circular(4),
+                            ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 15,
+                                  height: 15,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(5.0),
+
+                                    color: Colors.transparent,
+                                    border: Border.all(color: Colors.green, width: 2),),
+                                  padding: const EdgeInsets.all(2),
+                                  child: Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.green,
+                                      shape: BoxShape.circle,
+                                    ),
                                   ),
                                 ),
-                                child: Text(
-                                  "${widget.categoryProductList![index].discount} % OFF",
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .primaryTextTheme
-                                      .bodySmall!
-                                      .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer,
-                                      ),
+                                Text(
+                                  widget.categoryProductList![index].productName!,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: textTheme.bodyLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              )
+                              ],
+                            )
                             : const SizedBox(
                                 height: 16,
                                 width: 60,
                               ),
                       ),
                     ),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: IconButton(
-                        icon: widget.categoryProductList![index].isFavourite
-                            ? Icon(
-                                MdiIcons.heart,
-                                size: 20,
-                                color: Colors.red,
-                              )
-                            : Icon(
-                                MdiIcons.heartOutline,
-                                size: 20,
-                                color: Colors.red,
-                              ),
-                        onPressed: () async {
-                          if (global.currentUser!.id == null) {
-                            Future.delayed(Duration.zero, () {
-                              if (!context.mounted) return;
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => LoginScreen(
-                                          analytics: widget.analytics,
-                                          observer: widget.observer,
-                                        )),
-                              );
-                            });
-                          } else {
-                            bool isAdded = await addRemoveWishList(
-                              widget.categoryProductList![index].varientId,
-                            );
-                            if (isAdded) {
-                              widget.categoryProductList![index].isFavourite =
-                                  !widget
-                                      .categoryProductList![index].isFavourite;
-                            }
-
-                            setState(() {});
-                          }
-                        },
-                      ),
-                    ),
+                // Positioned(
+                //   right: 0,
+                //   top: 0,
+                //       child: Container(
+                //         height: 16,
+                //         width: 60,
+                //         decoration: BoxDecoration(
+                //           color: Theme.of(context)
+                //               .colorScheme
+                //               .primaryContainer,
+                //           borderRadius: const BorderRadius.only(
+                //             topLeft: Radius.circular(4),
+                //             bottomRight: Radius.circular(4),
+                //           ),
+                //         ),
+                //         child: Text(
+                //           "${widget.categoryProductList![index].discount} % OFF",
+                //           textAlign: TextAlign.center,
+                //           style: Theme.of(context)
+                //               .primaryTextTheme
+                //               .bodySmall!
+                //               .copyWith(
+                //             color: Theme.of(context)
+                //                 .colorScheme
+                //                 .onPrimaryContainer,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                    // Positioned(
+                    //   right: 0,
+                    //   top: 0,
+                    //   child: IconButton(
+                    //     icon: widget.categoryProductList![index].isFavourite
+                    //         ? Icon(
+                    //             MdiIcons.heart,
+                    //             size: 20,
+                    //             color: Colors.red,
+                    //           )
+                    //         : Icon(
+                    //             MdiIcons.heartOutline,
+                    //             size: 20,
+                    //             color: Colors.red,
+                    //           ),
+                    //     onPressed: () async {
+                    //       if (global.currentUser!.id == null) {
+                    //         Future.delayed(Duration.zero, () {
+                    //           if (!context.mounted) return;
+                    //           Navigator.of(context).push(
+                    //             MaterialPageRoute(
+                    //                 builder: (context) => LoginScreen(
+                    //                       analytics: widget.analytics,
+                    //                       observer: widget.observer,
+                    //                     )),
+                    //           );
+                    //         });
+                    //       } else {
+                    //         bool isAdded = await addRemoveWishList(
+                    //           widget.categoryProductList![index].varientId,
+                    //         );
+                    //         if (isAdded) {
+                    //           widget.categoryProductList![index].isFavourite =
+                    //               !widget
+                    //                   .categoryProductList![index].isFavourite;
+                    //         }
+                    //
+                    //         setState(() {});
+                    //       }
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

@@ -16,15 +16,17 @@ import 'package:user/screens/productlist_screen.dart';
 import 'package:user/screens/search_screen.dart';
 import 'package:user/widgets/dashboard_widgets.dart';
 
+import '../widgets/item_grid_large.dart';
+
 class DashboardScreen extends BaseRoute {
   final Function()? onAppDrawerButtonPressed;
 
   const DashboardScreen(
       {super.key,
-      super.analytics,
-      super.observer,
-      super.routeName = 'DashboardScreen',
-      this.onAppDrawerButtonPressed});
+        super.analytics,
+        super.observer,
+        super.routeName = 'DashboardScreen',
+        this.onAppDrawerButtonPressed});
 
   @override
   BaseRouteState<DashboardScreen> createState() => _DashboardScreenState();
@@ -41,6 +43,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: DashboardFloatingActionButton(
@@ -49,10 +52,12 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
             callNumberStore: callNumberStore,
             inviteFriendShareMessage: br.inviteFriendShareMessage),
         appBar: AppBar(
-          leadingWidth: 46,
+          leadingWidth: 60,
+          // backgroundColor: Colors.red.shade800,
+          // icon: const Icon(Icons.dashboard_outlined),
           leading: IconButton(
             visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-            icon: const Icon(Icons.dashboard_outlined),
+            icon: Image.asset("assets/images/1-03.png"),
             onPressed: widget.onAppDrawerButtonPressed,
           ),
           title: DashboardLocationTitle(
@@ -73,19 +78,19 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
               visualDensity: const VisualDensity(horizontal: -4),
               icon: const Icon(Icons.search_outlined),
               onPressed: () => Get.to(() => SearchScreen(
-                    analytics: widget.analytics,
-                    observer: widget.observer,
-                  )),
+                analytics: widget.analytics,
+                observer: widget.observer,
+              )),
             ),
             global.currentUser?.id != null
                 ? IconButton(
-                    visualDensity: const VisualDensity(horizontal: -4),
-                    icon: const Icon(Icons.notifications_none),
-                    onPressed: () => Get.to(() => NotificationScreen(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                        )),
-                  )
+              visualDensity: const VisualDensity(horizontal: -4),
+              icon: const Icon(Icons.notifications_none),
+              onPressed: () => Get.to(() => NotificationScreen(
+                analytics: widget.analytics,
+                observer: widget.observer,
+              )),
+            )
                 : const SizedBox()
           ],
         ),
@@ -99,8 +104,6 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const DashboardLoadingView();
               } else if (snapshot.connectionState == ConnectionState.done) {
-                // Print full snapshot data
-                print("Full Snapshot Data: ${snapshot.data}");
                 if (global.nearStoreModel != null &&
                     global.nearStoreModel?.id != null &&
                     snapshot.hasData) {
@@ -108,7 +111,6 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const DashboardAppNotice(),
                         const Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: 16.0,
@@ -118,32 +120,33 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
                         ),
                         (snapshot.data?.banner.isNotEmpty ?? false)
                             ? DashboardBanner1(
-                                items: _bannerItems(snapshot.data!))
+                            items: _bannerItems(snapshot.data!))
                             : const SizedBox(),
                         (snapshot.data?.topCat.isNotEmpty ?? false)
                             ? DashboardCategories(
-                                analytics: widget.analytics,
-                                observer: widget.observer,
-                                topCategoryList: snapshot.data!.topCat,
-                              )
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                          topCategoryList: snapshot.data!.topCat,
+                        )
                             : const SizedBox(),
+                        SizedBox(height: 10,),
                         (snapshot.data?.dealproduct.isNotEmpty ?? false)
                             ?
-                            //     DashboardBundleProducts(
-                            //       analytics: widget.analytics,
-                            //       observer: widget.observer,
-                            //       title: AppLocalizations.of(context)!.tle_bundle_offers,
-                            //       categoryName: '${AppLocalizations.of(context)!.tle_bundle_offers} ${AppLocalizations.of(context)!.tle_products}',
-                            //       dealProducts: snapshot.data!.dealproduct,
-                            //       screenId: 1,
-                            //     ) : const SizedBox(),
-                            // (snapshot.data?.catProdList.isNotEmpty ?? false) ?
-                            DashboardProductListByCategory(
-                                analytics: widget.analytics,
-                                observer: widget.observer,
-                                productListByCategory:
-                                    snapshot.data!.catProdList,
-                              )
+                        //     DashboardBundleProducts(
+                        //       analytics: widget.analytics,
+                        //       observer: widget.observer,
+                        //       title: AppLocalizations.of(context)!.tle_bundle_offers,
+                        //       categoryName: '${AppLocalizations.of(context)!.tle_bundle_offers} ${AppLocalizations.of(context)!.tle_products}',
+                        //       dealProducts: snapshot.data!.dealproduct,
+                        //       screenId: 1,
+                        //     ) : const SizedBox(),
+                        // (snapshot.data?.catProdList.isNotEmpty ?? false) ?
+                        DashboardProductListByCategory(
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                          productListByCategory:
+                          snapshot.data!.catProdList,
+                        )
                             : const SizedBox.shrink(),
                         // (snapshot.data?.ProductList.isNotEmpty ?? false)
                         // ?
@@ -161,59 +164,59 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
                         //     : const SizedBox(),
                         (snapshot.data?.secondBanner.isNotEmpty ?? false)
                             ? DashboardBanner2(
-                                margin: const EdgeInsets.only(top: 20),
-                                items: _secondBannerItems(snapshot.data!))
+                            margin: const EdgeInsets.only(top: 10),
+                            items: _secondBannerItems(snapshot.data!))
                             : const SizedBox(),
 
                         (snapshot.data?.spotLightProductList.isNotEmpty ??
-                                false)
+                            false)
                             ? DashboardBundleProducts(
-                                analytics: widget.analytics,
-                                observer: widget.observer,
-                                title:
-                                    "${AppLocalizations.of(context)!.lbl_in_spotlight} ",
-                                categoryName:
-                                    '${AppLocalizations.of(context)!.lbl_in_spotlight} ',
-                                dealProducts:
-                                    snapshot.data!.spotLightProductList,
-                                screenId: 4,
-                              )
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                          title:
+                          "${AppLocalizations.of(context)!.lbl_in_spotlight} ",
+                          categoryName:
+                          '${AppLocalizations.of(context)!.lbl_in_spotlight} ',
+                          dealProducts:
+                          snapshot.data!.spotLightProductList,
+                          screenId: 4,
+                        )
                             : const SizedBox(),
                         (snapshot.data?.bestsellerProductList.isNotEmpty ??
-                                false)
+                            false)
                             ? DashboardBundleProducts(
-                                analytics: widget.analytics,
-                                observer: widget.observer,
-                                title: AppLocalizations.of(context)!
-                                    .lbl_best_seller,
-                                categoryName:
-                                    '${AppLocalizations.of(context)!.lbl_best_seller} ${AppLocalizations.of(context)!.tle_products}',
-                                dealProducts:
-                                    snapshot.data!.bestsellerProductList,
-                                screenId: 3,
-                              )
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                          title: AppLocalizations.of(context)!
+                              .lbl_best_seller,
+                          categoryName:
+                          '${AppLocalizations.of(context)!.lbl_best_seller} ${AppLocalizations.of(context)!.tle_products}',
+                          dealProducts:
+                          snapshot.data!.bestsellerProductList,
+                          screenId: 3,
+                        )
                             : const SizedBox(),
 
                         (snapshot.data?.recentSellingProductList.isNotEmpty ??
-                                false)
-                            ? DashboardBundleProducts(
-                                analytics: widget.analytics,
-                                observer: widget.observer,
-                                title:
-                                    "${AppLocalizations.of(context)!.lbl_recent_selling} ",
-                                categoryName:
-                                    '${AppLocalizations.of(context)!.lbl_recent_selling} ',
-                                dealProducts:
-                                    snapshot.data!.recentSellingProductList,
-                                screenId: 5,
-                              )
+                            false)
+                            ? NewlyProductGrid(
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                          title:
+                          "${AppLocalizations.of(context)!.lbl_recent_selling} ",
+                          categoryName:
+                          '${AppLocalizations.of(context)!.lbl_recent_selling} ',
+                          dealProducts:
+                          snapshot.data!.recentSellingProductList,
+                          screenId: 5,
+                        )
                             : const SizedBox(),
                         (snapshot.data?.topselling.isNotEmpty ?? false)
                             ? DashboardTopSellingProductList(
-                                analytics: widget.analytics,
-                                observer: widget.observer,
-                                topSellingProducts: snapshot.data!.topselling,
-                              )
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                          topSellingProducts: snapshot.data!.topselling,
+                        )
                             : const SizedBox(),
                       ],
                     ),
@@ -257,16 +260,16 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
       list.add(InkWell(
         onTap: () {
           Get.to(() => ProductListScreen(
-                analytics: widget.analytics,
-                observer: widget.observer,
-                categoryId: homeScreenData.banner[i].catId,
-                screenId: 0,
-                categoryName: homeScreenData.banner[i].title,
-              ));
+            analytics: widget.analytics,
+            observer: widget.observer,
+            categoryId: homeScreenData.banner[i].catId,
+            screenId: 0,
+            categoryName: homeScreenData.banner[i].title,
+          ));
         },
         child: CachedNetworkImage(
           imageUrl:
-              global.appInfo!.imageUrl! + homeScreenData.banner[i].bannerImage!,
+          global.appInfo!.imageUrl! + homeScreenData.banner[i].bannerImage!,
           imageBuilder: (context, imageProvider) => Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -274,7 +277,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
             ),
           ),
           placeholder: (context, url) =>
-              const Center(child: CircularProgressIndicator()),
+          const Center(child: CircularProgressIndicator()),
           errorWidget: (context, url, error) => Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
@@ -357,41 +360,42 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
   }
 
   List<Widget> _secondBannerItems(HomeScreenData homeScreenData) {
-    List<Widget> list = [];
-    for (int i = 0; i < homeScreenData.secondBanner.length; i++) {
-      list.add(InkWell(
+    return homeScreenData.secondBanner.map((banner) {
+      return InkWell(
         onTap: () {
           Get.to(() => ProductDescriptionScreen(
-                analytics: widget.analytics,
-                observer: widget.observer,
-                productId: homeScreenData.secondBanner[i].varientId,
-                screenId: 0,
-              ));
+            analytics: widget.analytics,
+            observer: widget.observer,
+            productId: banner.varientId,
+            screenId: 0,
+          ));
         },
         child: CachedNetworkImage(
-          imageUrl: global.appInfo!.imageUrl! +
-              homeScreenData.secondBanner[i].bannerImage!,
+          imageUrl: global.appInfo!.imageUrl! + banner.bannerImage!,
           imageBuilder: (context, imageProvider) => Container(
+            width: double.infinity,
+            height: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+              image: DecorationImage(
+                image: imageProvider,
+                fit: BoxFit.cover, // ✅ Ensures the image fills the full container
+              ),
             ),
           ),
-          placeholder: (context, url) =>
-              const Center(child: CircularProgressIndicator()),
+          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
           errorWidget: (context, url, error) => Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               image: const DecorationImage(
-                  image: AssetImage('assets/images/icon.png'),
-                  fit: BoxFit.cover),
+                  image: AssetImage('assets/images/icon.png'), fit: BoxFit.cover),
             ),
           ),
         ),
-      ));
-    }
-    return list;
+      );
+    }).toList();
   }
+
 
   void callNumberStore(storeNumber) async {
     await launchUrlString('tel:$storeNumber');

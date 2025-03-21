@@ -25,9 +25,14 @@ class DashboardLocationTitle extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         global.currentLocation != null ?
-          Text(
-            AppLocalizations.of(context)!.txt_deliver,
-            style: boldCaptionStyle(context),
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              AppLocalizations.of(context)!.txt_deliver,
+              style: boldCaptionStyle(context).copyWith(
+
+              ),
+            ),
           ) : const SizedBox(),
         GestureDetector(
           onTap: () async {
@@ -58,15 +63,17 @@ class DashboardLocationTitle extends StatelessWidget {
                       : '${AppLocalizations.of(context)!.txt_deliver} No Location',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
-                  style: textTheme.bodyLarge,
-                ),
+
+                  style: textTheme.bodyLarge!.copyWith(
+                  fontSize: 14
+                ),),
               ),
-              Transform.rotate(
-                angle: pi / 2,
-                child: const Icon(
-                  Icons.chevron_right,
-                ),
-              )
+              // Transform.rotate(
+              //   angle: pi / 2,
+              //   child: const Icon(
+              //     Icons.chevron_right,
+              //   ),
+              // )
             ],
           ),
         )
