@@ -5,6 +5,8 @@ import 'package:user/widgets/gradient_heading_row.dart';
 import '../models/category_product_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'add_product_details.dart';
+
 class NewlyProductGrid extends StatefulWidget {
   const NewlyProductGrid({
     super.key,
@@ -39,9 +41,9 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 8,
+            crossAxisSpacing: 10,
             mainAxisSpacing: 8,
-            childAspectRatio: 0.59, // Adjust this for better spacing
+            childAspectRatio: 0.67, // Adjust this for better spacing
           ),
           itemCount: widget.dealProducts.length,
           itemBuilder: (context, index) {
@@ -51,7 +53,6 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
               elevation: 4,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -78,8 +79,30 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                           Row(
                             children: [
                               Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.circular(3.0),
+
+                                  color: Colors.transparent,
+                                  border: Border.all(color: Colors.green, width: 2),),
+                                padding: const EdgeInsets.all(2),
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 4),
+                                    horizontal: 4, vertical: 1),
                                 decoration: BoxDecoration(
                                   color: Colors.green.shade50,
                                 ),
@@ -87,16 +110,16 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                   "Bestseller",
                                   style: TextStyle(
                                     color: Colors.green,
-                                    fontSize: 10,
+                                    fontSize: 6,
                                   ),
                                 ),
                               ),
                               const SizedBox(
-                                width: 10,
+                                width: 5,
                               ),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 4),
+                                    horizontal: 4, vertical: 1),
                                 decoration: BoxDecoration(
                                   color: Colors.orange.shade50,
                                 ),
@@ -104,7 +127,7 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                   "New",
                                   style: TextStyle(
                                     color: Colors.orange,
-                                    fontSize: 10,
+                                    fontSize: 6,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -124,31 +147,32 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                     .productName!, // Assuming 'name' key exists
                                 style: const TextStyle(
                                   fontSize: 14,
+                                  wordSpacing: 2,
+                                  fontWeight: FontWeight.w600
                                 ),
                               ),
                               Text(
                                 "Customisable",
                                 style: TextStyle(
-                                  color: Colors.grey.shade400,
-                                  fontSize: 10,
+                                  color: Colors.grey.shade300,
+                                  fontSize: 8,
                                 ),
                               ),
                               Text(
                                 "${global.appInfo!.currencySign} ${product.price}", // Assuming 'price' key exists
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const Spacer(),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12.0),
                             child: GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  showProductBottomSheet(context,product);
+                                },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 8),
