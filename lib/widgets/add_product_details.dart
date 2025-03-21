@@ -30,9 +30,6 @@ List<Map<String, String>> variantOptions = [
   {"title": "Giant (serve 8,45cm)", "price": "₹ 945"},
 ];
 
-
-
-
 class ProductBottomSheet extends StatefulWidget {
   final Product product;
 
@@ -44,196 +41,155 @@ class ProductBottomSheet extends StatefulWidget {
 
 class _ProductBottomSheetState extends State<ProductBottomSheet> {
   int selectedVariant = 1;
-  bool showLeadingIcon = false;
-  late ScrollController _scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
-  }
-
-  void _scrollListener() {
-    if (_scrollController.offset > 100 && !showLeadingIcon) {
-      setState(() {
-        showLeadingIcon = true;
-      });
-    } else if (_scrollController.offset <= 100 && showLeadingIcon) {
-      setState(() {
-        showLeadingIcon = false;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
-    super.dispose();
-  }
+  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          minChildSize: 0.4,
-          maxChildSize: 0.5,
-          expand: false,
+          initialChildSize: 0.86,
+          minChildSize: 0.86,
+          maxChildSize:0.86,
           builder: (context, scrollController) {
-            _scrollController = scrollController; // Assign the controller
-
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                SliverAppBar(
-                  pinned: true,
-                  floating: false,
-                  expandedHeight: 250,
-                  backgroundColor: Colors.white,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Image.network(
-                      global.appInfo!.imageUrl! + widget.product.productImage!,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
+            return Container(
+              margin: EdgeInsets.only(top: 0),
+              decoration:  BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
+              ),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Product Image
+                      Card(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 10),
-                            Text(
-                              "${global.appInfo!.currencySign} ${widget.product.price}",
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              widget.product.description!,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            const SizedBox(height: 20),
-                            buildGradientHeadingRow(context, "CHOOSE A VARIANT"),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 8,
-                                mainAxisSpacing: 8,
-                                childAspectRatio: 1.5,
+                            ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.vertical(top: Radius.circular(20)),
+                              child: Image.network(
+                                global.appInfo!.imageUrl! +
+                                    widget.product.productImage!,
+                                fit: BoxFit.cover,
+                                height: 250,
+                                width: double.infinity,
                               ),
-                              itemCount: variantOptions.length,
-                              itemBuilder: (context, index) {
-                                return radioVarientButton(
-                                  variantOptions[index]["title"]!,
-                                  variantOptions[index]["price"]!,
-                                  index,
-                                  selectedVariant,
-                                      (val) {
-                                    setState(() {
-                                      selectedVariant = val!;
-                                    });
-                                  },
-                                );
-                              },
                             ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              "Upgrade Your Base - Regular",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            const Text(
-                              "you can choose up to 1 options(s)",
-                              style:
-                              TextStyle(color: Colors.black54, fontSize: 12),
-                            ),
-                            const SizedBox(height: 10),
-                            checkBoxRowVarient("Double Cheese", "₹410", true),
                             const SizedBox(height: 5),
-                            checkBoxRowVarient(
-                                "Ultra thin Crust Pizza - Regular Pizza",
-                                "₹560",
-                                true),
-                            const SizedBox(height: 20),
-                            const Text(
-                              "Toppings-veg[Regular]",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            const Text(
-                              "you can choose up to 4 options(s)",
-                              style:
-                              TextStyle(color: Colors.black54, fontSize: 12),
-                            ),
-                            Column(
-                              children: List.generate(
-                                vegPizzaToppings.length,
-                                    (index) => Column(
-                                  children: [
-                                    const SizedBox(height: 5),
-                                    checkBoxRowVarient(
-                                        vegPizzaToppings[index], "₹5$index", true),
-                                  ],
-                                ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      _buildBadge("Bestseller", Colors.green.shade800),
+                                      const SizedBox(width: 5),
+                                      _buildBadge("New", Colors.orange),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+
+                                  // Product Title, Price & Description
+                                  Text(
+                                    widget.product.productName!,
+                                    style: const TextStyle(
+                                        fontSize: 16, fontWeight: FontWeight.w600),
+                                  ),
+                                  Text("Customisable",
+                                      style: TextStyle(
+                                          color: Colors.grey.shade500, fontSize: 10)),
+                                  Text(
+                                      "${global.appInfo!.currencySign} ${widget.product.price}",
+                                      style: const TextStyle(fontSize: 14)),
+                                  const SizedBox(height: 10),
+                                  _buildExpandableText(widget.product.description!),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              "Toppings-Non-veg[Regular]",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            const Text(
-                              "you can choose up to 3 options(s)",
-                              style:
-                              TextStyle(color: Colors.black54, fontSize: 12),
-                            ),
-                            Column(
-                              children: List.generate(
-                                nonVegPizzaToppings.length,
-                                    (index) => Column(
-                                  children: [
-                                    checkBoxRowVarient(
-                                        nonVegPizzaToppings[index], "₹7$index", false),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                minimumSize: const Size(double.infinity, 50),
-                              ),
-                              child: const Text(
-                                "Add",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                           ],
                         ),
+                      ),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Product Badges
+
+
+
+
+                          const SizedBox(height: 20),
+                          buildGradientHeadingRow(context, "CHOOSE A VARIANT"),
+
+                          // Variant Grid
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              childAspectRatio: 1.5,
+                            ),
+                            itemCount: variantOptions.length,
+                            itemBuilder: (context, index) {
+                              return radioVarientButton(
+                                variantOptions[index]["title"]!,
+                                variantOptions[index]["price"]!,
+                                index,
+                                selectedVariant,
+                                (val) {
+                                  setState(() {
+                                    selectedVariant = val!;
+                                  });
+                                },
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+                          _buildUpgradeOptions(),
+
+                          const SizedBox(height: 20),
+                          _buildToppings(
+                              "Toppings-veg[Regular]", vegPizzaToppings, 4),
+                          const SizedBox(height: 20),
+                          _buildToppings("Toppings-Non-veg[Regular]",
+                              nonVegPizzaToppings, 3),
+
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              minimumSize: const Size(double.infinity, 50),
+                            ),
+                            child: const Text("Add",
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ],
+              ),
             );
           },
         ),
-
-        // Close Button
         Positioned(
           top: 10,
           left: MediaQuery.of(context).size.width / 2 - 25,
@@ -253,45 +209,116 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                   ),
                 ],
               ),
-              child: const Icon(Icons.close, size: 30),
+              child: Image.asset("assets/images/close.png",height: 10,
+              width: 10,fit: BoxFit.cover,),
             ),
           ),
         ),
+      ],
+    );
+  }
 
-        // Show leading icon when scrolled
-        if (showLeadingIcon)
-          Positioned(
-            top: 10,
-            left: 10,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                shape: BoxShape.circle,
+  // Helper Widgets
+  Widget _buildBadge(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(3)),
+      child: Text(text,
+          style: TextStyle(
+              color: color, fontSize: 8, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _buildExpandableText(String description) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              description,
+              maxLines: _isExpanded ? null : 4,
+              overflow:
+                  _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 16),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              child: Text(
+                _isExpanded ? "Show Less" : "Show More",
+                style: const TextStyle(
+                    color: Colors.lightBlueAccent, fontWeight: FontWeight.bold),
               ),
-              padding: const EdgeInsets.all(8),
-              child: const Icon(Icons.arrow_back, color: Colors.white),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildUpgradeOptions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Upgrade Your Base - Regular",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text("you can choose up to 1 option(s)",
+            style: TextStyle(color: Colors.black54, fontSize: 12)),
+        const SizedBox(height: 10),
+        checkBoxRowVarient("Double Cheese", "₹410", true),
+        const SizedBox(height: 5),
+        checkBoxRowVarient("Ultra Thin Crust Pizza - Regular", "₹560", true),
+      ],
+    );
+  }
+
+  Widget _buildToppings(String title, List<String> toppings, int maxOptions) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text("you can choose up to $maxOptions option(s)",
+            style: const TextStyle(color: Colors.black54, fontSize: 12)),
+        Column(
+          children: List.generate(
+            toppings.length,
+            (index) => Column(
+              children: [
+                const SizedBox(height: 5),
+                checkBoxRowVarient(toppings[index], "₹${5 + index}", true),
+              ],
             ),
           ),
+        ),
       ],
     );
   }
 }
-
 
 // Function to Show BottomSheet
 void showProductBottomSheet(BuildContext context, Product product) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.grey.shade100,
+    backgroundColor: Colors.transparent,
     builder: (context) {
-      return ProductBottomSheet(product: product);
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: ProductBottomSheet(product: product),
+      );
     },
   );
 }
 
-
-Card radioVarientButton(String title, String price, int value, int groupValue, void Function(int?) onChanged) {
+Card radioVarientButton(String title, String price, int value, int groupValue,
+    void Function(int?) onChanged) {
   return Card(
     color: Colors.white,
     shape: RoundedRectangleBorder(
@@ -312,12 +339,14 @@ Card radioVarientButton(String title, String price, int value, int groupValue, v
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   price,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
