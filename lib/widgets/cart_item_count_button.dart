@@ -10,14 +10,14 @@ class CartItemCountButton extends StatefulWidget {
   final dynamic analytics;
   final dynamic observer;
   final CartController? cartController;
-  const CartItemCountButton({super.key, this.analytics, this.observer, this.cartController});
+  const CartItemCountButton(
+      {super.key, this.analytics, this.observer, this.cartController});
 
   @override
   State<CartItemCountButton> createState() => _CartItemCountButtonState();
 }
 
 class _CartItemCountButtonState extends State<CartItemCountButton> {
-
   _CartItemCountButtonState();
 
   @override
@@ -30,7 +30,8 @@ class _CartItemCountButtonState extends State<CartItemCountButton> {
               width: Get.width / 2,
               child: ElevatedButton.icon(
                   icon: const Icon(Icons.shopping_cart_outlined),
-                  label: Text("${global.cartCount} ${AppLocalizations.of(context)!.txt_items_cart}"),
+                  label: Text(
+                      "${global.cartCount} ${AppLocalizations.of(context)!.txt_items_cart}"),
                   onPressed: () {
                     if (global.currentUser!.id == null) {
                       Get.to(() => LoginScreen(
