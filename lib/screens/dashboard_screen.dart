@@ -45,202 +45,244 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+        backgroundColor: Colors.grey.shade100,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: DashboardFloatingActionButton(
             analytics: widget.analytics,
             observer: widget.observer,
             callNumberStore: callNumberStore,
             inviteFriendShareMessage: br.inviteFriendShareMessage),
-        appBar: AppBar(
-          leadingWidth: 60,
-          // backgroundColor: Colors.red.shade800,
-          // icon: const Icon(Icons.dashboard_outlined),
-          leading: IconButton(
-            visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-            icon: Image.asset("assets/images/1-03.png"),
-            onPressed: widget.onAppDrawerButtonPressed,
-          ),
-          title: DashboardLocationTitle(
-              analytics: widget.analytics,
-              observer: widget.observer,
-              getCurrentPosition: getCurrentPosition),
-          actions: [
-            // IconButton(
-            //     onPressed: () async {
-            //       // await openBarcodeScanner(_scaffoldKey);
-            //     },
-            //     visualDensity: const VisualDensity(horizontal: -4),
-            //     icon: Icon(
-            //       MdiIcons.barcode,
-            //       color: Theme.of(context).colorScheme.primary,
-            //     )),
-            IconButton(
-              visualDensity: const VisualDensity(horizontal: -4),
-              icon: const Icon(Icons.search_outlined),
-              onPressed: () => Get.to(() => SearchScreen(
-                analytics: widget.analytics,
-                observer: widget.observer,
-              )),
-            ),
-            global.currentUser?.id != null
-                ? IconButton(
-              visualDensity: const VisualDensity(horizontal: -4),
-              icon: const Icon(Icons.notifications_none),
-              onPressed: () => Get.to(() => NotificationScreen(
-                analytics: widget.analytics,
-                observer: widget.observer,
-              )),
-            )
-                : const SizedBox()
-          ],
-        ),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            await _onRefresh();
-          },
-          child: FutureBuilder<HomeScreenData?>(
-            future: _homeDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const DashboardLoadingView();
-              } else if (snapshot.connectionState == ConnectionState.done) {
-                if (global.nearStoreModel != null &&
-                    global.nearStoreModel?.id != null &&
-                    snapshot.hasData) {
-                  return SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 16.0,
-                            horizontal: 16,
-                          ),
-                          child: DashboardScreenHeading(),
-                        ),
-                        (snapshot.data?.banner.isNotEmpty ?? false)
-                            ? DashboardBanner1(
-                            items: _bannerItems(snapshot.data!))
-                            : const SizedBox(),
-                        (snapshot.data?.topCat.isNotEmpty ?? false)
-                            ? DashboardCategories(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                          topCategoryList: snapshot.data!.topCat,
-                        )
-                            : const SizedBox(),
-                        SizedBox(height: 10,),
-                        (snapshot.data?.dealproduct.isNotEmpty ?? false)
-                            ?
-                        //     DashboardBundleProducts(
-                        //       analytics: widget.analytics,
-                        //       observer: widget.observer,
-                        //       title: AppLocalizations.of(context)!.tle_bundle_offers,
-                        //       categoryName: '${AppLocalizations.of(context)!.tle_bundle_offers} ${AppLocalizations.of(context)!.tle_products}',
-                        //       dealProducts: snapshot.data!.dealproduct,
-                        //       screenId: 1,
-                        //     ) : const SizedBox(),
-                        // (snapshot.data?.catProdList.isNotEmpty ?? false) ?
-                        DashboardProductListByCategory(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                          productListByCategory:
-                          snapshot.data!.catProdList,
-                        )
-                            : const SizedBox.shrink(),
-                        // (snapshot.data?.ProductList.isNotEmpty ?? false)
-                        // ?
-                        //     DashboardBundleProducts(
-                        //         analytics: widget.analytics,
-                        //         observer: widget.observer,
-                        //         title:
-                        //             AppLocalizations.of(context)!.lbl_whats_new,
-                        //         categoryName:
-                        //             '${AppLocalizations.of(context)!.lbl_whats_new} ${AppLocalizations.of(context)!.tle_products}',
-                        //         dealProducts:
-                        //             snapshot.data!.whatsnewProductList,
-                        //         screenId: 3,
-                        //       )
-                        //     : const SizedBox(),
-                        (snapshot.data?.secondBanner.isNotEmpty ?? false)
-                            ? DashboardBanner2(
-                            margin: const EdgeInsets.only(top: 10),
-                            items: _secondBannerItems(snapshot.data!))
-                            : const SizedBox(),
-
-                        (snapshot.data?.spotLightProductList.isNotEmpty ??
-                            false)
-                            ? DashboardBundleProducts(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                          title:
-                          "${AppLocalizations.of(context)!.lbl_in_spotlight} ",
-                          categoryName:
-                          '${AppLocalizations.of(context)!.lbl_in_spotlight} ',
-                          dealProducts:
-                          snapshot.data!.spotLightProductList,
-                          screenId: 4,
-                        )
-                            : const SizedBox(),
-                        (snapshot.data?.bestsellerProductList.isNotEmpty ??
-                            false)
-                            ? DashboardBundleProducts(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                          title: AppLocalizations.of(context)!
-                              .lbl_best_seller,
-                          categoryName:
-                          '${AppLocalizations.of(context)!.lbl_best_seller} ${AppLocalizations.of(context)!.tle_products}',
-                          dealProducts:
-                          snapshot.data!.bestsellerProductList,
-                          screenId: 3,
-                        )
-                            : const SizedBox(),
-
-                        (snapshot.data?.recentSellingProductList.isNotEmpty ??
-                            false)
-                            ? NewlyProductGrid(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                          title:
-                          "${AppLocalizations.of(context)!.lbl_recent_selling} ",
-                          categoryName:
-                          '${AppLocalizations.of(context)!.lbl_recent_selling} ',
-                          dealProducts:
-                          snapshot.data!.recentSellingProductList,
-                          screenId: 5,
-                        )
-                            : const SizedBox(),
-                        (snapshot.data?.topselling.isNotEmpty ?? false)
-                            ? DashboardTopSellingProductList(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                          topSellingProducts: snapshot.data!.topselling,
-                        )
-                            : const SizedBox(),
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              elevation: 4,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              pinned: true,
+              backgroundColor: Colors.transparent, // Set transparent to allow gradient effect
+              expandedHeight: 220.0,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFFF8000), // Deep orange shade
+                        Color(0xFFFFA500), // Warm yellow-orange shade
                       ],
                     ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Text(global.locationMessage!),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
                     ),
-                  );
-                } else {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Text(global.locationMessage!),
-                    ),
-                  );
-                }
-              } else {
-                return const Text("This shouldn't be seen ever");
-              }
-            },
-          ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 30),
+                      Image.asset(
+                        'assets/images/bannerap.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              leading: IconButton(
+                visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                icon: const Icon(Icons.dashboard_outlined, color: Colors.white),
+                onPressed: widget.onAppDrawerButtonPressed,
+              ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DashboardLocationTitle(
+                    analytics: widget.analytics,
+                    observer: widget.observer,
+                    getCurrentPosition: getCurrentPosition,
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        visualDensity: const VisualDensity(horizontal: -4),
+                        icon: const Icon(Icons.search_outlined, color: Colors.white),
+                        onPressed: () => Get.to(() => SearchScreen(
+                          analytics: widget.analytics,
+                          observer: widget.observer,
+                        )),
+                      ),
+                      if (global.currentUser?.id != null)
+                        IconButton(
+                          visualDensity: const VisualDensity(horizontal: -4),
+                          icon: const Icon(Icons.notifications_none, color: Colors.white),
+                          onPressed: () => Get.to(() => NotificationScreen(
+                            analytics: widget.analytics,
+                            observer: widget.observer,
+                          )),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            SliverToBoxAdapter(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await _onRefresh();
+                },
+                child: FutureBuilder<HomeScreenData?>(
+                  future: _homeDataFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const DashboardLoadingView();
+                    } else if (snapshot.connectionState == ConnectionState.done) {
+                      if (global.nearStoreModel != null &&
+                          global.nearStoreModel?.id != null &&
+                          snapshot.hasData) {
+                        return SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 10,),
+                              // const Padding(
+                              //   padding: EdgeInsets.symmetric(
+                              //     vertical: 16.0,
+                              //     horizontal: 16,
+                              //   ),
+                              //   child: DashboardScreenHeading(),
+                              // ),
+                              (snapshot.data?.banner.isNotEmpty ?? false)
+                                  ? DashboardBanner1(
+                                  items: _bannerItems(snapshot.data!))
+                                  : const SizedBox(),
+                              (snapshot.data?.topCat.isNotEmpty ?? false)
+                                  ? DashboardCategories(
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                                topCategoryList: snapshot.data!.topCat,
+                              )
+                                  : const SizedBox(),
+                              const SizedBox(height: 10,),
+                              (snapshot.data?.dealproduct.isNotEmpty ?? false)
+                                  ?
+                              //     DashboardBundleProducts(
+                              //       analytics: widget.analytics,
+                              //       observer: widget.observer,
+                              //       title: AppLocalizations.of(context)!.tle_bundle_offers,
+                              //       categoryName: '${AppLocalizations.of(context)!.tle_bundle_offers} ${AppLocalizations.of(context)!.tle_products}',
+                              //       dealProducts: snapshot.data!.dealproduct,
+                              //       screenId: 1,
+                              //     ) : const SizedBox(),
+                              // (snapshot.data?.catProdList.isNotEmpty ?? false) ?
+                              DashboardProductListByCategory(
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                                productListByCategory:
+                                snapshot.data!.catProdList,
+                              )
+                                  : const SizedBox.shrink(),
+                              // (snapshot.data?.ProductList.isNotEmpty ?? false)
+                              // ?
+                              //     DashboardBundleProducts(
+                              //         analytics: widget.analytics,
+                              //         observer: widget.observer,
+                              //         title:
+                              //             AppLocalizations.of(context)!.lbl_whats_new,
+                              //         categoryName:
+                              //             '${AppLocalizations.of(context)!.lbl_whats_new} ${AppLocalizations.of(context)!.tle_products}',
+                              //         dealProducts:
+                              //             snapshot.data!.whatsnewProductList,
+                              //         screenId: 3,
+                              //       )
+                              //     : const SizedBox(),
+                              (snapshot.data?.secondBanner.isNotEmpty ?? false)
+                                  ? DashboardBanner2(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  items: _secondBannerItems(snapshot.data!))
+                                  : const SizedBox(),
+
+                              (snapshot.data?.spotLightProductList.isNotEmpty ??
+                                  false)
+                                  ? DashboardBundleProducts(
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                                title:
+                                "${AppLocalizations.of(context)!.lbl_in_spotlight} ",
+                                categoryName:
+                                '${AppLocalizations.of(context)!.lbl_in_spotlight} ',
+                                dealProducts:
+                                snapshot.data!.spotLightProductList,
+                                screenId: 4,
+                              )
+                                  : const SizedBox(),
+                              (snapshot.data?.bestsellerProductList.isNotEmpty ??
+                                  false)
+                                  ? DashboardBundleProducts(
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                                title: AppLocalizations.of(context)!
+                                    .lbl_best_seller,
+                                categoryName:
+                                '${AppLocalizations.of(context)!.lbl_best_seller} ${AppLocalizations.of(context)!.tle_products}',
+                                dealProducts:
+                                snapshot.data!.bestsellerProductList,
+                                screenId: 3,
+                              )
+                                  : const SizedBox(),
+
+                              (snapshot.data?.recentSellingProductList.isNotEmpty ??
+                                  false)
+                                  ? NewlyProductGrid(
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                                title:
+                                "${AppLocalizations.of(context)!.lbl_recent_selling} ",
+                                categoryName:
+                                '${AppLocalizations.of(context)!.lbl_recent_selling} ',
+                                dealProducts:
+                                snapshot.data!.recentSellingProductList,
+                                screenId: 5,
+                              )
+                                  : const SizedBox(),
+                              (snapshot.data?.topselling.isNotEmpty ?? false)
+                                  ? DashboardTopSellingProductList(
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                                topSellingProducts: snapshot.data!.topselling,
+                              )
+                                  : const SizedBox(),
+                            ],
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Text(global.locationMessage!),
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Text(global.locationMessage!),
+                          ),
+                        );
+                      }
+                    } else {
+                      return const Text("This shouldn't be seen ever");
+                    }
+                  },
+                ),
+              ),
+            ),
+          ],
         ));
   }
 

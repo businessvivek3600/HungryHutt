@@ -470,7 +470,6 @@ class APIHelper {
         'payment_id': paymentId,
         'payment_gateway': paymentGateway
       });
-print("checkout post data----${formData.fields}");
       response = await dio.post('${global.baseUrl}checkout',
           data: formData,
           options: Options(
