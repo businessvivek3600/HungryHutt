@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:http/http.dart';
@@ -27,6 +28,8 @@ import 'package:user/screens/home_screen.dart';
 import 'package:user/screens/order_confirmation_screen.dart';
 import 'package:user/screens/stripe_payment_screen.dart';
 import 'package:user/utils/navigation_utils.dart';
+
+import '../controllers/home_controller.dart';
 
 class PaymentGatewayScreen extends BaseRoute {
   final int? screenId;
@@ -84,10 +87,12 @@ class _PaymentGatewayScreenState extends BaseRouteState<PaymentGatewayScreen> {
           actions: [
             InkWell(
                 onTap: () {
-                  Get.to(() => HomeScreen(
-                        analytics: widget.analytics,
-                        observer: widget.observer,
-                      ));
+                  Future.delayed(Duration.zero, () {
+                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(
+                     analytics: widget.analytics,
+                     observer: widget.observer,
+                   ),) );
+                  });
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(15),

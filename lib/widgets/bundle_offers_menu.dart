@@ -14,6 +14,8 @@ import 'package:user/screens/product_description_screen.dart';
 import 'package:user/theme/style.dart';
 import 'package:user/widgets/toastfile.dart';
 
+import 'add_product_details.dart';
+
 class BundleOffersMenu extends StatefulWidget {
   final dynamic analytics;
   final dynamic observer;
@@ -57,108 +59,113 @@ class _BundleOffersMenuItemState extends State<BundleOffersMenuItem> {
       width: screenWidth * 0.6,
       child: GetBuilder<CartController>(
         init: cartController,
-        builder: (value) => Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14.0),
-          ),
-          elevation: 2,
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: CachedNetworkImageProvider(
-                  global.appInfo!.imageUrl! + widget.product.productImage!,
-                ),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Colors.black.withOpacity(0.4),
-                  BlendMode.darken,
-                ),
-              ),
+        builder: (value) => GestureDetector(
+          onTap: () {
+            showProductBottomSheet(context,widget.product);
+          },
+          child: Card(
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14.0),
             ),
-            padding: const EdgeInsets.all(8.0),
-            child:  Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // Text(
-                //   widget.product.productName!,
-                //   overflow: TextOverflow.ellipsis,
-                //   maxLines: 1,
-                //   style: textTheme.bodyLarge!.copyWith(
-                //     fontWeight: FontWeight.bold,
-                //     fontSize: 16,
-                //     color: Colors.white,
-                //   ),
-                // ),
-                // const SizedBox(height: 5),
-                //
-                // Text(
-                //   widget.product.description ?? '',
-                //   maxLines: 2,
-                //   overflow: TextOverflow.ellipsis,
-                //   style: textTheme.bodySmall!.copyWith(
-                //     fontSize: 12,
-                //     color: Colors.white, // ✅ Set text color to white
-                //   ),
-                // ),
-                //
-                // const SizedBox(height: 8),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "${global.appInfo!.currencySign} ${widget.product.price}",
-                      style: textTheme.bodyLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: Colors.white, // ✅ Set text color to white
-                      ),
-                    ),
-                    // widget.product.price != widget.product.mrp
-                    //     ? Text(
-                    //   "${global.appInfo!.currencySign}${widget.product.mrp}",
-                    //   style: textTheme.labelSmall!.copyWith(
-                    //     decoration: TextDecoration.lineThrough,
-                    //     fontSize: 12,
-                    //     color: Colors.redAccent,
-                    //   ),
-                    // )
-                    //     : const SizedBox(),
-                    GestureDetector(
-                      onTap: () {
-                        // Your add button logic here
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white, // White background
-                          borderRadius: BorderRadius.circular(10), // Rounded corners
-                          border: Border.all(color: const Color(0xffe54740), width: 0.5), // Green border
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12, // Shadow color
-                              blurRadius: 2, // Slight shadow effect
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("Add", style: TextStyle(color: Color(0xffe54740), fontSize: 12,fontWeight: FontWeight.w600)),
-                            SizedBox(width: 4), // Space between text and icon
-                            Icon(Icons.add, color: Color(0xffe54740), size: 16),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+            elevation: 2,
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(
+                    global.appInfo!.imageUrl! + widget.product.productImage!,
+                  ),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.4),
+                    BlendMode.darken,
+                  ),
                 ),
-              ],
+                borderRadius: BorderRadius.circular(14.0),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child:  Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Text(
+                  //   widget.product.productName!,
+                  //   overflow: TextOverflow.ellipsis,
+                  //   maxLines: 1,
+                  //   style: textTheme.bodyLarge!.copyWith(
+                  //     fontWeight: FontWeight.bold,
+                  //     fontSize: 16,
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 5),
+                  //
+                  // Text(
+                  //   widget.product.description ?? '',
+                  //   maxLines: 2,
+                  //   overflow: TextOverflow.ellipsis,
+                  //   style: textTheme.bodySmall!.copyWith(
+                  //     fontSize: 12,
+                  //     color: Colors.white, // ✅ Set text color to white
+                  //   ),
+                  // ),
+                  //
+                  // const SizedBox(height: 8),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${global.appInfo!.currencySign} ${widget.product.price}",
+                        style: textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.white, // ✅ Set text color to white
+                        ),
+                      ),
+                      // widget.product.price != widget.product.mrp
+                      //     ? Text(
+                      //   "${global.appInfo!.currencySign}${widget.product.mrp}",
+                      //   style: textTheme.labelSmall!.copyWith(
+                      //     decoration: TextDecoration.lineThrough,
+                      //     fontSize: 12,
+                      //     color: Colors.redAccent,
+                      //   ),
+                      // )
+                      //     : const SizedBox(),
+                      GestureDetector(
+                        onTap: () {
+                          showProductBottomSheet(context,widget.product);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white, // White background
+                            borderRadius: BorderRadius.circular(10), // Rounded corners
+                            border: Border.all(color: const Color(0xffe54740), width: 0.5), // Green border
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12, // Shadow color
+                                blurRadius: 2, // Slight shadow effect
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("Add", style: TextStyle(color: Color(0xffe54740), fontSize: 12,fontWeight: FontWeight.w600)),
+                              SizedBox(width: 4), // Space between text and icon
+                              Icon(Icons.add, color: Color(0xffe54740), size: 16),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

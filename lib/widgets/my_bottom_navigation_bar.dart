@@ -19,34 +19,56 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: homeController.tabIndex,
-      onDestinationSelected: (value) {
-        setState(() {
-          if (value != 1) {
-            homeController.changeTabIndex(value);
-          }
-          widget.onTap!(value);
-        });
-      },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.home_outlined),
-          label: AppLocalizations.of(context)!.txt_home,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xffFFA300).withOpacity(0.7),
+            const Color(0xffFFA300),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        NavigationDestination(
-          icon: const Icon(Icons.search_outlined),
-          label: AppLocalizations.of(context)!.txt_search,
+      ),
+      child: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          backgroundColor:  const Color(0xffFFA300).withOpacity(0.7), // Keep gradient visible
+          indicatorColor: Colors.white.withOpacity(0.2),
+          labelTextStyle: MaterialStateProperty.all(
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          ),
         ),
-        NavigationDestination(
-          icon: const Icon(Icons.history_outlined),
-          label: AppLocalizations.of(context)!.tle_order,
+        child: NavigationBar(
+          backgroundColor:  const Color(0xffFFA300).withOpacity(0.7),
+          selectedIndex: homeController.tabIndex,
+          onDestinationSelected: (value) {
+            setState(() {
+              if (value != 1) {
+                homeController.changeTabIndex(value);
+              }
+              widget.onTap!(value);
+            });
+          },
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.home_outlined, color: Colors.white),
+              label: AppLocalizations.of(context)!.txt_home,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.search_outlined, color: Colors.white),
+              label: AppLocalizations.of(context)!.txt_search,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.history_outlined, color: Colors.white),
+              label: AppLocalizations.of(context)!.tle_order,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
+              label: AppLocalizations.of(context)!.txt_profile,
+            ),
+          ],
         ),
-        NavigationDestination(
-            icon: const Icon(Icons.account_circle_outlined),
-            label: AppLocalizations.of(context)!.txt_profile
-        )
-      ],
+      ),
     );
   }
 }

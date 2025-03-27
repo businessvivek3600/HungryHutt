@@ -14,7 +14,11 @@ class DashboardLocationTitle extends StatelessWidget {
   final FirebaseAnalyticsObserver? observer;
   final Function() getCurrentPosition;
 
-  const DashboardLocationTitle({super.key, this.analytics, this.observer, required this.getCurrentPosition});
+  const DashboardLocationTitle(
+      {super.key,
+      this.analytics,
+      this.observer,
+      required this.getCurrentPosition});
 
   @override
   Widget build(BuildContext context) {
@@ -24,30 +28,30 @@ class DashboardLocationTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        global.currentLocation != null ?
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Text(
-              AppLocalizations.of(context)!.txt_deliver,
-              style: boldCaptionStyle(context).copyWith(
-
-              ),
-            ),
-          ) : const SizedBox(),
+        global.currentLocation != null
+            ? Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  AppLocalizations.of(context)!.txt_deliver,
+                  style:
+                      boldCaptionStyle(context).copyWith(color: Colors.white),
+                ),
+              )
+            : const SizedBox(),
         GestureDetector(
           onTap: () async {
             if (global.lat != null && global.lng != null) {
               Get.to(() => LocationScreen(
-                analytics: analytics,
-                observer: observer,
-              ));
+                    analytics: analytics,
+                    observer: observer,
+                  ));
             } else {
               await getCurrentPosition().then((_) async {
                 if (global.lat != null && global.lng != null) {
                   Get.to(() => LocationScreen(
-                    analytics: analytics,
-                    observer: observer,
-                  ));
+                        analytics: analytics,
+                        observer: observer,
+                      ));
                 }
               });
             }
@@ -63,10 +67,11 @@ class DashboardLocationTitle extends StatelessWidget {
                       : '${AppLocalizations.of(context)!.txt_deliver} No Location',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
-
                   style: textTheme.bodyLarge!.copyWith(
-                  fontSize: 14
-                ),),
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
               ),
               // Transform.rotate(
               //   angle: pi / 2,

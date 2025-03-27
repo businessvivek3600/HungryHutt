@@ -147,14 +147,14 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                     .productName!, // Assuming 'name' key exists
                                 style: const TextStyle(
                                   fontSize: 14,
-                                  wordSpacing: 2,
+                                  wordSpacing: 1,
                                   fontWeight: FontWeight.w600
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 "Customisable",
                                 style: TextStyle(
-                                  color: Colors.grey.shade300,
+                                  color: Colors.black26,
                                   fontSize: 8,
                                 ),
                               ),

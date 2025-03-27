@@ -81,6 +81,7 @@ class DashboardProductListByCategory extends StatelessWidget {
                   ],
                 ),
               ),
+              //${productListByCategory[index].catTitle}
               BundleOffersMenu(
                 analytics: analytics,
                 observer: observer,
