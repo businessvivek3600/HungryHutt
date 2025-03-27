@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -42,7 +43,7 @@ class _CartScreenState extends BaseRouteState {
                 // ✅ AppBar Replacement with a Card
                 Card(
                   color: Colors.white,
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20),
@@ -51,47 +52,43 @@ class _CartScreenState extends BaseRouteState {
                   elevation: 2,
                   margin: EdgeInsets.zero,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
                     child: Column(
                       children: [
                         // ✅ Top Section: Back Button, Title, & Cart Count
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
+                            // Back Button with Same Size as Location Icon
                             IconButton(
                               onPressed: () {
                                 Get.back();
                               },
-                              icon: const Icon(Icons.keyboard_arrow_left),
+                              icon: const Icon(Icons.arrow_back_ios_outlined,
+                                  size: 20),
                             ),
+                            const SizedBox(width: 7),
                             Text(
                               AppLocalizations.of(context)!.txt_cart,
                               style: textTheme.titleLarge,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.start,
                             ),
-                            if (global.nearStoreModel != null)
-                              Text(
-                                "${global.cartCount} ${AppLocalizations.of(context)!.lbl_items}",
-                                style: textTheme.titleMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
                           ],
                         ),
 
                         // ✅ Bottom Section: Address Selection
                         Padding(
-                          padding: const EdgeInsets.only(top: 10),
+                          padding: const EdgeInsets.only(top: 5),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              // Address Icon & Text
+                              // Address Icon & Text in a Row
                               Row(
                                 children: [
                                   const Icon(Icons.location_on,
-                                      color: Colors.black, size: 25),
+                                      size: 25), // ✅ Same size as Back Icon
                                   const SizedBox(width: 7),
                                   Text(
                                     "No Address Selected",
@@ -124,197 +121,267 @@ class _CartScreenState extends BaseRouteState {
 
                 // ✅ Cart Body
                 Expanded(
-                  child: global.nearStoreModel != null
-                      ? _isDataLoaded
-                          ? cartController.cartItemsList != null &&
-                                  cartController
-                                      .cartItemsList!.cartList.isNotEmpty
-                              ? RefreshIndicator(
-                                  triggerMode:
-                                      RefreshIndicatorTriggerMode.anywhere,
-                                  onRefresh: () async {
-                                    await _onRefresh();
-                                  },
-                                  child: SingleChildScrollView(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        children: [
-                                          //  Cart Menu
-                                          CartMenu(
-                                              cartController: cartController),
-
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          //  Square-Shaped Food Cards ListView
-                                          SizedBox(
-                                            height: 110,
-                                            child: ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: 5,
-                                              itemBuilder: (context, index) {
-                                                double screenWidth =
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width;
-                                                double cardWidth = screenWidth *
-                                                    0.8; // ✅ Adaptive width
-
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 10),
-                                                  child: Card(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
+                    child: global.nearStoreModel != null
+                        ? _isDataLoaded
+                            ? cartController.cartItemsList != null &&
+                                    cartController
+                                        .cartItemsList!.cartList.isNotEmpty
+                                ? RefreshIndicator(
+                                    triggerMode:
+                                        RefreshIndicatorTriggerMode.anywhere,
+                                    onRefresh: () async {
+                                      await _onRefresh();
+                                    },
+                                    child: SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          children: [
+                                            //  Cart Menu
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black12,
+                                                      blurRadius: 6,
+                                                      spreadRadius: 1,
                                                     ),
-                                                    elevation: 2,
-                                                    child: Container(
-                                                      width:
-                                                          cardWidth, // ✅ Dynamically adjusted width
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              10),
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          // ✅ Image (Fixed size)
-                                                          ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            child:
-                                                                Image.network(
-                                                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYhwMKoZ6vVlMlqNWhLZRG8utuQRMuQUWeVA&s",
-                                                              width:
-                                                                  70, // ✅ Adjusted width
-                                                              height:
-                                                                  70, // ✅ Adjusted height
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 10),
+                                                  ]),
 
-                                                          // ✅ Text Section
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .radio_button_checked_outlined,
-                                                                    color: Colors
-                                                                        .green,
-                                                                    size: 13),
-                                                                Row(
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          Text(
-                                                                        "Triple Chocolate Brownie",
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .titleSmall!
-                                                                            .copyWith(fontWeight: FontWeight.bold),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis, // ✅ Prevents overflow
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    Text(
-                                                                      "₹ 119",
-                                                                      style: Theme.of(
-                                                                              context)
-                                                                          .textTheme
-                                                                          .titleSmall!
-                                                                          .copyWith(
-                                                                              fontWeight: FontWeight.w600),
-                                                                    ),
-                                                                    // ✅ Add Button
-                                                                    OutlinedButton
-                                                                        .icon(
-                                                                      onPressed:
-                                                                          () {},
-                                                                      icon: const Icon(
-                                                                          Icons
-                                                                              .add,
-                                                                          size:
-                                                                              15,
-                                                                          color:
-                                                                              Colors.green), // ✅ Add Icon
-                                                                      label:
-                                                                          const Text(
-                                                                        "Add",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.green),
-                                                                      ),
-                                                                      style: OutlinedButton
-                                                                          .styleFrom(
-                                                                        side: const BorderSide(
-                                                                            color:
-                                                                                Colors.green),
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                6,
-                                                                            vertical:
-                                                                                4),
-                                                                        shape:
-                                                                            RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(8),
-                                                                        ),
-                                                                        textStyle: Theme.of(context)
-                                                                            .textTheme
-                                                                            .bodySmall,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
+                                              // margin:
+                                              //     const EdgeInsets.symmetric(
+                                              //         horizontal: 15,
+                                              //         vertical: 10),
+                                              // padding:
+                                              //     const EdgeInsets.symmetric(
+                                              //         vertical: 10),
+                                              child: Column(
+                                                children: [
+                                                  /// Cart Items
+                                                  CartMenu(
+                                                      cartController:
+                                                          cartController),
+                                                  Dash(
+                                                    length: 300,
+                                                    dashLength: 5,
+                                                    dashColor: Colors.grey,
+                                                  ),
+
+                                                  /// Bottom Text
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            12.0),
+                                                    child: OutlinedButton.icon(
+                                                      onPressed: () {
+                                                        // Add functionality here
+                                                      },
+                                                      style: OutlinedButton
+                                                          .styleFrom(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 0),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        side: BorderSide(
+                                                            color: Colors
+                                                                .grey.shade300),
+                                                      ),
+                                                      icon: Icon(
+                                                          Icons
+                                                              .edit_note_rounded,
+                                                          color:
+                                                              Colors.grey[700],
+                                                          size: 25),
+                                                      label: TextField(
+                                                        focusNode: FocusNode(),
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              "Special Instruction", // Placeholder text
+                                                          border: InputBorder
+                                                              .none, // Removes underline
+                                                          contentPadding:
+                                                              EdgeInsets.all(
+                                                                  10), // Adjust padding
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                );
-                                              },
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            //  Square-Shaped Food Cards ListView
+                                            SizedBox(
+                                              height: 110,
+                                              child: ListView.builder(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemCount: 5,
+                                                itemBuilder: (context, index) {
+                                                  double screenWidth =
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width;
+                                                  double cardWidth = screenWidth *
+                                                      0.8; // ✅ Adaptive width
+
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 10),
+                                                    child: Card(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                      elevation: 2,
+                                                      child: Container(
+                                                        width:
+                                                            cardWidth, // ✅ Dynamically adjusted width
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            // ✅ Image (Fixed size)
+                                                            ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              child:
+                                                                  Image.network(
+                                                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYhwMKoZ6vVlMlqNWhLZRG8utuQRMuQUWeVA&s",
+                                                                width:
+                                                                    70, // ✅ Adjusted width
+                                                                height:
+                                                                    70, // ✅ Adjusted height
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 10),
+
+                                                            // ✅ Text Section
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Icon(
+                                                                      Icons
+                                                                          .radio_button_checked_outlined,
+                                                                      color: Colors
+                                                                          .green,
+                                                                      size: 13),
+                                                                  Row(
+                                                                    children: [
+                                                                      Expanded(
+                                                                        child:
+                                                                            Text(
+                                                                          "Triple Chocolate Brownie",
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .titleSmall!
+                                                                              .copyWith(fontWeight: FontWeight.bold),
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis, // ✅ Prevents overflow
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Text(
+                                                                        "₹ 119",
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .titleSmall!
+                                                                            .copyWith(fontWeight: FontWeight.w600),
+                                                                      ),
+                                                                      // ✅ Add Button
+                                                                      OutlinedButton
+                                                                          .icon(
+                                                                        onPressed:
+                                                                            () {},
+                                                                        icon: const Icon(
+                                                                            Icons
+                                                                                .add,
+                                                                            size:
+                                                                                15,
+                                                                            color:
+                                                                                Colors.green), // ✅ Add Icon
+                                                                        label:
+                                                                            const Text(
+                                                                          "Add",
+                                                                          style:
+                                                                              TextStyle(color: Colors.green),
+                                                                        ),
+                                                                        style: OutlinedButton
+                                                                            .styleFrom(
+                                                                          side:
+                                                                              const BorderSide(color: Colors.green),
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 6,
+                                                                              vertical: 4),
+                                                                          shape:
+                                                                              RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8),
+                                                                          ),
+                                                                          textStyle: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodySmall,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              : _emptyCartWidget()
-                          : _shimmer()
-                      : Center(
-                          child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Text(global.locationMessage!),
-                        )),
-                ),
+                                  )
+                                : _emptyCartWidget()
+                            : _shimmer()
+                        : Center(
+                            child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Text(global.locationMessage!),
+                          ))),
               ],
             ),
           ),

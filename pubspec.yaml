@@ -92,6 +92,7 @@ dependencies:
   google_places_flutter: ^2.1.0
   google_place: ^0.4.7
   video_player: ^2.9.3
+  flutter_dash: ^1.0.0
 
 
 dependency_overrides:
