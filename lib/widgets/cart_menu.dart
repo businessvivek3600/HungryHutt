@@ -47,17 +47,22 @@ class _CartMenuItemState extends State<CartMenuItem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CachedNetworkImage(
-                      imageUrl: global.appInfo!.imageUrl! + widget.product!.varientImage!,
+                      imageUrl: global.appInfo!.imageUrl! +
+                          widget.product!.varientImage!,
                       imageBuilder: (context, imageProvider) => Container(
                         color: const Color(0xffF7F7F7),
                         padding: const EdgeInsets.all(5),
                         child: Container(
                           height: 80,
                           width: 40,
-                          decoration: BoxDecoration(color: const Color(0xffF7F7F7), image: DecorationImage(image: imageProvider, fit: BoxFit.contain)),
+                          decoration: BoxDecoration(
+                              color: const Color(0xffF7F7F7),
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.contain)),
                         ),
                       ),
-                      placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                      placeholder: (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
                       errorWidget: (context, url, error) => SizedBox(
                         height: 80,
                         width: 40,
@@ -77,7 +82,8 @@ class _CartMenuItemState extends State<CartMenuItem> {
                             widget.product!.productName!,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
-                            style: textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: textTheme.bodyLarge!.copyWith(
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ),
                       ],
@@ -88,7 +94,8 @@ class _CartMenuItemState extends State<CartMenuItem> {
                       children: [
                         Text(
                           "${global.appInfo!.currencySign} ${widget.product!.price}",
-                          style: textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       ],
                     )
@@ -106,14 +113,19 @@ class _CartMenuItemState extends State<CartMenuItem> {
                           InkWell(
                             onTap: () async {
                               showOnlyLoaderDialog();
-                              if (widget.product!.cartQty != null && widget.product!.cartQty == 1) {
+                              if (widget.product!.cartQty != null &&
+                                  widget.product!.cartQty == 1) {
                                 _qty = 0;
                               } else {
                                 _qty = widget.product!.cartQty! - 1;
                               }
                               ATCMS? isSuccess;
-                              isSuccess = await widget.cartController!.addToCart(widget.product, _qty, true, varientId: widget.product!.varientId, callId: 0);
-                              if (isSuccess!.isSuccess != null && context.mounted) {
+                              isSuccess = await widget.cartController!
+                                  .addToCart(widget.product, _qty, true,
+                                      varientId: widget.product!.varientId,
+                                      callId: 0);
+                              if (isSuccess!.isSuccess != null &&
+                                  context.mounted) {
                                 Navigator.of(context).pop();
                               }
                               showToast(isSuccess.message!);
@@ -130,17 +142,24 @@ class _CartMenuItemState extends State<CartMenuItem> {
                                 height: 23,
                                 width: 23,
                                 alignment: Alignment.center,
-                                color: Theme.of(context).colorScheme.secondaryContainer,
-                                child: widget.product!.cartQty != null && widget.product!.cartQty == 1
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
+                                child: widget.product!.cartQty != null &&
+                                        widget.product!.cartQty == 1
                                     ? Icon(
-                                        Icons.delete,
+                                        Icons.remove,
                                         size: 17.0,
-                                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondaryContainer,
                                       )
                                     : Icon(
                                         MdiIcons.minus,
                                         size: 17.0,
-                                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondaryContainer,
                                       )),
                           ),
                           const SizedBox(
@@ -154,7 +173,9 @@ class _CartMenuItemState extends State<CartMenuItem> {
                                 width: 1.0,
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
-                              borderRadius: const BorderRadius.all(Radius.circular(5.0) //                 <--- border radius here
+                              borderRadius: const BorderRadius.all(
+                                  Radius.circular(
+                                      5.0) //                 <--- border radius here
                                   ),
                             ),
                             child: Center(
@@ -175,8 +196,12 @@ class _CartMenuItemState extends State<CartMenuItem> {
                               showOnlyLoaderDialog();
                               _qty = widget.product!.cartQty! + 1;
                               ATCMS? isSuccess;
-                              isSuccess = await widget.cartController!.addToCart(widget.product, _qty, false, varientId: widget.product!.varientId, callId: 0);
-                              if (isSuccess!.isSuccess != null && context.mounted) {
+                              isSuccess = await widget.cartController!
+                                  .addToCart(widget.product, _qty, false,
+                                      varientId: widget.product!.varientId,
+                                      callId: 0);
+                              if (isSuccess!.isSuccess != null &&
+                                  context.mounted) {
                                 Navigator.of(context).pop();
                               }
                               showToast(isSuccess.message!);
@@ -193,18 +218,22 @@ class _CartMenuItemState extends State<CartMenuItem> {
                                 height: 23,
                                 width: 23,
                                 alignment: Alignment.center,
-                                color: Theme.of(context).colorScheme.secondaryContainer,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
                                 child: Icon(
                                   MdiIcons.plus,
                                   size: 17,
-                                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSecondaryContainer,
                                 )),
                           )
                         ],
                       ),
                     )),
               ],
-            ),
+            ),  
           ),
         ));
   }
@@ -225,7 +254,6 @@ class _CartMenuItemState extends State<CartMenuItem> {
 }
 
 class _CartMenuState extends State<CartMenu> {
-
   _CartMenuState();
 
   @override
@@ -245,7 +273,13 @@ class _CartMenuState extends State<CartMenu> {
             onDismissed: (direction) async {
               showOnlyLoaderDialog();
               ATCMS? isSuccess;
-              isSuccess = await widget.cartController!.addToCart(widget.cartController!.cartItemsList!.cartList[index], 0, true, varientId: widget.cartController!.cartItemsList!.cartList[index].varientId, callId: 0);
+              isSuccess = await widget.cartController!.addToCart(
+                  widget.cartController!.cartItemsList!.cartList[index],
+                  0,
+                  true,
+                  varientId: widget
+                      .cartController!.cartItemsList!.cartList[index].varientId,
+                  callId: 0);
               if (isSuccess!.isSuccess != null && context.mounted) {
                 Navigator.of(context).pop();
               }

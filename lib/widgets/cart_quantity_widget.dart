@@ -6,17 +6,17 @@ final class CartQuantityWidget extends StatelessWidget {
   final VoidCallback? addTapped;
   final VoidCallback? deleteTapped;
 
-  const CartQuantityWidget({
-    super.key,
-    required this.quantity,
-    required this.addTapped,
-    required this.deleteTapped
-  });
+  const CartQuantityWidget(
+      {super.key,
+      required this.quantity,
+      required this.addTapped,
+      required this.deleteTapped});
 
   @override
   Widget build(BuildContext context) {
-    if(quantity == null || quantity == 0) {
-      return IconButton.filledTonal(onPressed: addTapped, icon: const Icon(Icons.add));
+    if (quantity == null || quantity == 0) {
+      return IconButton.filledTonal(
+          onPressed: addTapped, icon: const Icon(Icons.add));
     } else {
       return Padding(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
@@ -25,9 +25,7 @@ final class CartQuantityWidget extends StatelessWidget {
           // spacing: 5,
           children: [
             IconButton.filledTonal(
-                onPressed: deleteTapped,
-                icon: Icon(MdiIcons.minus)
-            ),
+                onPressed: deleteTapped, icon: Icon(MdiIcons.minus)),
             Container(
               height: 23,
               width: 23,
@@ -44,7 +42,8 @@ final class CartQuantityWidget extends StatelessWidget {
                 child: Text(quantity.toString()),
               ),
             ),
-            IconButton.filledTonal(onPressed: addTapped, icon: const Icon(Icons.add))
+            IconButton.filledTonal(
+                onPressed: addTapped, icon: const Icon(Icons.add))
           ],
         ),
       );
