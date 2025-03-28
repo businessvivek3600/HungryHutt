@@ -166,7 +166,7 @@ class _CartScreenState extends BaseRouteState {
                                                           cartController),
                                                   Dash(
                                                     length: 300,
-                                                    dashLength: 5,
+                                                    dashLength: 2,
                                                     dashColor: Colors.grey,
                                                   ),
 
@@ -174,7 +174,7 @@ class _CartScreenState extends BaseRouteState {
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(
-                                                            12.0),
+                                                            14.0),
                                                     child: OutlinedButton.icon(
                                                       onPressed: () {
                                                         // Add functionality here
@@ -189,7 +189,7 @@ class _CartScreenState extends BaseRouteState {
                                                             RoundedRectangleBorder(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(12),
+                                                                  .circular(16),
                                                         ),
                                                         side: BorderSide(
                                                             color: Colors
@@ -206,12 +206,15 @@ class _CartScreenState extends BaseRouteState {
                                                         decoration:
                                                             InputDecoration(
                                                           hintText:
-                                                              "Special Instruction", // Placeholder text
+                                                              "Special Instruction",
+                                                          hintStyle: TextStyle(
+                                                              fontWeight: FontWeight
+                                                                  .w500), // Placeholder text
                                                           border: InputBorder
                                                               .none, // Removes underline
                                                           contentPadding:
                                                               EdgeInsets.all(
-                                                                  10), // Adjust padding
+                                                                  8), // Adjust padding
                                                         ),
                                                       ),
                                                     ),
@@ -219,6 +222,7 @@ class _CartScreenState extends BaseRouteState {
                                                 ],
                                               ),
                                             ),
+                                            SizedBox(height: 10),
                                             //  Square-Shaped Food Cards ListView
                                             SizedBox(
                                               height: 110,
@@ -370,6 +374,7 @@ class _CartScreenState extends BaseRouteState {
                                                 },
                                               ),
                                             ),
+                                            Text("Data"),
                                           ],
                                         ),
                                       ),

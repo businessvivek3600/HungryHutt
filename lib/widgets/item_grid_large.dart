@@ -33,6 +33,7 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      
       children: [
         buildGradientHeadingRow(context, widget.title),
         GridView.builder(
@@ -55,7 +56,8 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
               ),
               elevation: 4,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -82,11 +84,11 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                 width: 12,
                                 height: 12,
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(3.0),
-
+                                  borderRadius: BorderRadius.circular(3.0),
                                   color: Colors.transparent,
-                                  border: Border.all(color: Colors.green, width: 2),),
+                                  border: Border.all(
+                                      color: Colors.green, width: 2),
+                                ),
                                 padding: const EdgeInsets.all(2),
                                 child: Container(
                                   width: 8,
@@ -138,7 +140,7 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                             height: 5,
                           ),
                           // if (product['new'] == true)
-
+    
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -146,10 +148,9 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                 product
                                     .productName!, // Assuming 'name' key exists
                                 style: const TextStyle(
-                                  fontSize: 14,
-                                  wordSpacing: 1,
-                                  fontWeight: FontWeight.w600
-                                ),
+                                    fontSize: 14,
+                                    wordSpacing: 1,
+                                    fontWeight: FontWeight.w600),
                               ),
                               const Text(
                                 "Customisable",
@@ -168,10 +169,11 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                           ),
                           const Spacer(),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12.0),
                             child: GestureDetector(
                                 onTap: () {
-                                  showProductBottomSheet(context,product);
+                                  showProductBottomSheet(context, product);
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
@@ -192,8 +194,9 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                                 fontWeight: FontWeight.w600)),
                                         SizedBox(width: 4),
                                         Icon(Icons.add,
-                                            color: Color(0xffe54740), size: 16),
-
+                                            color: Color(0xffe54740),
+                                            size: 16),
+    
                                         // Space between text and icon
                                       ],
                                     ),
