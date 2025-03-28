@@ -67,12 +67,12 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
               expandedHeight: 220.0,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
-                  decoration: const BoxDecoration(
+                  decoration:  BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFFFF8000), // Deep orange shade
+                        Color(0xFFFF8000).withOpacity(0.6), // Deep orange shade
                         Color(0xFFFFA500), // Warm yellow-orange shade
                       ],
                     ),

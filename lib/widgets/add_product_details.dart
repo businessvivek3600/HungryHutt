@@ -12,6 +12,7 @@ import 'package:user/widgets/gradient_heading_row.dart';
 import '../constants/statc_food_variant.dart';
 import '../controllers/cart_controller.dart';
 import '../models/addtocartmessagestatus.dart';
+import '../models/variant_model.dart';
 
 class ProductBottomSheet extends StatefulWidget {
   final Product product;
@@ -25,10 +26,13 @@ class ProductBottomSheet extends StatefulWidget {
 class _ProductBottomSheetState extends State<ProductBottomSheet> {
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> showAppBarNotifier = ValueNotifier(false);
-
+  late final List<Variant> variants;
   @override
   void initState() {
     super.initState();
+    setState(() {
+        variants = widget.product.varient;
+    });
     _scrollController.addListener(_onScroll);
   }
 
@@ -51,7 +55,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
     super.dispose();
   }
 
-  int selectedVariant = 1;
+  int selectedVariantIndex = 0;
   bool _isExpanded = false;
   final siteUrl = "https://hungryhutt.com/";
   Future<void> _shareProduct() async {
@@ -92,8 +96,10 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
     }
   }
 
+  List<Addon> selectedAddons = [];
   final CartController cartController = Get.find<CartController>();
   Widget build(BuildContext context) {
+    Variant selectedVariant = widget.product.varient[selectedVariantIndex];
     return Stack(
       children: [
         DraggableScrollableSheet(
@@ -213,9 +219,9 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                                         FontWeight.w600),
                                               ),
                                               IconButton(
-                                                icon: Icon(Icons.share_outlined,
-                                                    color:
-                                                        Colors.black),
+                                                icon: const Icon(
+                                                    Icons.share_outlined,
+                                                    color: Colors.black),
                                                 onPressed: _shareProduct,
                                               ),
                                             ],
@@ -255,29 +261,33 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                   mainAxisSpacing: 8,
                                   childAspectRatio: 1.5,
                                 ),
-                                itemCount: variantOptions.length,
+                                itemCount: variants.length,
                                 itemBuilder: (context, index) {
                                   return radioVarientButton(
-                                    variantOptions[index]["title"]!,
-                                    variantOptions[index]["price"]!,
+                                    variants[index].unit.toString(),
+                                    variants[index].price.toString(),
                                     index,
-                                    selectedVariant,
+                                   selectedVariantIndex,
                                     (val) {
                                       setState(() {
-                                        selectedVariant = val!;
+                                        selectedVariantIndex = val!;
                                       });
                                     },
                                   );
                                 },
                               ),
                               const SizedBox(height: 20),
-                              _buildUpgradeOptions(),
-                              const SizedBox(height: 20),
-                              _buildToppings(
-                                  "Toppings-veg[Regular]", vegPizzaToppings, 4),
-                              const SizedBox(height: 20),
-                              _buildToppings("Toppings-Non-veg[Regular]",
-                                  nonVegPizzaToppings, 3),
+                              if (selectedVariant.addonCategories != null)
+                                ...selectedVariant.addonCategories!.map((addonCategory) {
+                                  return CheckBoxAddon(
+                                    addonCategory: addonCategory,
+                                    onSelectionChanged: (selected) {
+                                      setState(() {
+                                        selectedAddons = selected;
+                                      });
+                                    },
+                                  );
+                                }).toList(),
                             ],
                           ),
                         ),
@@ -334,7 +344,6 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
             ),
             child: ElevatedButton(
               onPressed: () async {
-
                 ATCMS? response = await cartController.addToCart(
                   widget.product, // Product to add
                   1, // Quantity
@@ -411,62 +420,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
       },
     );
   }
-
-  Widget _buildUpgradeOptions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("Upgrade Your Base - Regular",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const Text("you can choose up to 1 option(s)",
-            style: TextStyle(color: Colors.black54, fontSize: 12)),
-        const SizedBox(height: 10),
-        checkBoxRowVarient("Double Cheese", "₹410", true),
-        const SizedBox(height: 5),
-        checkBoxRowVarient("Ultra Thin Crust Pizza - Regular", "₹560", true),
-      ],
-    );
-  }
-
-  Widget _buildToppings(String title, List<String> toppings, int maxOptions) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        Text("you can choose up to $maxOptions option(s)",
-            style: const TextStyle(color: Colors.black54, fontSize: 12)),
-        Column(
-          children: List.generate(
-            toppings.length,
-            (index) => Column(
-              children: [
-                const SizedBox(height: 5),
-                checkBoxRowVarient(toppings[index], "₹${5 + index}", true),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
-
-// Function to Show BottomSheet
-void showProductBottomSheet(BuildContext context, Product product) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
-        child: ProductBottomSheet(product: product),
-      );
-    },
-  );
-}
-
 Card radioVarientButton(String title, String price, int value, int groupValue,
     void Function(int?) onChanged) {
   return Card(
@@ -489,12 +443,14 @@ Card radioVarientButton(String title, String price, int value, int groupValue,
               children: [
                 Text(
                   title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  price,
+                  "${global.appInfo!.currencySign}${price.toString()}",
                   style: const TextStyle(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -512,71 +468,136 @@ Card radioVarientButton(String title, String price, int value, int groupValue,
     ),
   );
 }
+class CheckBoxAddon extends StatefulWidget {
+  final AddonCategory addonCategory;
+  final Function(List<Addon>) onSelectionChanged;
 
-Card checkBoxRowVarient(String title, String price, bool veg) {
-  return Card(
-    elevation: 2,
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 14,
-                height: 14,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4.0),
-                  color: Colors.transparent,
-                  border: Border.all(
-                      color: veg ? Colors.green : Colors.red, width: 2),
-                ),
-                padding: const EdgeInsets.all(2),
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: veg ? Colors.green : Colors.red,
-                    shape: BoxShape.circle,
+  const CheckBoxAddon({
+    Key? key,
+    required this.addonCategory,
+    required this.onSelectionChanged,
+  }) : super(key: key);
+
+  @override
+  _CheckBoxAddonState createState() => _CheckBoxAddonState();
+}
+
+class _CheckBoxAddonState extends State<CheckBoxAddon> {
+  List<Addon> selectedAddons = [];
+  Addon? selectedRadioAddon;
+  @override
+  Widget build(BuildContext context) {
+    bool isMultipleSelection = widget.addonCategory.multipleType == 1;
+    int selectionLimit = isMultipleSelection ? (widget.addonCategory.addons?.length ?? 0) : 1;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(widget.addonCategory.name ?? "Add-ons", style: const TextStyle(fontWeight: FontWeight.bold)),
+       Text("you can choose up to $selectionLimit option(s)",
+            style: TextStyle(color: Colors.black54, fontSize: 12)),
+        ...widget.addonCategory.addons?.map((addon) {
+          return   Card(
+            elevation: 2,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.0),
+                          color: Colors.transparent,
+                          border: Border.all(
+                              color:  Colors.green, width: 2),
+                        ),
+                        padding: const EdgeInsets.all(2),
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: const BoxDecoration(
+                            color:  Colors.green ,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        addon.name ?? "",
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(width: 20),
+                  Row(
+                    children: [
+                      Text(
+                        "+${addon.price ?? 0}",
+                        style:
+                        const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+                      ),
+                      SizedBox(
+                        height: 15,
+                        child:isMultipleSelection
+                            ? Checkbox(
+                          value: selectedAddons.contains(addon),
+                          onChanged: (isChecked) {
+                            setState(() {
+                              if (isChecked == true) {
+                                selectedAddons.add(addon);
+                              } else {
+                                selectedAddons.remove(addon);
+                              }
+                            });
+                            widget.onSelectionChanged(selectedAddons);
+                          },
+                          activeColor: Colors.green,
+                        )
+                            : Radio<Addon>(
+                          value: addon,
+                          groupValue: selectedRadioAddon,
+                          onChanged: (Addon? value) {
+                            setState(() {
+                              selectedRadioAddon = value;
+                              selectedAddons = value != null ? [value] : [];
+                            });
+                            widget.onSelectionChanged(selectedAddons);
+                          },
+                          activeColor: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              const SizedBox(width: 5),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 20),
-          Row(
-            children: [
-              Text(
-                price,
-                style:
-                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
-              ),
-              SizedBox(
-                height: 15,
-                child: Checkbox(
-                  value: true, // Set initial value
-                  onChanged: (bool? newValue) {
-                    // Handle checkbox state change
-                  },
-                  activeColor: Colors.green,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
+            ),
+          );
+        }).toList() ?? [],
+SizedBox(height: 10,),
+      ],
+    );
+  }
+}
+///----- Function to Show BottomSheet
+void showProductBottomSheet(BuildContext context, Product product) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: ProductBottomSheet(product: product),
+      );
+    },
   );
 }
