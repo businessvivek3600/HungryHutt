@@ -23,6 +23,7 @@ class DashboardProductListByCategory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    print("_____________________12345678________________________${productListByCategory}");
     return ListView.builder(
         shrinkWrap: true,
         itemCount: productListByCategory.length,
