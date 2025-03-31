@@ -31,6 +31,8 @@ class _CartScreenState extends BaseRouteState {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double cardWidth = screenWidth * 0.9; // 15% of screen height
     return PopScope(
       canPop: false,
       child: GetBuilder<CartController>(
@@ -150,14 +152,6 @@ class _CartScreenState extends BaseRouteState {
                                                       spreadRadius: 1,
                                                     ),
                                                   ]),
-
-                                              // margin:
-                                              //     const EdgeInsets.symmetric(
-                                              //         horizontal: 15,
-                                              //         vertical: 10),
-                                              // padding:
-                                              //     const EdgeInsets.symmetric(
-                                              //         vertical: 10),
                                               child: Column(
                                                 children: [
                                                   /// Cart Items
@@ -243,6 +237,7 @@ class _CartScreenState extends BaseRouteState {
                                                         const EdgeInsets.only(
                                                             right: 10),
                                                     child: Card(
+                                                      color: Colors.white,
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:
@@ -330,31 +325,37 @@ class _CartScreenState extends BaseRouteState {
                                                                           .icon(
                                                                         onPressed:
                                                                             () {},
-                                                                        icon: const Icon(
-                                                                            Icons
-                                                                                .add,
-                                                                            size:
-                                                                                15,
-                                                                            color:
-                                                                                Colors.green), // ✅ Add Icon
+                                                                        icon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .add,
+                                                                          size:
+                                                                              12,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        ),
                                                                         label:
                                                                             const Text(
                                                                           "Add",
                                                                           style:
-                                                                              TextStyle(color: Colors.green),
+                                                                              TextStyle(
+                                                                            color:
+                                                                                Colors.green,
+                                                                            fontSize:
+                                                                                12,
+                                                                          ),
                                                                         ),
                                                                         style: OutlinedButton
                                                                             .styleFrom(
                                                                           side:
-                                                                              const BorderSide(color: Colors.green),
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              horizontal: 6,
-                                                                              vertical: 4),
+                                                                              BorderSide(color: Colors.green),
+                                                                          padding: EdgeInsets.symmetric(
+                                                                              horizontal: 2,
+                                                                              vertical: -4),
                                                                           shape:
                                                                               RoundedRectangleBorder(
                                                                             borderRadius:
-                                                                                BorderRadius.circular(8),
+                                                                                BorderRadius.circular(4),
                                                                           ),
                                                                           textStyle: Theme.of(context)
                                                                               .textTheme
@@ -374,7 +375,275 @@ class _CartScreenState extends BaseRouteState {
                                                 },
                                               ),
                                             ),
-                                            Text("Data"),
+                                            SizedBox(height: 7),
+                                            SizedBox(
+                                              width: cardWidth,
+                                              // height: 100,
+                                              child: Card(
+                                                color: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                elevation: 2,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 12.0,
+                                                      vertical: 6.0),
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      // Discount icon
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.all(8),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .green.shade100,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        child: Icon(
+                                                          Icons.percent,
+                                                          color: Colors.green,
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                      // Offer details
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              'LPN75',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 4),
+                                                            Text(
+                                                              'Get Flat Discount of Rs.75 on Minimum Billing of Rs.399',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .grey[600],
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 5),
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  'View more offers',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                                ),
+                                                                Spacer(),
+                                                                Text(
+                                                                  'Apply',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+
+                                            SizedBox(height: 5),
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4.0),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Bill Details",
+                                                          style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              16.0),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            spreadRadius: 1,
+                                                            blurRadius: 5,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                AppLocalizations.of(
+                                                                        context)!
+                                                                    .txt_total_price,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                cartController!
+                                                                            .cartItemsList !=
+                                                                        null
+                                                                    ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.totalMrp!.toStringAsFixed(2)}"
+                                                                    : "${global.appInfo!.currencySign} 0",
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 8.0),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    AppLocalizations.of(
+                                                                            context)!
+                                                                        .txt_discount_price,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Text(
+                                                                cartController!
+                                                                            .cartItemsList !=
+                                                                        null
+                                                                    ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.discountonmrp!.toStringAsFixed(2)}"
+                                                                    : "${global.appInfo!.currencySign} 0",
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 8.0),
+                                                          Divider(),
+                                                          const SizedBox(
+                                                              height: 8.0),
+                                                          Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .txt_tax,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  cartController!
+                                                                              .cartItemsList !=
+                                                                          null
+                                                                      ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.totalTax!.toStringAsFixed(2)}"
+                                                                      : "${global.appInfo!.currencySign} 0",
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                ),
+                                                              ]),
+                                                          const SizedBox(
+                                                              height: 16.0),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )),
                                           ],
                                         ),
                                       ),
