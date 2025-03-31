@@ -12,6 +12,7 @@ import 'package:user/models/category_product_model.dart';
 import 'package:user/screens/login_screen.dart';
 import 'package:user/screens/product_description_screen.dart';
 import 'package:user/theme/style.dart';
+import 'package:user/widgets/tag_container.dart';
 import 'package:user/widgets/toastfile.dart';
 
 class PopularProductsMenuItem extends StatefulWidget {
@@ -76,33 +77,10 @@ class _PopularProductsMenuItemState extends State<PopularProductsMenuItem> {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade100,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text("Bestseller",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.shade100,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text("New",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold)),
-                        ),
+                        buildBadge("Bestseller",
+                            Colors.green.shade800),
+                        const SizedBox(width: 5),
+                        buildBadge("New", Colors.orange),
                       ],
                     ),
                     const SizedBox(height: 6),
@@ -151,8 +129,8 @@ class _PopularProductsMenuItemState extends State<PopularProductsMenuItem> {
                   child: CachedNetworkImage(
                     imageUrl: global.appInfo!.imageUrl! + widget.product.productImage!,
                     fit: BoxFit.cover, // Ensure image fills the entire container
-                    placeholder: (context, url) => Center(child: CircularProgressIndicator()), // Optional loading indicator
-                    errorWidget: (context, url, error) => Icon(Icons.error, size: 50), // Optional error placeholder
+                    placeholder: (context, url) => const Center(child: CircularProgressIndicator()), // Optional loading indicator
+                    errorWidget: (context, url, error) => const Icon(Icons.error, size: 50), // Optional error placeholder
                     imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(

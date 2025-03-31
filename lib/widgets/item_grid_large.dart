@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:user/models/businessLayer/global.dart' as global;
 import 'package:user/widgets/gradient_heading_row.dart';
+import 'package:user/widgets/tag_container.dart';
 import '../models/category_product_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -31,6 +32,8 @@ class NewlyProductGrid extends StatefulWidget {
 class _NewlyProductGridState extends State<NewlyProductGrid> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double childAspectRatio = screenWidth < 600 ? 0.65 : 0.68;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -39,11 +42,11 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
           padding: const EdgeInsets.all(10),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 8,
-            childAspectRatio: 0.67, // Adjust this for better spacing
+            childAspectRatio: childAspectRatio,
           ),
           itemCount: widget.dealProducts.length,
           itemBuilder: (context, index) {
@@ -100,38 +103,10 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                               const SizedBox(
                                 width: 5,
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 1),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.shade50,
-                                ),
-                                child: const Text(
-                                  "Bestseller",
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 6,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 1),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.shade50,
-                                ),
-                                child: const Text(
-                                  "New",
-                                  style: TextStyle(
-                                    color: Colors.orange,
-                                    fontSize: 6,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                              buildBadge("Bestseller",
+                                  Colors.green.shade800),
+                              const SizedBox(width: 5),
+                              buildBadge("New", Colors.orange),
                             ],
                           ),
                           const SizedBox(
