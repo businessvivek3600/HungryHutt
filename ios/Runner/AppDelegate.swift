@@ -11,7 +11,7 @@ import GoogleMaps
   ) -> Bool {
 //     FirebaseApp.configure()
     GeneratedPluginRegistrant.register(with: self)
-    GMSServices.provideAPIKey("your map key which is associated in google-info.plist")
+    GMSServices.provideAPIKey("AIzaSyDJD4uR9IS6X7lg5cX9Hp5Ef0-Xot6M8zQ")
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
     }
