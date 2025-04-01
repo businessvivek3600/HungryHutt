@@ -50,6 +50,7 @@ class Product {
   bool isSelected = false;
   int? discount;
   int? maxprice;
+  int? isNonVeg;
   String? ratingDescription;
 
   Product();
@@ -63,6 +64,7 @@ class Product {
       mrp = json['mrp'] != null ? double.parse('${json['mrp']}') : null;
       price = json['price'] != null ? double.parse('${json['price']}'): null;
       minOrdQty = json['min_ord_qty'] != null ? int.parse(json['min_ord_qty'].toString()) : null;
+      minOrdQty = json['vegNonVeg'] != null ? int.parse(json['vegNonVeg'].toString()) : null;
       maxOrdQty = json['max_ord_qty'] != null ? int.parse(json['max_ord_qty'].toString()) : null;
       productId = json['product_id'] != null ? int.parse(json['product_id'].toString()) : null;
       quantity = json['quantity'] != null ? int.parse(json['quantity'].toString()) : null;

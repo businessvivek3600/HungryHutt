@@ -72,7 +72,7 @@ class _HomeScreenState extends BaseRouteState<HomeScreen> {
               },
             ),
             floatingActionButton: FloatingActionButton(
-              backgroundColor:  const Color(0xffFFA300),
+              backgroundColor:   const Color(0xFF68a039),
                 child: const Icon(
                   Icons.add_shopping_cart_outlined,
                   color:Colors.white,

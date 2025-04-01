@@ -8,6 +8,7 @@ import 'package:user/models/businessLayer/global.dart' as global;
 import 'package:flutter/material.dart';
 import 'package:user/models/category_product_model.dart';
 import 'package:user/widgets/gradient_heading_row.dart';
+import 'package:user/widgets/tag_container.dart';
 
 import '../constants/statc_food_variant.dart';
 import '../controllers/cart_controller.dart';
@@ -99,6 +100,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
   List<Addon> selectedAddons = [];
   final CartController cartController = Get.find<CartController>();
   Widget build(BuildContext context) {
+    print("---------------------------widget.product.isNonVeg ----${widget.product.isNonVeg}");
     Variant selectedVariant = widget.product.varient[selectedVariantIndex];
     return Stack(
       children: [
@@ -184,7 +186,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                         global.appInfo!.imageUrl! +
                                             widget.product.productImage!,
                                         fit: BoxFit.cover,
-                                        height: 250,
+                                         height: 250,
                                         width: double.infinity,
                                       ),
                                     ),
@@ -198,10 +200,10 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                         children: [
                                           Row(
                                             children: [
-                                              _buildBadge("Bestseller",
+                                              buildBadge("Bestseller",
                                                   Colors.green.shade800),
                                               const SizedBox(width: 5),
-                                              _buildBadge("New", Colors.orange),
+                                              buildBadge("New", Colors.orange),
                                             ],
                                           ),
                                           const SizedBox(height: 5),
@@ -286,12 +288,15 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                         selectedAddons = selected;
                                       });
                                     },
+                                    inVeg:  widget.product.isNonVeg ==  1 ?true:false,
                                   );
                                 }).toList(),
+                              const SizedBox(height: 60),
                             ],
                           ),
                         ),
                       ),
+
                     ],
                   );
                 },
@@ -377,18 +382,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
     );
   }
 
-  // Helper Widgets
-  Widget _buildBadge(String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(3)),
-      child: Text(text,
-          style: TextStyle(
-              color: color, fontSize: 8, fontWeight: FontWeight.bold)),
-    );
-  }
+
 
   Widget _buildExpandableText(String description) {
     return LayoutBuilder(
@@ -470,12 +464,13 @@ Card radioVarientButton(String title, String price, int value, int groupValue,
 }
 class CheckBoxAddon extends StatefulWidget {
   final AddonCategory addonCategory;
+  final bool inVeg;
   final Function(List<Addon>) onSelectionChanged;
 
   const CheckBoxAddon({
     Key? key,
     required this.addonCategory,
-    required this.onSelectionChanged,
+    required this.onSelectionChanged, required this.inVeg,
   }) : super(key: key);
 
   @override
@@ -516,14 +511,14 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
                           borderRadius: BorderRadius.circular(4.0),
                           color: Colors.transparent,
                           border: Border.all(
-                              color:  Colors.green, width: 2),
+                              color:  widget.inVeg ? Colors.red :Colors.green, width: 2),
                         ),
                         padding: const EdgeInsets.all(2),
                         child: Container(
                           width: 10,
                           height: 10,
-                          decoration: const BoxDecoration(
-                            color:  Colors.green ,
+                          decoration:  BoxDecoration(
+                            color:  widget.inVeg ? Colors.red :Colors.green ,
                             shape: BoxShape.circle,
                           ),
                         ),
