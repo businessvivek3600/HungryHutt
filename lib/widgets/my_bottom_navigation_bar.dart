@@ -20,26 +20,26 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xffFFA300).withOpacity(0.7),
-            const Color(0xffFFA300),
+            Color(0xFF68a039),
+            Color(0xFF68a039),
           ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
       ),
       child: NavigationBarTheme(
         data: NavigationBarThemeData(
-          backgroundColor:  const Color(0xffFFA300).withOpacity(0.7), // Keep gradient visible
+          backgroundColor:  const Color(0xFF68a039).withOpacity(0.7), // Keep gradient visible
           indicatorColor: Colors.white.withOpacity(0.2),
           labelTextStyle: MaterialStateProperty.all(
             const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
           ),
         ),
         child: NavigationBar(
-          backgroundColor:  const Color(0xffFFA300).withOpacity(0.7),
+          backgroundColor:   const Color(0xFF68a039).withOpacity(0.7),
           selectedIndex: homeController.tabIndex,
           onDestinationSelected: (value) {
             setState(() {

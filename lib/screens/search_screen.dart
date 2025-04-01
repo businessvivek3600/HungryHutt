@@ -119,10 +119,11 @@ class _SearchScreenState extends BaseRouteState {
                               observer: widget.observer,
                             ),
                           ),
-                          Text(
+                          _trendingSearchProducts != null ? Text(
                             AppLocalizations.of(context)!.lbl_trending_products,
                             style: textTheme.titleLarge,
-                          ),
+                          ) : SizedBox(),
+                          _trendingSearchProducts != null ?
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                             child: _isDataLoaded
@@ -135,7 +136,7 @@ class _SearchScreenState extends BaseRouteState {
                                       )
                                     : Text(AppLocalizations.of(context)!.txt_nothing_to_show)
                                 : _shimmer1(),
-                          ),
+                          ) : SizedBox(),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                             child: Text(
@@ -198,22 +199,27 @@ class _SearchScreenState extends BaseRouteState {
     try {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
+        debugPrint("Fetching recent search data from API...");
         await apiHelper.showRecentSearch().then((result) async {
           if (result != null) {
             if (result.status == "1") {
               _recentSearchList = result.data;
+              debugPrint("Recent search data received from API: $_recentSearchList");
             } else {
               _recentSearchList = null;
+              debugPrint("API call failed. No recent search data available.");
             }
           }
         });
       } else {
         showNetworkErrorSnackBar(_scaffoldKey);
+        debugPrint("No internet connection. Cannot fetch recent search data.");
       }
     } catch (e) {
-      debugPrint("Exception - search_screen.dart - _getRecentSearchData():$e");
+      debugPrint("Exception - search_screen.dart - _getRecentSearchData(): $e");
     }
   }
+
 
   _init() async {
     try {

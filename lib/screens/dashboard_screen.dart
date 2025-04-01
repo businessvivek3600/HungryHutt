@@ -47,15 +47,16 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: DashboardFloatingActionButton(
-            analytics: widget.analytics,
-            observer: widget.observer,
-            callNumberStore: callNumberStore,
-            inviteFriendShareMessage: br.inviteFriendShareMessage),
+        // floatingActionButton: DashboardFloatingActionButton(
+        //     analytics: widget.analytics,
+        //     observer: widget.observer,
+        //     callNumberStore: callNumberStore,
+        //     inviteFriendShareMessage: br.inviteFriendShareMessage),
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
               elevation: 4,
+              expandedHeight: 70,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
@@ -63,36 +64,36 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
                 ),
               ),
               pinned: true,
-              backgroundColor: Colors.transparent, // Set transparent to allow gradient effect
-              expandedHeight: 220.0,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  decoration:  BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFFFF8000).withOpacity(0.6), // Deep orange shade
-                        Color(0xFFFFA500), // Warm yellow-orange shade
-                      ],
-                    ),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 30),
-                      Image.asset(
-                        'assets/images/bannerap.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              backgroundColor:    Color(0xFF68a039),
+             // expandedHeight: 220.0,
+              // flexibleSpace: FlexibleSpaceBar(
+              //   background: Container(
+              //     decoration:   BoxDecoration(
+              //       gradient: LinearGradient(
+              //         begin: Alignment.topLeft,
+              //         end: Alignment.bottomRight,
+              //         colors: [
+              //          // Color(0xFFFF8000).withOpacity(0.8), // Deep orange shade
+              //           Color(0xFF539e83), Color(0xFF539e83), // Warm yellow-orange shade
+              //         ],
+              //       ),
+              //       borderRadius: BorderRadius.only(
+              //         bottomLeft: Radius.circular(20),
+              //         bottomRight: Radius.circular(20),
+              //       ),
+              //     ),
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.start,
+              //       children: [
+              //         const SizedBox(height: 30),
+              //         Image.asset(
+              //           'assets/images/bannerap.png',
+              //           fit: BoxFit.cover,
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               leading: IconButton(
                 visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
                 icon: const Icon(Icons.dashboard_outlined, color: Colors.white),
