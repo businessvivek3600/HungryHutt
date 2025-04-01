@@ -213,7 +213,7 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
                   ],
                 ),
               ),
-            ),
+            ),   
           )),
     );
   }
@@ -412,6 +412,10 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
     }
   }
 }
+
+
+
+
  ///_commented code-
 // _isClosingTime == false &&
 //         global.nearStoreModel?.storeOpeningTime != null &&
