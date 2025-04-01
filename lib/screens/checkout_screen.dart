@@ -213,7 +213,7 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
                   ],
                 ),
               ),
-            ),
+            ),   
           )),
     );
   }

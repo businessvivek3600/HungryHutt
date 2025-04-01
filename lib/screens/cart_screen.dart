@@ -4,13 +4,17 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user/controllers/cart_controller.dart';
+import 'package:user/models/address_model.dart';
 import 'package:user/models/businessLayer/base_route.dart';
 import 'package:user/models/businessLayer/global.dart' as global;
+import 'package:user/screens/add_address_screen.dart';
 import 'package:user/screens/checkout_screen.dart';
 import 'package:user/controllers/home_controller.dart';
 import 'package:user/utils/navigation_utils.dart';
+import 'package:user/widgets/address_info_card.dart';
 import 'package:user/widgets/cart_menu.dart';
 import 'package:user/widgets/cart_screen_bottom_sheet.dart';
+import 'package:user/widgets/toastfile.dart';
 
 class CartScreen extends BaseRoute {
   const CartScreen(
@@ -27,10 +31,28 @@ class _CartScreenState extends BaseRouteState {
   final CartController cartController = Get.put(CartController());
   final HomeController homeController = Get.find();
   bool _isDataLoaded = false;
+  GlobalKey<ScaffoldState>? _scaffoldKey;
+  Address? _selectedAddress = Address();
+  List<Address> _addressList = [];
+  bool _isLoading = true;
 
-  @override
+  Future<void> _fetchAddresses() async {
+    var addressList = await apiHelper.getAddressList();
+    if (addressList != null && addressList.isNotEmpty) {
+      setState(() {
+        _addressList = addressList;
+        _selectedAddress = _addressList.first;
+      });
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double cardWidth = screenWidth * 0.9; // 15% of screen height
     return PopScope(
       canPop: false,
       child: GetBuilder<CartController>(
@@ -54,68 +76,207 @@ class _CartScreenState extends BaseRouteState {
                   child: Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
-                    child: Column(
-                      children: [
-                        // ✅ Top Section: Back Button, Title, & Cart Count
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                    child: Column(children: [
+                      // ✅ Top Section: Back Button, Title, & Cart Count
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          // Back Button with Same Size as Location Icon
+                          IconButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            icon: const Icon(Icons.arrow_back_ios_outlined,
+                                size: 20),
+                          ),
+                          const SizedBox(width: 7),
+                          Text(
+                            AppLocalizations.of(context)!.txt_cart,
+                            style: textTheme.titleLarge,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.start,
+                          ),
+                        ],
+                      ),
+
+                      // ✅ Bottom Section: Address Selection
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Back Button with Same Size as Location Icon
-                            IconButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              icon: const Icon(Icons.arrow_back_ios_outlined,
-                                  size: 20),
+                            // Address Icon & Text in a Row
+                            Row(
+                              children: [
+                                const Icon(Icons.location_on, size: 25),
+                                const SizedBox(width: 7),
+                                Text(
+                                  "No Address Selected",
+                                  style: textTheme.titleMedium,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 7),
-                            Text(
-                              AppLocalizations.of(context)!.txt_cart,
-                              style: textTheme.titleLarge,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.start,
+
+                            GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  backgroundColor: Colors.white,
+                                  context: context,
+                                  isScrollControlled: true,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20)),
+                                  ),
+                                  builder: (context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          // Header Row with Close Button
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Text(
+                                                "Choose a delivery address",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.close),
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+
+                                          // Selected Address Card
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.3,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            child: _addressList.isNotEmpty
+                                                ? ListView.builder(
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                        _addressList.length,
+                                                    itemBuilder:
+                                                        (BuildContext ctx,
+                                                            int index) {
+                                                      Address address =
+                                                          _addressList[index];
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 6.0),
+                                                        child: AddressInfoCard(
+                                                          analytics:
+                                                              widget.analytics,
+                                                          observer:
+                                                              widget.observer,
+                                                          key: UniqueKey(),
+                                                          address: address,
+                                                          isSelected:
+                                                              _selectedAddress ==
+                                                                  address,
+                                                          value: address,
+                                                          groupValue:
+                                                              _selectedAddress,
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              _selectedAddress =
+                                                                  value!;
+                                                            });
+                                                            _selectAddressForCheckout(
+                                                                selectedAddressId:
+                                                                    _selectedAddress
+                                                                            ?.addressId ??
+                                                                        0,
+                                                                addressSelected:
+                                                                    value);
+                                                          },
+                                                        ),
+                                                      );
+                                                    },
+                                                  )
+                                                : const Divider(
+                                                    color: Colors.grey,
+                                                  ),
+                                          ),
+
+                                          // Add Address Button
+                                          GestureDetector(
+                                            onTap: () {
+                                              Get.to(() => AddAddressScreen(
+                                                        Address(),
+                                                        analytics:
+                                                            widget.analytics,
+                                                        observer:
+                                                            widget.observer,
+                                                        screenId: 0,
+                                                      ))!
+                                                  .then((value) {
+                                                setState(() {
+                                                  _fetchAddresses(); // Refresh address list after adding
+                                                });
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
+                                                        color: Colors.black),
+                                                  ),
+                                                  child: const Icon(Icons.add,
+                                                      color: Colors.black),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                const Text(
+                                                  "Add new Address",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 20),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Text(
+                                "Select",
+                                style: textTheme.titleMedium!.copyWith(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-
-                        // ✅ Bottom Section: Address Selection
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Address Icon & Text in a Row
-                              Row(
-                                children: [
-                                  const Icon(Icons.location_on,
-                                      size: 25), // ✅ Same size as Back Icon
-                                  const SizedBox(width: 7),
-                                  Text(
-                                    "No Address Selected",
-                                    style: textTheme.titleMedium,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-
-                              // "Select" Button
-                              GestureDetector(
-                                onTap: () {
-                                  // Handle address selection
-                                },
-                                child: Text(
-                                  "Select",
-                                  style: textTheme.titleMedium!.copyWith(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ]),
                   ),
                 ),
 
@@ -150,14 +311,6 @@ class _CartScreenState extends BaseRouteState {
                                                       spreadRadius: 1,
                                                     ),
                                                   ]),
-
-                                              // margin:
-                                              //     const EdgeInsets.symmetric(
-                                              //         horizontal: 15,
-                                              //         vertical: 10),
-                                              // padding:
-                                              //     const EdgeInsets.symmetric(
-                                              //         vertical: 10),
                                               child: Column(
                                                 children: [
                                                   /// Cart Items
@@ -243,6 +396,7 @@ class _CartScreenState extends BaseRouteState {
                                                         const EdgeInsets.only(
                                                             right: 10),
                                                     child: Card(
+                                                      color: Colors.white,
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:
@@ -330,31 +484,37 @@ class _CartScreenState extends BaseRouteState {
                                                                           .icon(
                                                                         onPressed:
                                                                             () {},
-                                                                        icon: const Icon(
-                                                                            Icons
-                                                                                .add,
-                                                                            size:
-                                                                                15,
-                                                                            color:
-                                                                                Colors.green), // ✅ Add Icon
+                                                                        icon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .add,
+                                                                          size:
+                                                                              12,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        ),
                                                                         label:
                                                                             const Text(
                                                                           "Add",
                                                                           style:
-                                                                              TextStyle(color: Colors.green),
+                                                                              TextStyle(
+                                                                            color:
+                                                                                Colors.green,
+                                                                            fontSize:
+                                                                                12,
+                                                                          ),
                                                                         ),
                                                                         style: OutlinedButton
                                                                             .styleFrom(
                                                                           side:
-                                                                              const BorderSide(color: Colors.green),
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              horizontal: 6,
-                                                                              vertical: 4),
+                                                                              BorderSide(color: Colors.green),
+                                                                          padding: EdgeInsets.symmetric(
+                                                                              horizontal: 2,
+                                                                              vertical: -4),
                                                                           shape:
                                                                               RoundedRectangleBorder(
                                                                             borderRadius:
-                                                                                BorderRadius.circular(8),
+                                                                                BorderRadius.circular(4),
                                                                           ),
                                                                           textStyle: Theme.of(context)
                                                                               .textTheme
@@ -374,7 +534,275 @@ class _CartScreenState extends BaseRouteState {
                                                 },
                                               ),
                                             ),
-                                            Text("Data"),
+                                            SizedBox(height: 7),
+                                            SizedBox(
+                                              width: cardWidth,
+                                              // height: 100,
+                                              child: Card(
+                                                color: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                elevation: 2,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 12.0,
+                                                      vertical: 6.0),
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      // Discount icon
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.all(8),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .green.shade100,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        child: Icon(
+                                                          Icons.percent,
+                                                          color: Colors.green,
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                      // Offer details
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              'LPN75',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 4),
+                                                            Text(
+                                                              'Get Flat Discount of Rs.75 on Minimum Billing of Rs.399',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .grey[600],
+                                                              ),
+                                                            ),
+                                                            SizedBox(height: 5),
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  'View more offers',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                                ),
+                                                                Spacer(),
+                                                                Text(
+                                                                  'Apply',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+
+                                            SizedBox(height: 5),
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4.0),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Bill Details",
+                                                          style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              16.0),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            spreadRadius: 1,
+                                                            blurRadius: 5,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                AppLocalizations.of(
+                                                                        context)!
+                                                                    .txt_total_price,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                cartController!
+                                                                            .cartItemsList !=
+                                                                        null
+                                                                    ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.totalMrp!.toStringAsFixed(2)}"
+                                                                    : "${global.appInfo!.currencySign} 0",
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 8.0),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    AppLocalizations.of(
+                                                                            context)!
+                                                                        .txt_discount_price,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Text(
+                                                                cartController!
+                                                                            .cartItemsList !=
+                                                                        null
+                                                                    ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.discountonmrp!.toStringAsFixed(2)}"
+                                                                    : "${global.appInfo!.currencySign} 0",
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 8.0),
+                                                          Divider(),
+                                                          const SizedBox(
+                                                              height: 8.0),
+                                                          Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .txt_tax,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  cartController!
+                                                                              .cartItemsList !=
+                                                                          null
+                                                                      ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.totalTax!.toStringAsFixed(2)}"
+                                                                      : "${global.appInfo!.currencySign} 0",
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                ),
+                                                              ]),
+                                                          const SizedBox(
+                                                              height: 16.0),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )),
                                           ],
                                         ),
                                       ),
@@ -425,6 +853,17 @@ class _CartScreenState extends BaseRouteState {
   @override
   void initState() {
     super.initState();
+    _fetchAddresses();
+    if (global.nearStoreModel!.storeOpeningTime != null &&
+        global.nearStoreModel!.storeOpeningTime != '' &&
+        global.nearStoreModel!.storeClosingTime != null &&
+        global.nearStoreModel!.storeClosingTime != '') {
+      // _openingTime = DateFormat('yyyy-MM-dd hh:mm a')
+      //     .parse(global.nearStoreModel!.storeOpeningTime!.toUpperCase());
+      // _closingTime = DateFormat('yyyy-MM-dd hh:mm a')
+      //     .parse(global.nearStoreModel!.storeClosingTime!.toUpperCase());
+    }
+
     _getCartList();
     debugPrint('TOKEN:${global.appDeviceId}');
   }
@@ -474,6 +913,48 @@ class _CartScreenState extends BaseRouteState {
       await _getCartList();
     } catch (e) {
       debugPrint("Exception - _onRefresh(): $e");
+    }
+  }
+
+  _selectAddressForCheckout(
+      {int? selectedAddressId, Address? addressSelected, int? index}) async {
+    try {
+      bool isConnected = await br.checkConnectivity();
+      if (isConnected) {
+        showOnlyLoaderDialog();
+        await apiHelper
+            .selectAddressForCheckout(selectedAddressId)
+            .then((result) async {
+          hideLoader();
+          if (result != null) {
+            if (result.status == "1") {
+              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //   backgroundColor: Theme
+              //       .of(context)
+              //       .colorScheme.primary,
+              //   content: Text(
+              //     result.message,
+              //     textAlign: TextAlign.center,
+              //   ),
+              //   duration: Duration(seconds: 2),
+              // ));
+              showToast(result.message);
+              setState(() {
+                _selectedAddress = addressSelected;
+                global.userProfileController.addressList[index!].isSelected =
+                    !global.userProfileController.addressList[index].isSelected;
+              });
+            } else {
+              showToast(result.message);
+            }
+          }
+        });
+      } else {
+        showNetworkErrorSnackBar(_scaffoldKey);
+      }
+    } catch (e) {
+      debugPrint(
+          "Exception - checkout_screen.dart - _selectAddressForCheckout():$e");
     }
   }
 
