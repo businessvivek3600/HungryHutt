@@ -57,7 +57,6 @@ class _PopularProductsMenuItemState extends State<PopularProductsMenuItem> {
 
   @override
   Widget build(BuildContext context) {
-    print("popular products  images----${global.appInfo!.imageUrl! + widget.product.productImage!}");
     TextTheme textTheme = Theme.of(context).textTheme;
     return SizedBox(
       height: 160,

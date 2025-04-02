@@ -31,6 +31,7 @@ class _CartScreenState extends BaseRouteState {
   final CartController cartController = Get.put(CartController());
   final HomeController homeController = Get.find();
   bool _isDataLoaded = false;
+  var isExpanded = false;
   GlobalKey<ScaffoldState>? _scaffoldKey;
   Address? _selectedAddress = Address();
   List<Address> _addressList = [];
@@ -52,7 +53,7 @@ class _CartScreenState extends BaseRouteState {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
-    double cardWidth = screenWidth * 0.9; // 15% of screen height
+    double cardWidth = screenWidth * 0.9;
     return PopScope(
       canPop: false,
       child: GetBuilder<CartController>(
@@ -102,176 +103,46 @@ class _CartScreenState extends BaseRouteState {
                       // ✅ Bottom Section: Address Selection
                       Padding(
                         padding: const EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Address Icon & Text in a Row
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(Icons.location_on, size: 25),
+                                const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.location_on, size: 25),
+                                  ],
+                                ),
                                 const SizedBox(width: 7),
-                                Text(
-                                  "No Address Selected",
-                                  style: textTheme.titleMedium,
-                                  overflow: TextOverflow.ellipsis,
+                                Expanded(
+                                  child: Text(
+                                    _selectedAddress?.fullAddress ??
+                                        "No Address Selected",
+                                    style: textTheme.titleMedium,
+                                    softWrap:
+                                        true, // Allow text to wrap to the next line
+                                    maxLines: null, // No limit on lines
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 8.0,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    selectAddressBottomSheet(context);
+                                  },
+                                  child: Text(
+                                    "Select",
+                                    style: textTheme.titleMedium!.copyWith(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ],
-                            ),
-
-                            GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  backgroundColor: Colors.white,
-                                  context: context,
-                                  isScrollControlled: true,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20)),
-                                  ),
-                                  builder: (context) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          // Header Row with Close Button
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                "Choose a delivery address",
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(Icons.close),
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-
-                                          // Selected Address Card
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.3,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            child: _addressList.isNotEmpty
-                                                ? ListView.builder(
-                                                    shrinkWrap: true,
-                                                    itemCount:
-                                                        _addressList.length,
-                                                    itemBuilder:
-                                                        (BuildContext ctx,
-                                                            int index) {
-                                                      Address address =
-                                                          _addressList[index];
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 6.0),
-                                                        child: AddressInfoCard(
-                                                          analytics:
-                                                              widget.analytics,
-                                                          observer:
-                                                              widget.observer,
-                                                          key: UniqueKey(),
-                                                          address: address,
-                                                          isSelected:
-                                                              _selectedAddress ==
-                                                                  address,
-                                                          value: address,
-                                                          groupValue:
-                                                              _selectedAddress,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              _selectedAddress =
-                                                                  value!;
-                                                            });
-                                                            _selectAddressForCheckout(
-                                                                selectedAddressId:
-                                                                    _selectedAddress
-                                                                            ?.addressId ??
-                                                                        0,
-                                                                addressSelected:
-                                                                    value);
-                                                          },
-                                                        ),
-                                                      );
-                                                    },
-                                                  )
-                                                : const Divider(
-                                                    color: Colors.grey,
-                                                  ),
-                                          ),
-
-                                          // Add Address Button
-                                          GestureDetector(
-                                            onTap: () {
-                                              Get.to(() => AddAddressScreen(
-                                                        Address(),
-                                                        analytics:
-                                                            widget.analytics,
-                                                        observer:
-                                                            widget.observer,
-                                                        screenId: 0,
-                                                      ))!
-                                                  .then((value) {
-                                                setState(() {
-                                                  _fetchAddresses(); // Refresh address list after adding
-                                                });
-                                              });
-                                            },
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    border: Border.all(
-                                                        color: Colors.black),
-                                                  ),
-                                                  child: const Icon(Icons.add,
-                                                      color: Colors.black),
-                                                ),
-                                                const SizedBox(width: 10),
-                                                const Text(
-                                                  "Add new Address",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 20),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: Text(
-                                "Select",
-                                style: textTheme.titleMedium!.copyWith(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
                             ),
                           ],
                         ),
@@ -300,11 +171,12 @@ class _CartScreenState extends BaseRouteState {
                                           children: [
                                             //  Cart Menu
                                             Container(
+                                              padding: const EdgeInsets.all(10),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.circular(12),
-                                                  boxShadow: [
+                                                  boxShadow: const [
                                                     BoxShadow(
                                                       color: Colors.black12,
                                                       blurRadius: 6,
@@ -317,492 +189,99 @@ class _CartScreenState extends BaseRouteState {
                                                   CartMenu(
                                                       cartController:
                                                           cartController),
-                                                  Dash(
-                                                    length: 300,
-                                                    dashLength: 2,
-                                                    dashColor: Colors.grey,
-                                                  ),
 
                                                   /// Bottom Text
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            14.0),
-                                                    child: OutlinedButton.icon(
-                                                      onPressed: () {
-                                                        // Add functionality here
-                                                      },
-                                                      style: OutlinedButton
-                                                          .styleFrom(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 16,
-                                                                vertical: 0),
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(16),
-                                                        ),
-                                                        side: BorderSide(
-                                                            color: Colors
-                                                                .grey.shade300),
-                                                      ),
-                                                      icon: Icon(
-                                                          Icons
-                                                              .edit_note_rounded,
-                                                          color:
-                                                              Colors.grey[700],
-                                                          size: 25),
-                                                      label: TextField(
-                                                        focusNode: FocusNode(),
-                                                        decoration:
-                                                            InputDecoration(
-                                                          hintText:
-                                                              "Special Instruction",
-                                                          hintStyle: TextStyle(
-                                                              fontWeight: FontWeight
-                                                                  .w500), // Placeholder text
-                                                          border: InputBorder
-                                                              .none, // Removes underline
-                                                          contentPadding:
-                                                              EdgeInsets.all(
-                                                                  8), // Adjust padding
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(height: 10),
-                                            //  Square-Shaped Food Cards ListView
-                                            SizedBox(
-                                              height: 110,
-                                              child: ListView.builder(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount: 5,
-                                                itemBuilder: (context, index) {
-                                                  double screenWidth =
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width;
-                                                  double cardWidth = screenWidth *
-                                                      0.8; // ✅ Adaptive width
-
-                                                  return Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 10),
-                                                    child: Card(
-                                                      color: Colors.white,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                      ),
-                                                      elevation: 2,
-                                                      child: Container(
-                                                        width:
-                                                            cardWidth, // ✅ Dynamically adjusted width
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(10),
-                                                        child: Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            // ✅ Image (Fixed size)
-                                                            ClipRRect(
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child:
+                                                            OutlinedButton.icon(
+                                                          onPressed: () {
+                                                            // Add functionality here
+                                                          },
+                                                          style: OutlinedButton
+                                                              .styleFrom(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical:
+                                                                        0),
+                                                            shape:
+                                                                RoundedRectangleBorder(
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
-                                                                          10),
-                                                              child:
-                                                                  Image.network(
-                                                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYhwMKoZ6vVlMlqNWhLZRG8utuQRMuQUWeVA&s",
-                                                                width:
-                                                                    70, // ✅ Adjusted width
-                                                                height:
-                                                                    70, // ✅ Adjusted height
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
+                                                                          16),
                                                             ),
-                                                            const SizedBox(
-                                                                width: 10),
-
-                                                            // ✅ Text Section
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Icon(
-                                                                      Icons
-                                                                          .radio_button_checked_outlined,
-                                                                      color: Colors
-                                                                          .green,
-                                                                      size: 13),
-                                                                  Row(
-                                                                    children: [
-                                                                      Expanded(
-                                                                        child:
-                                                                            Text(
-                                                                          "Triple Chocolate Brownie",
-                                                                          style: Theme.of(context)
-                                                                              .textTheme
-                                                                              .titleSmall!
-                                                                              .copyWith(fontWeight: FontWeight.bold),
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis, // ✅ Prevents overflow
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                        "₹ 119",
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .titleSmall!
-                                                                            .copyWith(fontWeight: FontWeight.w600),
-                                                                      ),
-                                                                      // ✅ Add Button
-                                                                      OutlinedButton
-                                                                          .icon(
-                                                                        onPressed:
-                                                                            () {},
-                                                                        icon:
-                                                                            const Icon(
-                                                                          Icons
-                                                                              .add,
-                                                                          size:
-                                                                              12,
-                                                                          color:
-                                                                              Colors.green,
-                                                                        ),
-                                                                        label:
-                                                                            const Text(
-                                                                          "Add",
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color:
-                                                                                Colors.green,
-                                                                            fontSize:
-                                                                                12,
-                                                                          ),
-                                                                        ),
-                                                                        style: OutlinedButton
-                                                                            .styleFrom(
-                                                                          side:
-                                                                              BorderSide(color: Colors.green),
-                                                                          padding: EdgeInsets.symmetric(
-                                                                              horizontal: 2,
-                                                                              vertical: -4),
-                                                                          shape:
-                                                                              RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(4),
-                                                                          ),
-                                                                          textStyle: Theme.of(context)
-                                                                              .textTheme
-                                                                              .bodySmall,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                            SizedBox(height: 7),
-                                            SizedBox(
-                                              width: cardWidth,
-                                              // height: 100,
-                                              child: Card(
-                                                color: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                elevation: 2,
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 12.0,
-                                                      vertical: 6.0),
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      // Discount icon
-                                                      Container(
-                                                        padding:
-                                                            EdgeInsets.all(8),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors
-                                                              .green.shade100,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        child: Icon(
-                                                          Icons.percent,
-                                                          color: Colors.green,
-                                                          size: 20,
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 10),
-                                                      // Offer details
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text(
-                                                              'LPN75',
-                                                              style: TextStyle(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                            ),
-                                                            SizedBox(height: 4),
-                                                            Text(
-                                                              'Get Flat Discount of Rs.75 on Minimum Billing of Rs.399',
-                                                              style: TextStyle(
-                                                                fontSize: 12,
+                                                            side: BorderSide(
                                                                 color: Colors
-                                                                    .grey[600],
-                                                              ),
+                                                                    .grey
+                                                                    .shade300),
+                                                          ),
+                                                          icon: Icon(
+                                                              Icons
+                                                                  .edit_note_rounded,
+                                                              color: Colors
+                                                                  .grey[700],
+                                                              size: 25),
+                                                          label: TextField(
+                                                            focusNode:
+                                                                FocusNode(),
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              hintText:
+                                                                  "Special Instruction",
+                                                              hintStyle: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500), // Placeholder text
+                                                              border: InputBorder
+                                                                  .none, // Removes underline
+                                                              contentPadding:
+                                                                  EdgeInsets.all(
+                                                                      8), // Adjust padding
                                                             ),
-                                                            SizedBox(height: 5),
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  'View more offers',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .green,
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
-                                                                ),
-                                                                Spacer(),
-                                                                Text(
-                                                                  'Apply',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .green,
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 10),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .green[100],
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                          child: const Icon(
+                                                              Icons
+                                                                  .add_alert_rounded,
+                                                              color:
+                                                                  Colors.green,
+                                                              size: 25),
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                ),
+                                                ],
                                               ),
                                             ),
+                                            const SizedBox(height: 10),
+                                            //  Square-Shaped Food Cards ListView
+                                            cartProductCard(),
+                                            const SizedBox(height: 7),
+                                            cartCoupon(cardWidth),
 
-                                            SizedBox(height: 5),
-                                            Padding(
-                                                padding:
-                                                    const EdgeInsets.all(4.0),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          "Bill Details",
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              16.0),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.grey
-                                                                .withOpacity(
-                                                                    0.2),
-                                                            spreadRadius: 1,
-                                                            blurRadius: 5,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                AppLocalizations.of(
-                                                                        context)!
-                                                                    .txt_total_price,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                cartController!
-                                                                            .cartItemsList !=
-                                                                        null
-                                                                    ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.totalMrp!.toStringAsFixed(2)}"
-                                                                    : "${global.appInfo!.currencySign} 0",
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 8.0),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  Text(
-                                                                    AppLocalizations.of(
-                                                                            context)!
-                                                                        .txt_discount_price,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Text(
-                                                                cartController!
-                                                                            .cartItemsList !=
-                                                                        null
-                                                                    ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.discountonmrp!.toStringAsFixed(2)}"
-                                                                    : "${global.appInfo!.currencySign} 0",
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 8.0),
-                                                          Divider(),
-                                                          const SizedBox(
-                                                              height: 8.0),
-                                                          Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  AppLocalizations.of(
-                                                                          context)!
-                                                                      .txt_tax,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  cartController!
-                                                                              .cartItemsList !=
-                                                                          null
-                                                                      ? "${global.appInfo!.currencySign} ${cartController!.cartItemsList!.totalTax!.toStringAsFixed(2)}"
-                                                                      : "${global.appInfo!.currencySign} 0",
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                  ),
-                                                                ),
-                                                              ]),
-                                                          const SizedBox(
-                                                              height: 16.0),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )),
+                                            const SizedBox(height: 5),
+                                            billingCard(context),
                                           ],
                                         ),
                                       ),
@@ -847,6 +326,474 @@ class _CartScreenState extends BaseRouteState {
               : const SizedBox(),
         ),
       ),
+    );
+  }
+
+  Padding billingCard(BuildContext context) {
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.receipt_long, color: Colors.green),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "To Pay",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        "\u{20B9}${cartController.cartItemsList!.totalMrp!.toStringAsFixed(2)} ",
+                                    style: const TextStyle(
+                                      decoration: TextDecoration.lineThrough,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        "\u{20B9}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          "\u{20B9}${cartController.cartItemsList!.discountonmrp!.toStringAsFixed(2)} saved on the total!",
+                          style: const TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isExpanded = !isExpanded;
+                          });
+                        },
+                        icon: Icon( isExpanded
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                            color: Colors.grey[700], size: 25)),
+                  ],
+                ),
+                ///-----Hide or show this data on tap drop down
+                 if (isExpanded) ...[
+                const Divider(),
+                _buildRow(
+                    "Item Total",
+                    cartController.cartItemsList!.totalItems!
+                        .toStringAsFixed(2)),
+                _buildRow("Delivery Fee | 5.9 kms", "\u{20B9}57.00"),
+                _buildRow("Extra discount for you", "-\u{20B9}20.00",
+                    color: Colors.green),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Delivery Tip",
+                        style: TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w500)),
+                    Text("Add tip",
+                        style: TextStyle(
+                            color: Colors.orange, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                _buildRow("Platform Fee", "\u{20B9}9.00"),
+                _buildRow("GST and Restaurant Charges",
+                    "\u{20B9}${cartController.cartItemsList!.totalTax!.toStringAsFixed(2)}"),
+                const Divider(),
+                _buildRow("To Pay",
+                    "\u{20B9}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
+                    bold: true),
+              ],
+           ] ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRow(String label, String value,
+      {Color color = Colors.black, bool bold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
+          Text(value,
+              style: TextStyle(
+                  color: color,
+                  fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  SizedBox cartCoupon(double cardWidth) {
+    return SizedBox(
+      width: cardWidth,
+      // height: 100,
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Discount icon
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.percent,
+                  color: Colors.green,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              // Offer details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'LPN75',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Get Flat Discount of Rs.75 on Minimum Billing of Rs.399',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    const Row(
+                      children: [
+                        Text(
+                          'View more offers',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Spacer(),
+                        Text(
+                          'Apply',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  SizedBox cartProductCard() {
+    return SizedBox(
+      height: 190,
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ✅ Title
+              Text(
+                "COMPLETE YOUR MEAL",
+                style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                    color: Colors.grey),
+              ),
+              const SizedBox(height: 5),
+
+              // ✅ Horizontal Scrollable Product List
+              Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5, // Number of products
+                  itemBuilder: (context, index) {
+                    return SizedBox(
+                      width: 90,
+                      height: 90,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // ✅ Product Image
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYhwMKoZ6vVlMlqNWhLZRG8utuQRMuQUWeVA&s",
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+
+                                // ✅ Product Name (2 lines max)
+                                SizedBox(
+                                  width: 70,
+                                  child: Text(
+                                    "Triple Chocolate Brownie",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                    maxLines: 2,
+                                    textAlign: TextAlign.start,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+
+                                // ✅ Price
+                                Text(
+                                  "₹ 119",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                              ],
+                            ),
+
+                            // ✅ Floating Add Button (Top-Right of Image)
+                            Positioned(
+                              top: -2,
+                              right: -1,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                      color: Colors.green.shade400, width: 1),
+                                  color: Colors.white,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // Your add button logic
+                                  },
+                                  child: const Icon(Icons.add,
+                                      size: 16, color: Colors.green),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<dynamic> selectAddressBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      backgroundColor: Colors.white,
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        Address? selectedAddress = _selectedAddress; // Store local selection
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header Row with Close Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Choose a delivery address",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Selected Address Card
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: MediaQuery.of(context).size.width,
+                    child: _addressList.isNotEmpty
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _addressList.length,
+                            itemBuilder: (BuildContext ctx, int index) {
+                              Address address = _addressList[index];
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 6.0),
+                                child: AddressInfoCard(
+                                  analytics: widget.analytics,
+                                  observer: widget.observer,
+                                  key: UniqueKey(),
+                                  address: address,
+                                  isSelected: selectedAddress == address,
+                                  value: address,
+                                  groupValue: selectedAddress,
+                                  onChanged: (value) {
+                                    setModalState(() {
+                                      selectedAddress = value!;
+                                    });
+
+                                    // Update the main state when the user selects an address
+                                    _selectAddressForCheckout(
+                                      selectedAddressId: value?.addressId ?? 0,
+                                      addressSelected: value,
+                                    );
+
+                                    setState(() {
+                                      _selectedAddress = value;
+                                    });
+
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              );
+                            },
+                          )
+                        : const Divider(color: Colors.grey),
+                  ),
+
+                  // Add Address Button
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(() => AddAddressScreen(
+                                Address(),
+                                analytics: widget.analytics,
+                                observer: widget.observer,
+                                screenId: 0,
+                              ))!
+                          .then((value) {
+                        setState(() {
+                          _fetchAddresses(); // Refresh address list after adding
+                        });
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.black),
+                          ),
+                          child: const Icon(Icons.add, color: Colors.black),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          "Add new Address",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -985,3 +932,6 @@ class _CartScreenState extends BaseRouteState {
     );
   }
 }
+
+
+
