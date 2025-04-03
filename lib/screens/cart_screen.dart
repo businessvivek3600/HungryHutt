@@ -418,11 +418,11 @@ class _CartScreenState extends BaseRouteState {
                  if (isExpanded) ...[
                 const Divider(),
                 _buildRow(
-                    "Item Total",
+                    "Total Items",
                     cartController.cartItemsList!.totalItems!
                         .toStringAsFixed(2)),
-                _buildRow("Delivery Fee | 5.9 kms", "\u{20B9}57.00"),
-                _buildRow("Extra discount for you", "-\u{20B9}20.00",
+                _buildRow("Delivery Fee | 5.9 kms", "\u{20AC}57.00"),
+                _buildRow("Extra discount for you", "-\u{20AC}20.00",
                     color: Colors.green),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -435,12 +435,12 @@ class _CartScreenState extends BaseRouteState {
                             color: Colors.orange, fontWeight: FontWeight.bold)),
                   ],
                 ),
-                _buildRow("Platform Fee", "\u{20B9}9.00"),
+                _buildRow("Platform Fee", "\u{20AC}9.00"),
                 _buildRow("GST and Restaurant Charges",
-                    "\u{20B9}${cartController.cartItemsList!.totalTax!.toStringAsFixed(2)}"),
+                    "\u{20AC}${cartController.cartItemsList!.totalTax!.toStringAsFixed(2)}"),
                 const Divider(),
                 _buildRow("To Pay",
-                    "\u{20B9}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
+                    "\u{20AC}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
                     bold: true),
               ],
            ] ),
