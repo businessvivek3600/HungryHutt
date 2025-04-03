@@ -32,7 +32,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
   void initState() {
     super.initState();
     setState(() {
-        variants = widget.product.varient;
+      variants = widget.product.varient;
     });
     _scrollController.addListener(_onScroll);
   }
@@ -100,7 +100,8 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
   List<Addon> selectedAddons = [];
   final CartController cartController = Get.find<CartController>();
   Widget build(BuildContext context) {
-    print("---------------------------widget.product.isNonVeg ----${widget.product.isNonVeg}");
+    print(
+        "---------------------------widget.product.isNonVeg ----${widget.product.isNonVeg}");
     Variant selectedVariant = widget.product.varient[selectedVariantIndex];
     return Stack(
       children: [
@@ -186,7 +187,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                         global.appInfo!.imageUrl! +
                                             widget.product.productImage!,
                                         fit: BoxFit.cover,
-                                         height: 250,
+                                        height: 250,
                                         width: double.infinity,
                                       ),
                                     ),
@@ -269,7 +270,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                     variants[index].unit.toString(),
                                     variants[index].price.toString(),
                                     index,
-                                   selectedVariantIndex,
+                                    selectedVariantIndex,
                                     (val) {
                                       setState(() {
                                         selectedVariantIndex = val!;
@@ -280,7 +281,8 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                               ),
                               const SizedBox(height: 20),
                               if (selectedVariant.addonCategories != null)
-                                ...selectedVariant.addonCategories!.map((addonCategory) {
+                                ...selectedVariant.addonCategories!
+                                    .map((addonCategory) {
                                   return CheckBoxAddon(
                                     addonCategory: addonCategory,
                                     onSelectionChanged: (selected) {
@@ -288,7 +290,9 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                         selectedAddons = selected;
                                       });
                                     },
-                                    inVeg:  widget.product.isNonVeg ==  1 ?true:false,
+                                    inVeg: widget.product.isNonVeg == 1
+                                        ? true
+                                        : false,
                                   );
                                 }).toList(),
                               const SizedBox(height: 60),
@@ -296,7 +300,6 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                           ),
                         ),
                       ),
-
                     ],
                   );
                 },
@@ -382,8 +385,6 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
     );
   }
 
-
-
   Widget _buildExpandableText(String description) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -415,6 +416,7 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
     );
   }
 }
+
 Card radioVarientButton(String title, String price, int value, int groupValue,
     void Function(int?) onChanged) {
   return Card(
@@ -462,6 +464,7 @@ Card radioVarientButton(String title, String price, int value, int groupValue,
     ),
   );
 }
+
 class CheckBoxAddon extends StatefulWidget {
   final AddonCategory addonCategory;
   final bool inVeg;
@@ -470,7 +473,8 @@ class CheckBoxAddon extends StatefulWidget {
   const CheckBoxAddon({
     Key? key,
     required this.addonCategory,
-    required this.onSelectionChanged, required this.inVeg,
+    required this.onSelectionChanged,
+    required this.inVeg,
   }) : super(key: key);
 
   @override
@@ -483,105 +487,114 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
   @override
   Widget build(BuildContext context) {
     bool isMultipleSelection = widget.addonCategory.multipleType == 1;
-    int selectionLimit = isMultipleSelection ? (widget.addonCategory.addons?.length ?? 0) : 1;
+    int selectionLimit =
+        isMultipleSelection ? (widget.addonCategory.addons?.length ?? 0) : 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.addonCategory.name ?? "Add-ons", style: const TextStyle(fontWeight: FontWeight.bold)),
-       Text("you can choose up to $selectionLimit option(s)",
+        Text(widget.addonCategory.name ?? "Add-ons",
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text("you can choose up to $selectionLimit option(s)",
             style: TextStyle(color: Colors.black54, fontSize: 12)),
         ...widget.addonCategory.addons?.map((addon) {
-          return   Card(
-            elevation: 2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+              return Card(
+                elevation: 2,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.0),
-                          color: Colors.transparent,
-                          border: Border.all(
-                              color:  widget.inVeg ? Colors.red :Colors.green, width: 2),
-                        ),
-                        padding: const EdgeInsets.all(2),
-                        child: Container(
-                          width: 10,
-                          height: 10,
-                          decoration:  BoxDecoration(
-                            color:  widget.inVeg ? Colors.red :Colors.green ,
-                            shape: BoxShape.circle,
+                      Row(
+                        children: [
+                          Container(
+                            width: 14,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4.0),
+                              color: Colors.transparent,
+                              border: Border.all(
+                                  color:
+                                      widget.inVeg ? Colors.red : Colors.green,
+                                  width: 2),
+                            ),
+                            padding: const EdgeInsets.all(2),
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: widget.inVeg ? Colors.red : Colors.green,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 5),
+                          Text(
+                            addon.name ?? "",
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 5),
-                      Text(
-                        addon.name ?? "",
-                        style: const TextStyle(
-                          fontSize: 12,
-                        ),
+                      const SizedBox(width: 20),
+                      Row(
+                        children: [
+                          Text(
+                            "+${addon.price ?? 0}",
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                          ),
+                          SizedBox(
+                            height: 15,
+                            child: isMultipleSelection
+                                ? Checkbox(
+                                    value: selectedAddons.contains(addon),
+                                    onChanged: (isChecked) {
+                                      setState(() {
+                                        if (isChecked == true) {
+                                          selectedAddons.add(addon);
+                                        } else {
+                                          selectedAddons.remove(addon);
+                                        }
+                                      });
+                                      widget.onSelectionChanged(selectedAddons);
+                                    },
+                                    activeColor: Colors.green,
+                                  )
+                                : Radio<Addon>(
+                                    value: addon,
+                                    groupValue: selectedRadioAddon,
+                                    onChanged: (Addon? value) {
+                                      setState(() {
+                                        selectedRadioAddon = value;
+                                        selectedAddons =
+                                            value != null ? [value] : [];
+                                      });
+                                      widget.onSelectionChanged(selectedAddons);
+                                    },
+                                    activeColor: Colors.green,
+                                  ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(width: 20),
-                  Row(
-                    children: [
-                      Text(
-                        "+${addon.price ?? 0}",
-                        style:
-                        const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
-                      ),
-                      SizedBox(
-                        height: 15,
-                        child:isMultipleSelection
-                            ? Checkbox(
-                          value: selectedAddons.contains(addon),
-                          onChanged: (isChecked) {
-                            setState(() {
-                              if (isChecked == true) {
-                                selectedAddons.add(addon);
-                              } else {
-                                selectedAddons.remove(addon);
-                              }
-                            });
-                            widget.onSelectionChanged(selectedAddons);
-                          },
-                          activeColor: Colors.green,
-                        )
-                            : Radio<Addon>(
-                          value: addon,
-                          groupValue: selectedRadioAddon,
-                          onChanged: (Addon? value) {
-                            setState(() {
-                              selectedRadioAddon = value;
-                              selectedAddons = value != null ? [value] : [];
-                            });
-                            widget.onSelectionChanged(selectedAddons);
-                          },
-                          activeColor: Colors.green,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        }).toList() ?? [],
-SizedBox(height: 10,),
+                ),
+              );
+            }).toList() ??
+            [],
+        SizedBox(
+          height: 10,
+        ),
       ],
     );
   }
 }
+
 ///----- Function to Show BottomSheet
 void showProductBottomSheet(BuildContext context, Product product) {
   showModalBottomSheet(
