@@ -1791,7 +1791,6 @@ class APIHelper {
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
-      print("------------GET MY PROFILE--------------------${response.data}");
       dynamic recordList;
       if (response.statusCode == 200) {
         recordList = CurrentUser.fromJson(response.data['data']);
