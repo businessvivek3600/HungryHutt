@@ -20,7 +20,7 @@ class _CartScreenBottomSheetState extends State<CartScreenBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white, // Adjust color as needed
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.0), // Adjust the radius as needed
@@ -35,12 +35,12 @@ class _CartScreenBottomSheetState extends State<CartScreenBottomSheet> {
           ),
         ],
       ),
-      padding: EdgeInsets.all(8.0), // Adjust padding as needed
+      padding: const EdgeInsets.all(8.0), // Adjust padding as needed
       child: BottomButton(
         loadingState: false,
         disabledState: false,
         onPressed: () => widget.onButtonPressed!(),
-        child: Text("Select Delivery Address"),
+        child: const Text("Select Delivery Address"),
       ),
     );
   }

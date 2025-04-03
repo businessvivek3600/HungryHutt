@@ -409,7 +409,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
           Get.to(() => ProductDescriptionScreen(
             analytics: widget.analytics,
             observer: widget.observer,
-            productId: banner.varientId,
+            productId: banner.varientId ?? 0,
             screenId: 0,
           ));
         },
