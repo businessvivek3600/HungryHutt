@@ -597,15 +597,27 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
 
 ///----- Function to Show BottomSheet
 void showProductBottomSheet(BuildContext context, Product product) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
-        child: ProductBottomSheet(product: product),
-      );
-    },
-  );
+  if (product.varient.isNotEmpty && product.varient.length == 1) {
+   
+    addToCart(product.varient.first);
+  } else {
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.75,
+          child: ProductBottomSheet(product: product),
+        );
+      },
+    );
+  }
+}
+
+// 🛒 Dummy function - Isme aap cartController ka logic daal sakte hain
+void addToCart(Variant variant) {
+  print("Adding to cart: ${variant.unit} - ${variant.price}");
+  // Yaha aap cartController ka addItem method call kar sakte ho
 }
