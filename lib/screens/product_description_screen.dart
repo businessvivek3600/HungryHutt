@@ -38,15 +38,20 @@ class ProductDescriptionScreen extends BaseRoute {
   final ProductDetail? productDetail;
   final int? screenId;
 
-  ProductDescriptionScreen({super.key, super.analytics, super.observer, super.routeName = 'ProductDescriptionScreen', this.productId, this.screenId, this.productDetail});
+  ProductDescriptionScreen(
+      {super.key,
+      super.analytics,
+      super.observer,
+      super.routeName = 'ProductDescriptionScreen',
+      this.productId,
+      this.screenId,
+      this.productDetail});
 
   @override
-  BaseRouteState createState() =>
-      _ProductDescriptionScreenState();
+  BaseRouteState createState() => _ProductDescriptionScreenState();
 }
 
 class _AppBarActionButtonState extends State<AppBarActionButton> {
-
   _AppBarActionButtonState();
 
   @override
@@ -72,9 +77,9 @@ class _AppBarActionButtonState extends State<AppBarActionButton> {
                       radius: 12,
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       child: Text(
-                          global.cartCount != 0
-                              ? '${global.cartCount}'
-                              : '', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+                          global.cartCount != 0 ? '${global.cartCount}' : '',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary)),
                     ),
                   )
                 : const SizedBox(),
@@ -85,7 +90,8 @@ class _AppBarActionButtonState extends State<AppBarActionButton> {
   }
 }
 
-class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionScreen> {
+class _ProductDescriptionScreenState
+    extends BaseRouteState<ProductDescriptionScreen> {
   ProductDetail? _productDetail;
   bool _isDataLoaded = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -145,7 +151,7 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                             onTap: () async {
                               if (global.currentUser?.id == null) {
                                 Future.delayed(Duration.zero, () {
-                                  if(!context.mounted) return;
+                                  if (!context.mounted) return;
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (context) => LoginScreen(
@@ -159,7 +165,8 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                                     _productDetail!.productDetail!.varientId);
                                 if (isAdded) {
                                   _productDetail!.productDetail!.isFavourite =
-                                      !_productDetail!.productDetail!.isFavourite;
+                                      !_productDetail!
+                                          .productDetail!.isFavourite;
                                 }
 
                                 setState(() {});
@@ -202,12 +209,16 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                                       .productDetail!.images.length,
                                   builder: (BuildContext context, int index) {
                                     return PhotoViewGalleryPageOptions(
-                                        imageProvider: _productDetail!.productDetail!
-                                                        .images.isNotEmpty
+                                        imageProvider: _productDetail!
+                                                .productDetail!
+                                                .images
+                                                .isNotEmpty
                                             ? CachedNetworkImageProvider(
                                                 global.appInfo!.imageUrl! +
-                                                    _productDetail!.productDetail!
-                                                        .images[index].image!,
+                                                    _productDetail!
+                                                        .productDetail!
+                                                        .images[index]
+                                                        .image!,
                                               )
                                             : _productDetail!.productDetail!
                                                         .productImage !=
@@ -219,17 +230,18 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                                                             .productImage!,
                                                   )
                                                 : SizedBox(
-                                                    width: screenWidth,
-                                                    height: 260,
-                                                    child: Image.asset(
-                                                        'assets/images/icon.png')) as ImageProvider<Object>?);
+                                                        width: screenWidth,
+                                                        height: 260,
+                                                        child: Image.asset(
+                                                            'assets/images/icon.png'))
+                                                    as ImageProvider<Object>?);
                                   },
                                   backgroundDecoration: const BoxDecoration(
                                       // color: Colors.white,
                                       borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(40),
-                                        bottomRight: Radius.circular(40),
-                                      )),
+                                    bottomLeft: Radius.circular(40),
+                                    bottomRight: Radius.circular(40),
+                                  )),
                                 )
                               : PhotoView(
                                   imageProvider: _productDetail!
@@ -241,16 +253,17 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                                                   .productDetail!.productImage!,
                                         )
                                       : SizedBox(
-                                          width: screenWidth,
-                                          height: 260,
-                                          child: Image.asset(
-                                              'assets/images/icon.png')) as ImageProvider<Object>?,
+                                              width: screenWidth,
+                                              height: 260,
+                                              child: Image.asset(
+                                                  'assets/images/icon.png'))
+                                          as ImageProvider<Object>?,
                                   backgroundDecoration: const BoxDecoration(
                                       // color: Colors.white,
                                       borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(40),
-                                        bottomRight: Radius.circular(40),
-                                      )),
+                                    bottomLeft: Radius.circular(40),
+                                    bottomRight: Radius.circular(40),
+                                  )),
                                   loadingBuilder: (BuildContext context, _) {
                                     return const Center(
                                         child: CircularProgressIndicator());
@@ -279,7 +292,8 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                       shrinkWrap: true,
                       itemCount: _productDetail!.productDetail!.varient.length,
                       itemBuilder: (BuildContext context, int i) {
-                        debugPrint('${_productDetail!.productDetail!.varient[i].stock}');
+                        debugPrint(
+                            '${_productDetail!.productDetail!.varient[i].stock}');
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: _productWeightAndQuantity(
@@ -298,7 +312,8 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) => RatingListScreen(
-                                        _productDetail!.productDetail!.varientId,
+                                        _productDetail!
+                                            .productDetail!.varientId,
                                         analytics: widget.analytics,
                                         observer: widget.observer),
                                   ),
@@ -312,7 +327,8 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                                   Icon(
                                     Icons.star,
                                     size: 13,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                   RichText(
                                     text: TextSpan(
@@ -368,8 +384,9 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                               } else {
                                 if (_productDetail!.productDetail!.stock! > 0) {
                                   if (_productDetail!.productDetail!.varient
-                                          .where((e) => e.cartQty! > 0)
-                                          .toList().isNotEmpty) {
+                                      .where((e) => e.cartQty! > 0)
+                                      .toList()
+                                      .isNotEmpty) {
                                     //go to cart
                                     Get.to(() => CartScreen(
                                           analytics: widget.analytics,
@@ -385,29 +402,31 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                             },
                             child: _productDetail!.productDetail!.stock! > 0
                                 ? _productDetail!.productDetail!.varient
-                                            .where((e) => e.cartQty! > 0)
-                                            .toList().isNotEmpty
+                                        .where((e) => e.cartQty! > 0)
+                                        .toList()
+                                        .isNotEmpty
                                     ? Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                              AppLocalizations.of(context)!.btn_go_to_cart),
+                                          Text(AppLocalizations.of(context)!
+                                              .btn_go_to_cart),
                                           CircleAvatar(
                                             radius: 15,
                                             backgroundColor: Colors.white,
                                             child: Icon(
                                               Icons.shopping_cart_outlined,
                                               color: Theme.of(context)
-                                                  .colorScheme.primary,
+                                                  .colorScheme
+                                                  .primary,
                                             ),
                                           ),
                                         ],
                                       )
-                                    : Text(
-                                        AppLocalizations.of(context)!.btn_add_cart)
-                                : Text(
-                                    AppLocalizations.of(context)!.txt_out_of_stock)))
+                                    : Text(AppLocalizations.of(context)!
+                                        .btn_add_cart)
+                                : Text(AppLocalizations.of(context)!
+                                    .txt_out_of_stock)))
                   ],
                 ),
               ),
@@ -426,7 +445,9 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
     try {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
-        await apiHelper.getBannerProductDetail(widget.productId).then((result) async {
+        await apiHelper
+            .getBannerProductDetail(widget.productId)
+            .then((result) async {
           if (result != null) {
             if (result.status == "1") {
               _productDetail = result.data;
@@ -551,55 +572,52 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
           ),
           const Spacer(),
           _productDetail!.productDetail!.varient[i].stock! > 0
-              ?
-                CartQuantityWidget(
-                    quantity: _productDetail!.productDetail!.varient[i].cartQty,
-                    addTapped: () async {
-                      if (global.currentUser!.id == null) {
-                        Get.to(LoginScreen(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                        ));
-                      } else {
-                        _qty = 1;
-                        showOnlyLoaderDialog();
-                        ATCMS? isSuccess = await value.addToCart(
-                            _productDetail?.productDetail, _qty, false,
-                            varient: _productDetail?.productDetail?.varient[i]);
-                        if (isSuccess?.isSuccess != null && mounted) {
-                          Navigator.of(context).pop();
-                        }
-                        showToast(isSuccess?.message ??
-                            'Something went wrong adding product to cart');
-                        setState(() {});
-                      }
-                    },
-                    deleteTapped: () async {
-                      if (_productDetail!
-                          .productDetail!.varient[i].cartQty !=
-                          null &&
-                          _productDetail!
-                              .productDetail!.varient[i].cartQty ==
-                              1) {
-                        _qty = 0;
-                      } else {
-                        _qty = _productDetail!
-                            .productDetail!.varient[i].cartQty! - 1;
-                      }
-
+              ? CartQuantityWidget(
+                  quantity: _productDetail!.productDetail!.varient[i].cartQty,
+                  addTapped: () async {
+                    if (global.currentUser!.id == null) {
+                      Get.to(LoginScreen(
+                        analytics: widget.analytics,
+                        observer: widget.observer,
+                      ));
+                    } else {
+                      _qty = 1;
                       showOnlyLoaderDialog();
                       ATCMS? isSuccess = await value.addToCart(
-                          _productDetail?.productDetail, _qty, true,
-                          varient:
-                          _productDetail?.productDetail?.varient[i]);
-                      if (isSuccess?.isSuccess != null) {
-                        if(!mounted) return;
+                          _productDetail?.productDetail, _qty, false,
+                          varient: _productDetail?.productDetail?.varient[i]);
+                      if (isSuccess?.isSuccess != null && mounted) {
                         Navigator.of(context).pop();
                       }
-                      showToast(isSuccess?.message ?? 'Something went wrong trying to remove the product to the cart. Please try again later');
+                      showToast(isSuccess?.message ??
+                          'Something went wrong adding product to cart');
                       setState(() {});
                     }
-                )
+                  },
+                  deleteTapped: () async {
+                    if (_productDetail!.productDetail!.varient[i].cartQty !=
+                            null &&
+                        _productDetail!.productDetail!.varient[i].cartQty ==
+                            1) {
+                      _qty = 0;
+                    } else {
+                      _qty =
+                          _productDetail!.productDetail!.varient[i].cartQty! -
+                              1;
+                    }
+
+                    showOnlyLoaderDialog();
+                    ATCMS? isSuccess = await value.addToCart(
+                        _productDetail?.productDetail, _qty, true,
+                        varient: _productDetail?.productDetail?.varient[i]);
+                    if (isSuccess?.isSuccess != null) {
+                      if (!mounted) return;
+                      Navigator.of(context).pop();
+                    }
+                    showToast(isSuccess?.message ??
+                        'Something went wrong trying to remove the product to the cart. Please try again later');
+                    setState(() {});
+                  })
               : Text(
                   AppLocalizations.of(context)!.txt_out_of_stock,
                   style: const TextStyle(color: Colors.red, fontSize: 12),
@@ -622,7 +640,8 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
               return InkWell(
                 onTap: () {
                   _isDataLoaded = false;
-                  widget.productId = _productDetail!.similarProductList[index].productId;
+                  widget.productId =
+                      _productDetail!.similarProductList[index].productId;
 
                   _init();
                 },
@@ -655,7 +674,8 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                       SizedBox(
                         width: 60,
                         child: Text(
-                          _productDetail!.similarProductList[index].productName!,
+                          _productDetail!
+                              .similarProductList[index].productName!,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 10),
                         ),
@@ -754,7 +774,8 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                   const Divider(),
                   Expanded(
                     child: ListView.builder(
-                        itemCount: _productDetail!.productDetail!.varient.length,
+                        itemCount:
+                            _productDetail!.productDetail!.varient.length,
                         itemBuilder: (BuildContext context, int i) {
                           return ListTile(
                             title: ReadMoreText(
@@ -783,85 +804,81 @@ class _ProductDescriptionScreenState extends BaseRouteState<ProductDescriptionSc
                                     .titleSmall!
                                     .copyWith(fontSize: 15)),
                             trailing: _productDetail!
-                                .productDetail!.varient[i].stock! > 0
-                                ?
-                                  CartQuantityWidget(
-                                      quantity: _productDetail!.productDetail!.varient[i].cartQty,
-                                      addTapped: () async {
-                                        if (_productDetail!.productDetail!
-                                            .varient[i].cartQty ==
-                                            null) {
+                                        .productDetail!.varient[i].stock! >
+                                    0
+                                ? CartQuantityWidget(
+                                    quantity: _productDetail!
+                                        .productDetail!.varient[i].cartQty,
+                                    addTapped: () async {
+                                      if (_productDetail!.productDetail!
+                                              .varient[i].cartQty ==
+                                          null) {
+                                        _productDetail!.productDetail!
+                                            .varient[i].cartQty = 0;
+                                      }
+                                      if (_productDetail!.productDetail!
+                                              .varient[i].stock! >=
                                           _productDetail!.productDetail!
-                                              .varient[i].cartQty = 0;
-                                        }
-                                        if (_productDetail!.productDetail!
-                                            .varient[i].stock! >=
-                                            _productDetail!.productDetail!
-                                                .varient[i].cartQty!) {
-                                          _qty = _productDetail!.productDetail!
-                                              .varient[i].cartQty! +
-                                              1;
-
-                                          showOnlyLoaderDialog();
-                                          ATCMS? isSuccess =
-                                          await value.addToCart(
-                                              _productDetail!
-                                                  .productDetail,
-                                              _qty,
-                                              false,
-                                              varient: _productDetail!
-                                                  .productDetail!
-                                                  .varient[i]);
-                                          if (isSuccess?.isSuccess != null && context.mounted) {
-                                            Navigator.of(context).pop();
-                                          }
-                                          showToast(isSuccess?.message ?? '');
-                                        }
-                                        else {
-                                          showToast(
-                                              'No more stock available for this variant');
-                                        }
-
-                                        setState(() {});
-                                      },
-                                      deleteTapped: () async {
-                                        if (_productDetail!.productDetail!
-                                            .varient[i].cartQty !=
-                                            null &&
-                                            _productDetail!.productDetail!
-                                                .varient[i].cartQty ==
-                                                1) {
-                                          _qty = 0;
-                                        } else {
-                                          _qty = _productDetail!
-                                              .productDetail!
-                                              .varient[i]
-                                              .cartQty! -
-                                              1;
-                                        }
+                                              .varient[i].cartQty!) {
+                                        _qty = _productDetail!.productDetail!
+                                                .varient[i].cartQty! +
+                                            1;
 
                                         showOnlyLoaderDialog();
                                         ATCMS? isSuccess =
-                                        await value.addToCart(
-                                            _productDetail!
-                                                .productDetail,
-                                            _qty,
-                                            true,
-                                            varient: _productDetail!
-                                                .productDetail!
-                                                .varient[i]);
-                                        if (isSuccess?.isSuccess != null && context.mounted) {
+                                            await value.addToCart(
+                                                _productDetail!.productDetail,
+                                                _qty,
+                                                false,
+                                                varient: _productDetail!
+                                                    .productDetail!.varient[i]);
+                                        if (isSuccess?.isSuccess != null &&
+                                            context.mounted) {
                                           Navigator.of(context).pop();
                                         }
                                         showToast(isSuccess?.message ?? '');
-
-                                        setState(() {});
+                                      } else {
+                                        showToast(
+                                            'No more stock available for this variant');
                                       }
-                                  )
+
+                                      setState(() {});
+                                    },
+                                    deleteTapped: () async {
+                                      if (_productDetail!.productDetail!
+                                                  .varient[i].cartQty !=
+                                              null &&
+                                          _productDetail!.productDetail!
+                                                  .varient[i].cartQty ==
+                                              1) {
+                                        _qty = 0;
+                                      } else {
+                                        _qty = _productDetail!.productDetail!
+                                                .varient[i].cartQty! -
+                                            1;
+                                      }
+
+                                      showOnlyLoaderDialog();
+                                      ATCMS? isSuccess = await value.addToCart(
+                                          _productDetail!.productDetail,
+                                          _qty,
+                                          true,
+                                          varient: _productDetail!
+                                              .productDetail!.varient[i]);
+                                      if (isSuccess?.isSuccess != null &&
+                                          context.mounted) {
+                                        Navigator.of(context).pop();
+                                      }
+                                      showToast(isSuccess?.message ?? '');
+
+                                      setState(() {});
+                                    })
                                 : Text(
-                              AppLocalizations.of(context)!.txt_out_of_stock,
-                              style: const TextStyle(color: Colors.red, fontSize: 12),
-                            ),
+                                    AppLocalizations.of(context)!
+                                        .txt_out_of_stock,
+                                    style: const TextStyle(
+                                        color: Colors.red, fontSize: 12),
+                                  ),
                           );
                         }),
                   )

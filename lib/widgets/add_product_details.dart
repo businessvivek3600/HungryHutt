@@ -27,6 +27,7 @@ class ProductBottomSheet extends StatefulWidget {
 class _ProductBottomSheetState extends State<ProductBottomSheet> {
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> showAppBarNotifier = ValueNotifier(false);
+
   late final List<Variant> variants;
   @override
   void initState() {
@@ -598,10 +599,8 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
 ///----- Function to Show BottomSheet
 void showProductBottomSheet(BuildContext context, Product product) {
   if (product.varient.isNotEmpty && product.varient.length == 1) {
-   
     addToCart(product.varient.first);
   } else {
-    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
