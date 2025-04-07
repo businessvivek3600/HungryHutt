@@ -13,12 +13,11 @@ class DashboardTopSellingProductList extends StatelessWidget {
   final FirebaseAnalyticsObserver? observer;
   final List<Product> topSellingProducts;
 
-  const DashboardTopSellingProductList({
-    super.key,
-    this.analytics,
-    this.observer,
-    required this.topSellingProducts
-  });
+  const DashboardTopSellingProductList(
+      {super.key,
+      this.analytics,
+      this.observer,
+      required this.topSellingProducts});
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +41,17 @@ class DashboardTopSellingProductList extends StatelessWidget {
               InkWell(
                 onTap: () {
                   Get.to(() => ProductListScreen(
-                    analytics: analytics,
-                    observer: observer,
-                    categoryName: AppLocalizations.of(context)!.tle_popular_products,
-                  ));
+                        analytics: analytics,
+                        observer: observer,
+                        categoryName:
+                            AppLocalizations.of(context)!.tle_popular_products,
+                      ));
                 },
                 child: Text(
-                  "${AppLocalizations.of(context)!.btn_view_all} ", style: textTheme.bodySmall!.copyWith(color: Theme.of(context).colorScheme.primary, fontSize: 14),
+                  "${AppLocalizations.of(context)!.btn_view_all} ",
+                  style: textTheme.bodySmall!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 14),
                 ),
               ),
             ],
