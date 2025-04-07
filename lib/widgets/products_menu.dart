@@ -12,6 +12,7 @@ import 'package:user/models/category_product_model.dart';
 import 'package:user/screens/login_screen.dart';
 import 'package:user/screens/product_description_screen.dart';
 import 'package:user/theme/style.dart';
+import 'package:user/widgets/add_product_details.dart';
 import 'package:user/widgets/tag_container.dart';
 import 'package:user/widgets/toastfile.dart';
 
@@ -36,12 +37,15 @@ class ProductsMenu extends StatefulWidget {
   final dynamic analytics;
   final dynamic observer;
   final int? callId;
+  // final List<Product> dealProducts;
   final List<Product>? categoryProductList;
+
   const ProductsMenu(
       {super.key,
       this.analytics,
       this.observer,
       this.categoryProductList,
+      // required this.dealProducts,
       this.callId});
 
   @override
@@ -58,6 +62,7 @@ class _PopularProductsMenuItemState extends State<PopularProductsMenuItem> {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+
     return SizedBox(
       height: 160,
       child: Card(
@@ -76,8 +81,7 @@ class _PopularProductsMenuItemState extends State<PopularProductsMenuItem> {
                   children: [
                     Row(
                       children: [
-                        buildBadge("Bestseller",
-                            Colors.green.shade800),
+                        buildBadge("Bestseller", Colors.green.shade800),
                         const SizedBox(width: 5),
                         buildBadge("New", Colors.orange),
                       ],
@@ -116,40 +120,54 @@ class _PopularProductsMenuItemState extends State<PopularProductsMenuItem> {
               // Right Side (Product Image)
               Stack(
                 children: [
-                Container(
-                height: 120,
-                width: 120,
-                decoration: BoxDecoration(
-                  color: const Color(0xffF7F7F7),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: CachedNetworkImage(
-                    imageUrl: global.appInfo!.imageUrl! + widget.product.productImage!,
-                    fit: BoxFit.cover, // Ensure image fills the entire container
-                    placeholder: (context, url) => const Center(child: CircularProgressIndicator()), // Optional loading indicator
-                    errorWidget: (context, url, error) => const Icon(Icons.error, size: 50), // Optional error placeholder
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover, // Change to cover for full fill
-                        ),
-                      ),
-                      child: Visibility(
-                        visible: widget.product.stock! <= 0, // Show only when out of stock
-                        child: Container(
-                          color: Colors.white.withOpacity(0.6),
-                          alignment: Alignment.center,
-                          child: Transform.rotate(
-                            angle: 12,
-                            child: Text(
-                              AppLocalizations.of(context)!.txt_out_of_stock,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
+                  Container(
+                    height: 120,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffF7F7F7),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: CachedNetworkImage(
+                        imageUrl: global.appInfo!.imageUrl! +
+                            widget.product.productImage!,
+                        fit: BoxFit
+                            .cover, // Ensure image fills the entire container
+                        placeholder: (context, url) => const Center(
+                            child:
+                                CircularProgressIndicator()), // Optional loading indicator
+                        errorWidget: (context, url, error) => const Icon(
+                            Icons.error,
+                            size: 50), // Optional error placeholder
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit:
+                                  BoxFit.cover, // Change to cover for full fill
+                            ),
+                          ),
+                          child: Visibility(
+                            visible: widget.product.stock! <=
+                                0, // Show only when out of stock
+                            child: Container(
+                              color: Colors.white.withOpacity(0.6),
+                              alignment: Alignment.center,
+                              child: Transform.rotate(
+                                angle: 12,
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .txt_out_of_stock,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
                               ),
                             ),
                           ),
@@ -157,48 +175,51 @@ class _PopularProductsMenuItemState extends State<PopularProductsMenuItem> {
                       ),
                     ),
                   ),
-                ),
-              ),
-
-
                   Positioned(
-                    bottom: 0,
-                    right: 0,
-                    left: 0,
-                    child: GestureDetector(
-                      onTap: () {
-                        // Your add button logic here
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white, // White background
-                          borderRadius: BorderRadius.circular(10), // Rounded corners
-                          border: Border.all(color: const Color(0xffe54740), width: 0.5), // Green border
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12, // Shadow color
-                              blurRadius: 2, // Slight shadow effect
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.add, color: Color(0xffe54740), size: 16),
-                              SizedBox(width: 4),
-                              Text("Add", style: TextStyle(color: Color(0xffe54740), fontSize: 12,fontWeight: FontWeight.w600)),
-                               // Space between text and icon
-
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          showProductBottomSheet(context, widget.product);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white, // White background
+                            borderRadius:
+                                BorderRadius.circular(10), // Rounded corners
+                            border: Border.all(
+                                color: const Color(0xffe54740),
+                                width: 0.5), // Green border
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12, // Shadow color
+                                blurRadius: 2, // Slight shadow effect
+                                spreadRadius: 1,
+                              ),
                             ],
                           ),
+                          child: const Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.add,
+                                    color: Color(0xffe54740), size: 16),
+                                SizedBox(width: 4),
+                                Text("Add",
+                                    style: TextStyle(
+                                        color: Color(0xffe54740),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600)),
+                                // Space between text and icon
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    )
-                  ),
+                      )),
                 ],
               ),
             ],
