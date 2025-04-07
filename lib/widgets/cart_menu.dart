@@ -94,7 +94,7 @@ class _CartMenuItemState extends State<CartMenuItem> {
                     ),
                   ],
                 ),
-                const SizedBox(width: 20),
+                const SizedBox(width: 10),
                 // ✅ Quantity Adjuster
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -115,7 +115,7 @@ class _CartMenuItemState extends State<CartMenuItem> {
                             onTap: _qty! > 1 ? _decreaseQuantity : null,
                             child: Icon(
                               _qty == 1 ? Icons.remove : MdiIcons.minus,
-                              size: 15,
+                              size: 20,
                               color: _qty == 1 ? Colors.grey : Colors.black,
                             ),
                           ),
@@ -136,7 +136,7 @@ class _CartMenuItemState extends State<CartMenuItem> {
                             onTap: _increaseQuantity,
                             child: Icon(
                               MdiIcons.plus,
-                              size: 15,
+                              size: 20,
                               color: Colors.black,
                             ),
                           ),
@@ -172,6 +172,7 @@ class _CartMenuItemState extends State<CartMenuItem> {
           varientId: widget.product!.varientId,
           callId: 0,
         );
+        print("addToCart response: $isSuccess");
         if (context.mounted) {
           showToast(isSuccess?.message ?? "Error");
         }
@@ -192,6 +193,7 @@ class _CartMenuItemState extends State<CartMenuItem> {
         varientId: widget.product!.varientId,
         callId: 0,
       );
+      print("addToCart response: $isSuccess");
       if (context.mounted) {
         showToast(isSuccess?.message ?? "Error");
       }

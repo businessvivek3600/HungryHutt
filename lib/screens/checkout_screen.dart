@@ -328,10 +328,7 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
         if (isConnected) {
           await apiHelper
               .makeOrder(
-                  // selectedDate: _selectedDate,
-                  // selectedTime: _membershipStatus!.status == 'running'
-                  //     ? 'instant'
-                  //     : _selectedTimeSlot!.timeslot
+
                 )
               .then((result) async {
             if (result != null) {
@@ -396,8 +393,8 @@ class _CheckoutScreenState extends BaseRouteState<CheckoutScreen> {
               setState(() {
                 _selectedAddress = addressSelected;
                 global.userProfileController.addressList[index!].isSelected =
-                    !global
-                        .userProfileController.addressList[index].isSelected;
+                !global
+                    .userProfileController.addressList[index].isSelected;
               });
             } else {
               showToast(result.message);

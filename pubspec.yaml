@@ -93,6 +93,8 @@ dependencies:
   google_place: ^0.4.7
   video_player: ^2.9.3
   flutter_dash: ^1.0.0
+  flutter_dotenv: ^5.2.1
+  flutter_stripe: ^11.4.0
 
 
 dependency_overrides:
@@ -119,6 +121,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/.env
 
   fonts:
     - family: Google-Sans

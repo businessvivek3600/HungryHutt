@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -18,11 +19,14 @@ import 'package:user/provider/local_provider.dart';
 import 'package:user/screens/splash_screen.dart';
 import 'package:user/theme/style.dart';
 
+import 'constants/app_constant.dart';
 import 'networking/my_http_client.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = AppConst.stripePublicKey;
+  await Stripe.instance.applySettings();
   try {
     await Firebase.initializeApp(
       // To generate your app configuration follows step 1 and 2 at the
@@ -35,6 +39,8 @@ void main() async {
   }
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   HttpOverrides.global = MyHttpOverrides();
+  print("PAYMENT KEYS DATA----${AppConst.stripeSecretKey}");
+  print("PAYMENT Currency DATA----${global.appInfo!.paymentCurrency}");
   runApp(const App());
 }
 
