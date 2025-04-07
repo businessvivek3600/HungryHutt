@@ -121,7 +121,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/.env
+    # - assets/.env
 
   fonts:
     - family: Google-Sans
