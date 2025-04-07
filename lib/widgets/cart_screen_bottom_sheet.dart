@@ -7,8 +7,9 @@ import 'package:user/widgets/bottom_button.dart';
 class CartScreenBottomSheet extends StatefulWidget {
   final CartController? cartController;
   final Function()? onButtonPressed;
+  final String? title;
   const CartScreenBottomSheet(
-      {super.key, this.onButtonPressed, this.cartController});
+      {super.key, this.onButtonPressed, this.cartController, this.title});
 
   @override
   State<CartScreenBottomSheet> createState() => _CartScreenBottomSheetState();
@@ -40,7 +41,9 @@ class _CartScreenBottomSheetState extends State<CartScreenBottomSheet> {
         loadingState: false,
         disabledState: false,
         onPressed: () => widget.onButtonPressed!(),
-        child: const Text("Select Delivery Address"),
+        child:  Text(widget.title!,style: TextStyle(
+          fontWeight: FontWeight.bold,fontSize: 16
+        ),),
       ),
     );
   }

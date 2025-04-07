@@ -12,9 +12,14 @@ import 'package:user/screens/checkout_screen.dart';
 import 'package:user/controllers/home_controller.dart';
 import 'package:user/utils/navigation_utils.dart';
 import 'package:user/widgets/address_info_card.dart';
+import 'package:user/widgets/cart_coupon.dart';
 import 'package:user/widgets/cart_menu.dart';
 import 'package:user/widgets/cart_screen_bottom_sheet.dart';
 import 'package:user/widgets/toastfile.dart';
+
+import '../models/order_model.dart';
+import '../widgets/tip_controller.dart';
+import 'payment_screen.dart';
 
 class CartScreen extends BaseRoute {
   const CartScreen(
@@ -31,11 +36,11 @@ class _CartScreenState extends BaseRouteState {
   final CartController cartController = Get.put(CartController());
   final HomeController homeController = Get.find();
   bool _isDataLoaded = false;
-  var isExpanded = false;
+  var isExpanded = true;
+  var isTip = false;
   GlobalKey<ScaffoldState>? _scaffoldKey;
   Address? _selectedAddress = Address();
   List<Address> _addressList = [];
-  bool _isLoading = true;
 
   Future<void> _fetchAddresses() async {
     var addressList = await apiHelper.getAddressList();
@@ -45,15 +50,15 @@ class _CartScreenState extends BaseRouteState {
         _selectedAddress = _addressList.first;
       });
     }
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() {});
   }
+  Order? orderDetails;
 
+  int? selectedTip;
+  TextEditingController tipController = TextEditingController();
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
-    double cardWidth = screenWidth * 0.9;
     return PopScope(
       canPop: false,
       child: GetBuilder<CartController>(
@@ -101,52 +106,43 @@ class _CartScreenState extends BaseRouteState {
                       ),
 
                       // ✅ Bottom Section: Address Selection
-                      Padding(
+                      if (cartController.cartItemsList != null &&
+                          cartController
+                              .cartItemsList!.cartList.isNotEmpty &&_selectedAddress?.fullAddress != null && _selectedAddress!.fullAddress!.trim().isNotEmpty)
+                        Padding(
                         padding: const EdgeInsets.only(top: 5),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Address Icon & Text in a Row
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.location_on, size: 25),
-                                  ],
-                                ),
-                                const SizedBox(width: 7),
-                                Expanded(
-                                  child: Text(
-                                    _selectedAddress?.fullAddress ??
-                                        "No Address Selected",
-                                    style: textTheme.titleMedium,
-                                    softWrap:
-                                        true, // Allow text to wrap to the next line
-                                    maxLines: null, // No limit on lines
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 8.0,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    selectAddressBottomSheet(context);
-                                  },
-                                  child: Text(
-                                    "Select",
-                                    style: textTheme.titleMedium!.copyWith(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold,
+                            GestureDetector(
+                              onTap: () {
+                                selectAddressBottomSheet(context);
+                              },
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                   getAddressIcon(_selectedAddress?.type),
+                                  const SizedBox(width: 7),
+                                  Expanded(
+                                    child: Text(
+                                      _selectedAddress?.fullAddress ??
+                                          "No Address Selected",
+                                      style: textTheme.titleMedium,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap:
+                                          true, // Allow text to wrap to the next line
+                                      maxLines: null, // No limit on lines
                                     ),
                                   ),
-                                ),
-                              ],
+
+
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
+                      )
                     ]),
                   ),
                 ),
@@ -190,87 +186,8 @@ class _CartScreenState extends BaseRouteState {
                                                       cartController:
                                                           cartController),
 
-                                                  /// Bottom Text
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child:
-                                                            OutlinedButton.icon(
-                                                          onPressed: () {
-                                                            // Add functionality here
-                                                          },
-                                                          style: OutlinedButton
-                                                              .styleFrom(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        16,
-                                                                    vertical:
-                                                                        0),
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          16),
-                                                            ),
-                                                            side: BorderSide(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade300),
-                                                          ),
-                                                          icon: Icon(
-                                                              Icons
-                                                                  .edit_note_rounded,
-                                                              color: Colors
-                                                                  .grey[700],
-                                                              size: 25),
-                                                          label: TextField(
-                                                            focusNode:
-                                                                FocusNode(),
-                                                            decoration:
-                                                                const InputDecoration(
-                                                              hintText:
-                                                                  "Special Instruction",
-                                                              hintStyle: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500), // Placeholder text
-                                                              border: InputBorder
-                                                                  .none, // Removes underline
-                                                              contentPadding:
-                                                                  EdgeInsets.all(
-                                                                      8), // Adjust padding
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      Expanded(
-                                                        child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .green[100],
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                          ),
-                                                          child: const Icon(
-                                                              Icons
-                                                                  .add_alert_rounded,
-                                                              color:
-                                                                  Colors.green,
-                                                              size: 25),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                  /// Bottom Instruction Container
+                                                  cartProductInstruction(),
                                                 ],
                                               ),
                                             ),
@@ -278,8 +195,8 @@ class _CartScreenState extends BaseRouteState {
                                             //  Square-Shaped Food Cards ListView
                                             cartProductCard(),
                                             const SizedBox(height: 7),
-                                            cartCoupon(cardWidth),
-
+                                            savingCard(),
+                                            isTip ?  TipContainer() : const SizedBox(),
                                             const SizedBox(height: 5),
                                             billingCard(context),
                                           ],
@@ -307,17 +224,16 @@ class _CartScreenState extends BaseRouteState {
                           init: cartController,
                           builder: (value) => SafeArea(
                             child: CartScreenBottomSheet(
+                              title:_selectedAddress?.fullAddress != null && _selectedAddress!.fullAddress!.trim().isNotEmpty ? "Checkout" :"Select Delivery Address" ,
                               cartController: cartController,
-                              onButtonPressed: () => Navigator.of(context).push(
-                                NavigationUtils.createAnimatedRoute(
-                                  1.0,
-                                  CheckoutScreen(
-                                    cartController: cartController,
-                                    analytics: widget.analytics,
-                                    observer: widget.observer,
-                                  ),
-                                ),
-                              ),
+                              onButtonPressed: () {
+                                if (_selectedAddress?.fullAddress != null && _selectedAddress!.fullAddress!.trim().isNotEmpty) {
+                                  _makeOrder();
+                               }
+                                else {
+                                 selectAddressBottomSheet(context);
+                                }
+                              },
                             ),
                           ),
                         )
@@ -328,9 +244,74 @@ class _CartScreenState extends BaseRouteState {
       ),
     );
   }
+  Icon getAddressIcon(String? addressType) {
+    print("Address Type: $addressType");
+    switch (addressType) {
+      case 'Home':
+        return const Icon(Icons.home, size: 25,);
+      case 'Work':
+        return const Icon(Icons.work, size: 25, );
+      case 'Other':
+        return const Icon(Icons.location_on, size: 25, );
+      default:
+        return const Icon(Icons.location_on, size: 25); // Default icon
+    }
+  }
+  Row cartProductInstruction() {
+    return Row(
+      children: [
+        Expanded(
+          child: SizedBox(
+            height: 48,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                // Add functionality here
+              },
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                side: BorderSide(color: Colors.grey.shade300),
+              ),
+              icon: Icon(Icons.note_alt,
+                  color: Colors.grey[700], size: 16),
+              label: TextField(
+                focusNode: FocusNode()
+                ,
+                decoration: const InputDecoration(
+
+                  hintText: "Special Instruction",
+                  hintStyle:
+                      TextStyle(fontSize: 12), // Placeholder text
+                  border: InputBorder.none, // Removes underline
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              homeController.navigateToHome();
+              Get.back();
+            },
+            child: Container(
+              height: 48,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child:Center(child: Text("+ Add More ITems",style: TextStyle(fontSize: 14),)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   Padding billingCard(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -349,101 +330,115 @@ class _CartScreenState extends BaseRouteState {
                 ),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.receipt_long, color: Colors.green),
-                            const SizedBox(width: 8),
-                            const Text(
-                              "To Pay",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.receipt_long, color: Colors.green),
+                          const SizedBox(width: 8),
+                          const Text(
+                            "To Pay",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
-                            const SizedBox(width: 8),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text:
-                                        "\u{20B9}${cartController.cartItemsList!.totalMrp!.toStringAsFixed(2)} ",
-                                    style: const TextStyle(
-                                      decoration: TextDecoration.lineThrough,
-                                      color: Colors.grey,
-                                    ),
+                          ),
+                          const SizedBox(width: 8),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                      "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalMrp!.toStringAsFixed(2)} ",
+                                  style: const TextStyle(
+                                    decoration: TextDecoration.lineThrough,
+                                    color: Colors.grey,
                                   ),
-                                  TextSpan(
-                                    text:
-                                        "\u{20B9}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
+                                ),
+                                TextSpan(
+                                  text:
+                                      "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          "\u{20B9}${cartController.cartItemsList!.discountonmrp!.toStringAsFixed(2)} saved on the total!",
-                          style: const TextStyle(
-                              color: Colors.green, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            isExpanded = !isExpanded;
-                          });
-                        },
-                        icon: Icon( isExpanded
-                            ? Icons.keyboard_arrow_up_rounded
-                            : Icons.keyboard_arrow_down_rounded,
-                            color: Colors.grey[700], size: 25)),
-                  ],
-                ),
-                ///-----Hide or show this data on tap drop down
-                 if (isExpanded) ...[
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        "${global.appInfo!.currencySign}${cartController.cartItemsList!.discountonmrp!.toStringAsFixed(2)} saved on the total!",
+                        style: const TextStyle(
+                            color: Colors.green, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isExpanded = !isExpanded;
+                        });
+                      },
+                      icon: Icon(
+                          isExpanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          color: Colors.grey[700],
+                          size: 25)),
+                ],
+              ),
+
+              ///-----Hide or show this data on tap drop down
+              if (isExpanded) ...[
                 const Divider(),
                 _buildRow(
                     "Total Items",
                     cartController.cartItemsList!.totalItems!
                         .toStringAsFixed(2)),
-                _buildRow("Delivery Fee | 5.9 kms", "\u{20AC}57.00"),
-                _buildRow("Extra discount for you", "-\u{20AC}20.00",
+                _buildRow("Delivery Fee | 5.9 kms",
+                    "${global.appInfo!.currencySign}57.00"),
+                _buildRow("Extra discount for you",
+                    "-${global.appInfo!.currencySign}20.00",
                     color: Colors.green),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Delivery Tip",
+                    const Text("Delivery Tip",
                         style: TextStyle(
                             fontSize: 13, fontWeight: FontWeight.w500)),
-                    Text("Add tip",
-                        style: TextStyle(
+                    selectedTip == null ?  InkWell(
+                      onTap: () {
+                        setState(() {
+                          isTip = !isTip;
+                        });
+                      },
+                      child: const Text("Add tip",
+                          style: TextStyle(
+                              color: Colors.orange, fontWeight: FontWeight.bold)),
+                    ) : Text( "${global.appInfo!.currencySign}${selectedTip.toString()}",
+                        style: const TextStyle(
                             color: Colors.orange, fontWeight: FontWeight.bold)),
                   ],
                 ),
-                _buildRow("Platform Fee", "\u{20AC}9.00"),
+                _buildRow(
+                    "Platform Fee", "${global.appInfo!.currencySign}9.00"),
                 _buildRow("GST and Restaurant Charges",
-                    "\u{20AC}${cartController.cartItemsList!.totalTax!.toStringAsFixed(2)}"),
+                    "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalTax!.toStringAsFixed(2)}"),
                 const Divider(),
                 _buildRow("To Pay",
-                    "\u{20AC}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
+                    "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
                     bold: true),
               ],
-           ] ),
+            ]),
           ),
         ],
       ),
@@ -470,84 +465,81 @@ class _CartScreenState extends BaseRouteState {
     );
   }
 
-  SizedBox cartCoupon(double cardWidth) {
-    return SizedBox(
-      width: cardWidth,
-      // height: 100,
-      child: Card(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Discount icon
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.percent,
-                  color: Colors.green,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 10),
-              // Offer details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'LPN75',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Get Flat Discount of Rs.75 on Minimum Billing of Rs.399',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Row(
-                      children: [
-                        Text(
-                          'View more offers',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 12,
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          'Apply',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+  Widget savingCard() {
+    return Card(
+      elevation: 2,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "SAVINGS CORNER",
+              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                  color: Colors.grey),
+            ),
+            const SizedBox(height: 5),
+            _buildListTile(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const CouponPage(),
+                ));
+              },
+              icon: Icons.local_offer,
+              iconColor: Colors.orange,
+              title: "Apply Coupon",
+              trailing: const Icon(Icons.chevron_right, color: Colors.black54),
+            ),
+            // Divider(),
+            // _buildListTile(
+            //   icon: Icons.local_offer,
+            //   iconColor: Colors.orange,
+            //   title: "₹166 saved with 'Items at ₹129'",
+            //   trailing: Row(
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: [
+            //       Icon(Icons.check, color: Colors.green, size: 18),
+            //       SizedBox(width: 4),
+            //       Text(
+            //         "Applied",
+            //         style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildListTile({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
+    return ListTile(
+      onTap: onTap,
+      contentPadding: EdgeInsets.zero,
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: iconColor.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: iconColor, size: 20),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      ),
+      trailing: trailing,
     );
   }
 
@@ -622,7 +614,7 @@ class _CartScreenState extends BaseRouteState {
 
                                 // ✅ Price
                                 Text(
-                                  "₹ 119",
+                                  "${global.appInfo!.currencySign}119",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
@@ -650,7 +642,7 @@ class _CartScreenState extends BaseRouteState {
                                     // Your add button logic
                                   },
                                   child: const Icon(Icons.add,
-                                      size: 16, color: Colors.green),
+                                      size: 16, color: Color(0xFF68a039)),
                                 ),
                               ),
                             ),
@@ -670,6 +662,9 @@ class _CartScreenState extends BaseRouteState {
 
   Future<dynamic> selectAddressBottomSheet(BuildContext context) {
     return showModalBottomSheet(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.4,
+      ),
       backgroundColor: Colors.white,
       context: context,
       isScrollControlled: true,
@@ -706,48 +701,51 @@ class _CartScreenState extends BaseRouteState {
                   const SizedBox(height: 10),
 
                   // Selected Address Card
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    width: MediaQuery.of(context).size.width,
-                    child: _addressList.isNotEmpty
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: _addressList.length,
-                            itemBuilder: (BuildContext ctx, int index) {
-                              Address address = _addressList[index];
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 6.0),
-                                child: AddressInfoCard(
-                                  analytics: widget.analytics,
-                                  observer: widget.observer,
-                                  key: UniqueKey(),
-                                  address: address,
-                                  isSelected: selectedAddress == address,
-                                  value: address,
-                                  groupValue: selectedAddress,
-                                  onChanged: (value) {
-                                    setModalState(() {
-                                      selectedAddress = value!;
-                                    });
+                  if (_selectedAddress?.fullAddress != null && _selectedAddress!.fullAddress!.trim().isNotEmpty)
+                  Expanded(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: _addressList.isNotEmpty
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: _addressList.length,
+                              itemBuilder: (BuildContext ctx, int index) {
+                                Address address = _addressList[index];
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6.0),
+                                  child: AddressInfoCard(
+                                    analytics: widget.analytics,
+                                    observer: widget.observer,
+                                    key: UniqueKey(),
+                                    address: address,
+                                    isSelected: selectedAddress == address,
+                                    value: address,
+                                    groupValue: selectedAddress,
+                                    onChanged: (value) {
+                                      setModalState(() {
+                                        selectedAddress = value!;
+                                      });
 
-                                    // Update the main state when the user selects an address
-                                    _selectAddressForCheckout(
-                                      selectedAddressId: value?.addressId ?? 0,
-                                      addressSelected: value,
-                                    );
+                                      // Update the main state when the user selects an address
+                                      _selectAddressForCheckout(
+                                        selectedAddressId: value?.addressId ?? 0,
+                                        addressSelected: value,
+                                      );
 
-                                    setState(() {
-                                      _selectedAddress = value;
-                                    });
+                                      setState(() {
+                                        _selectedAddress = value;
+                                      });
 
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              );
-                            },
-                          )
-                        : const Divider(color: Colors.grey),
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                );
+                              },
+                            )
+                          : const Divider(color: Colors.grey),
+                    ),
                   ),
 
                   // Add Address Button
@@ -761,7 +759,7 @@ class _CartScreenState extends BaseRouteState {
                               ))!
                           .then((value) {
                         setState(() {
-                          _fetchAddresses(); // Refresh address list after adding
+                          _fetchAddresses();
                         });
                       });
                     },
@@ -797,6 +795,10 @@ class _CartScreenState extends BaseRouteState {
     );
   }
 
+  ///Tip Container-----
+
+
+  /// Tip Container----
   @override
   void initState() {
     super.initState();
@@ -828,6 +830,7 @@ class _CartScreenState extends BaseRouteState {
             style: ElevatedButton.styleFrom(
               fixedSize: const Size.fromWidth(350.0),
               minimumSize: const Size.fromHeight(55),
+              backgroundColor: Color(0xFF68a039),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
@@ -875,16 +878,16 @@ class _CartScreenState extends BaseRouteState {
           hideLoader();
           if (result != null) {
             if (result.status == "1") {
-              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              //   backgroundColor: Theme
-              //       .of(context)
-              //       .colorScheme.primary,
-              //   content: Text(
-              //     result.message,
-              //     textAlign: TextAlign.center,
-              //   ),
-              //   duration: Duration(seconds: 2),
-              // ));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Theme
+                    .of(context)
+                    .colorScheme.primary,
+                content: Text(
+                  result.message,
+                  textAlign: TextAlign.center,
+                ),
+                duration: Duration(seconds: 2),
+              ));
               showToast(result.message);
               setState(() {
                 _selectedAddress = addressSelected;
@@ -904,7 +907,100 @@ class _CartScreenState extends BaseRouteState {
           "Exception - checkout_screen.dart - _selectAddressForCheckout():$e");
     }
   }
+  _makeOrder() async {
+    try {
+      if (_selectedAddress == null ||
+          (_selectedAddress != null && _selectedAddress?.addressId == null)) {
+        showToast(AppLocalizations.of(context)!.txt_select_deluvery_address);
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //   backgroundColor: Theme
+        //       .of(context)
+        //       .colorScheme.primary,
+        //   content: Text(
+        //     '${AppLocalizations
+        //         .of(context)
+        //         .txt_select_deluvery_address}',
+        //     textAlign: TextAlign.center,
+        //   ),
+        //   duration: Duration(seconds: 2),
+        // ));
+      }
+      // else if (_selectedDate == null &&
+      //     _membershipStatus?.status != 'running') {
+      //   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   //   backgroundColor: Theme
+      //   //       .of(context)
+      //   //       .colorScheme.primary,
+      //   //   content: Text(
+      //   //     '${AppLocalizations
+      //   //         .of(context)
+      //   //         .txt_select_date}',
+      //   //     textAlign: TextAlign.center,
+      //   //   ),
+      //   //   duration: Duration(seconds: 2),
+      //   // ));
+      //   showToast(AppLocalizations.of(context)!.txt_select_date);
+      // } else if (_selectedTimeSlot?.timeslot == null &&
+      //     _membershipStatus?.status != 'running') {
+      //   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   //   backgroundColor: Theme
+      //   //       .of(context)
+      //   //       .colorScheme.primary,
+      //   //   content: Text(
+      //   //     '${AppLocalizations
+      //   //         .of(context)
+      //   //         .txt_select_time_slot}',
+      //   //     textAlign: TextAlign.center,
+      //   //   ),
+      //   //   duration: Duration(seconds: 2),
+      //   // ));
+      //   showToast(AppLocalizations.of(context)!.txt_select_time_slot);
+      // }
+      else {
+        // debugPrint(_selectedTimeSlot.timeslot);
+        showOnlyLoaderDialog();
+        bool isConnected = await br.checkConnectivity();
+        if (isConnected) {
+          await apiHelper
+              .makeOrder(
 
+          )
+              .then((result) async {
+            if (result != null) {
+              if (result.status == "1") {
+                orderDetails = result.data;
+                hideLoader();
+                Get.to(() => PaymentGatewayScreen(
+                    analytics: widget.analytics,
+                    observer: widget.observer,
+                    screenId: 1,
+                    totalAmount: orderDetails!.remPrice,
+                    cartController: cartController,
+                    order: orderDetails));
+              } else {
+                hideLoader();
+                showToast(result.message);
+                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //   backgroundColor: Theme
+                //       .of(context)
+                //       .colorScheme.primary,
+                //   content: Text(
+                //     result.message,
+                //     textAlign: TextAlign.center,
+                //   ),
+                //   duration: Duration(seconds: 2),
+                // ));
+              }
+            }
+          });
+        } else {
+          showNetworkErrorSnackBar(_scaffoldKey);
+        }
+      }
+    } catch (e) {
+      debugPrint("Exception - checkout_screen.dart - _makeOrder():$e");
+    }
+  }
   _shimmer() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
@@ -932,6 +1028,3 @@ class _CartScreenState extends BaseRouteState {
     );
   }
 }
-
-
-

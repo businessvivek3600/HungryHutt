@@ -22,14 +22,22 @@ class _BottomButtonState extends State<BottomButton> {
       height: 50,
       width: double.infinity,
       child: FilledButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all<Color>(const Color(0xFF68a039)),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+        ),
         onPressed: widget.loadingState! || widget.disabledState! ? null : widget.onPressed,
         child: !widget.loadingState!
             ? widget.child
-            : SizedBox(
+            : const SizedBox(
                 height: 20.0,
                 width: 20.0,
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF68a039)),
                 ),
               ),
       ),
