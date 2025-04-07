@@ -1050,11 +1050,15 @@ class APIHelper {
       var dio = Dio();
       var formData = FormData.fromMap(
           {'user_id': global.currentUser!.id, 'cart_id': cartId});
+      print("----------------------get cpoupon----------");
+      print(formData.fields);
       response = await dio.post('${global.baseUrl}couponlist',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("--------------------------------");
+      print(response.data);
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
         recordList = List<Coupon>.from(
@@ -1276,7 +1280,7 @@ class APIHelper {
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
-      debugPrint(response.data);
+      debugPrint("-------------------------${response.data}");
       dynamic recordList;
       if (response.statusCode == 200 && response.data['status'] != null) {
         recordList = PaymentGateway.fromJson(response.data);
@@ -1408,11 +1412,14 @@ class APIHelper {
         'user_id': global.currentUser!.id,
         'store_id': global.nearStoreModel!.id
       });
+      print("Coupon Form field ---${formData.fields}");
       response = await dio.post('${global.baseUrl}storecoupons',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(false),
           ));
+      print("--------------------------------");
+      print(response.data);
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
         recordList = List<Coupon>.from(
@@ -1705,7 +1712,8 @@ class APIHelper {
         // 'delivery_date': selectedDate,
         // 'time_slot': selectedTime
       });
-
+      print("Make Order-----");
+print("Order  Form field ---${formData.fields}");
       response = await dio.post('${global.baseUrl}make_order',
           data: formData,
           options: Options(

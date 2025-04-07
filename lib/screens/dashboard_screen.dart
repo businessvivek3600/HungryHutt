@@ -44,6 +44,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
 
+
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -64,7 +65,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
                 ),
               ),
               pinned: true,
-              backgroundColor:    Color(0xFF68a039),
+              backgroundColor:    const Color(0xFF68a039),
              // expandedHeight: 220.0,
               // flexibleSpace: FlexibleSpaceBar(
               //   background: Container(
@@ -411,7 +412,7 @@ class _DashboardScreenState extends BaseRouteState<DashboardScreen> {
             observer: widget.observer,
             productId: banner.varientId ?? 0,
             screenId: 0,
-          ));
+          ) );
         },
         child: CachedNetworkImage(
           imageUrl: global.appInfo!.imageUrl! + banner.bannerImage!,

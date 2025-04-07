@@ -489,7 +489,7 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
       children: [
         Text(widget.addonCategory.name ?? "Add-ons", style: const TextStyle(fontWeight: FontWeight.bold)),
        Text("you can choose up to $selectionLimit option(s)",
-            style: TextStyle(color: Colors.black54, fontSize: 12)),
+            style: const TextStyle(color: Colors.black54, fontSize: 12)),
         ...widget.addonCategory.addons?.map((addon) {
           return   Card(
             elevation: 2,
@@ -577,7 +577,7 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
             ),
           );
         }).toList() ?? [],
-SizedBox(height: 10,),
+const SizedBox(height: 10,),
       ],
     );
   }

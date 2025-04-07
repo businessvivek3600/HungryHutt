@@ -188,6 +188,7 @@ class _CouponsScreenState extends BaseRouteState<CouponsScreen> {
     try {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
+       print("Coupons List ---${ widget.screenId}");
         if (widget.screenId == 0) {
           await apiHelper.getCoupons(cartId: widget.cartId).then((result) async {
             if (result != null) {
