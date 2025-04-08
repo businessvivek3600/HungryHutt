@@ -19,7 +19,13 @@ import 'package:user/widgets/profile_picture.dart';
 class SignUpScreen extends BaseRoute {
   final CurrentUser? user;
   final int? loginType;
-  const SignUpScreen({super.key, super.analytics, super.observer, super.routeName = 'SignUpScreen', this.user, this.loginType});
+  const SignUpScreen(
+      {super.key,
+      super.analytics,
+      super.observer,
+      super.routeName = 'SignUpScreen',
+      this.user,
+      this.loginType});
 
   @override
   BaseRouteState<SignUpScreen> createState() => _SignUpScreenState();
@@ -102,11 +108,16 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                 controller: _cPhoneNumber,
                 focusNode: _fPhoneNumber,
                 hintText: 'Mobile No.',
-                readOnly: widget.loginType==0,
+                readOnly: widget.loginType == 0,
                 autofocus: false,
                 maxLines: 1,
-                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(global.appInfo!.phoneNumberLength)],
+                keyboardType: const TextInputType.numberWithOptions(
+                    signed: true, decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(
+                      global.appInfo!.phoneNumberLength)
+                ],
                 onFieldSubmitted: (val) {
                   FocusScope.of(context).requestFocus(_fEmail);
                 },
@@ -115,18 +126,29 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                 height: 20,
               ),
               MyTextField(
-                key: const Key('8'),
-                controller: _cEmail,
-                focusNode: _fEmail,
-                hintText: AppLocalizations.of(context)!.lbl_email,
-                autofocus: false,
-                maxLines: 1,
-                readOnly: widget.loginType==1,
-                keyboardType: TextInputType.emailAddress,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(_fPassword);
-                },
-              ),
+  key: const Key('8'),
+  controller: _cEmail,
+  focusNode: _fEmail,
+  hintText: AppLocalizations.of(context)!.lbl_email,
+  autofocus: false,
+  maxLines: 1,
+  readOnly: widget.loginType == 1,
+  keyboardType: TextInputType.emailAddress,
+  onChanged: (val) {
+    if (!val.endsWith('@gmail.com')) {
+      print('Invalid: Only Gmail addresses allowed');
+      // You can also show a warning via setState/snackbar here
+    }
+  },
+  onFieldSubmitted: (val) {
+    if (val.endsWith('@gmail.com')) {
+      FocusScope.of(context).requestFocus(_fPassword);
+    } else {
+      // showSnackBarMessage('Please enter a valid Gmail address');
+    }
+  },
+),
+
               const SizedBox(
                 height: 20,
               ),
@@ -155,7 +177,11 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                   ),
                   hintText: AppLocalizations.of(context)!.lbl_password,
                   suffixIcon: IconButton(
-                    icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off, color: IconTheme.of(context).color),
+                    icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: IconTheme.of(context).color),
                     onPressed: () {
                       _isPasswordVisible = !_isPasswordVisible;
                       setState(() {});
@@ -195,7 +221,11 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                   ),
                   hintText: AppLocalizations.of(context)!.lbl_confirm_password,
                   suffixIcon: IconButton(
-                    icon: Icon(_isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off, color: IconTheme.of(context).color),
+                    icon: Icon(
+                        _isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: IconTheme.of(context).color),
                     onPressed: () {
                       _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
                       setState(() {});
@@ -210,95 +240,98 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
               const SizedBox(
                 height: 20,
               ),
-              InkWell(
-                child: MyTextField(
-                  key: const Key('111'),
-                  controller: _cCity,
-                  focusNode: _fCity,
-                  readOnly: true,
-                  autofocus: false,
-                  hintText: AppLocalizations.of(context)!.hnt_select_city,
-                  onTap: () {
-                    if (_citiesList != null && _citiesList!.isNotEmpty) {
-                      _cCity.clear();
-                      _cSociety.clear();
-                      _cSearchCity.clear();
-                      _cSearchSociety.clear();
-                      _selectedCity = City();
-                      _selectedSociety = Society();
-                      _showCitySelectDialog();
-                    } else {
-                      showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_no_city);
-                    }
+              // InkWell(
+              //   child: MyTextField(
+              //     key: const Key('111'),
+              //     controller: _cCity,
+              //     focusNode: _fCity,
+              //     readOnly: true,
+              //     autofocus: false,
+              //     hintText: AppLocalizations.of(context)!.hnt_select_city,
+              //     onTap: () {
+              //       if (_citiesList != null && _citiesList!.isNotEmpty) {
+              //         _cCity.clear();
+              //         _cSociety.clear();
+              //         _cSearchCity.clear();
+              //         _cSearchSociety.clear();
+              //         _selectedCity = City();
+              //         _selectedSociety = Society();
+              //         _showCitySelectDialog();
+              //       } else {
+              //         showSnackBar(
+              //             key: _scaffoldKey,
+              //             snackBarMessage:
+              //                 AppLocalizations.of(context)!.txt_no_city);
+              //       }
 
-                    setState(() {});
-                  },
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(_fSociety);
-                  },
-                ),
-              ),
+              //       setState(() {});
+              //     },
+              //     onFieldSubmitted: (val) {
+              //       FocusScope.of(context).requestFocus(_fSociety);
+              //     },
+              //   ),
+              // ),
               const SizedBox(
                 height: 20,
               ),
-              MyTextField(
-                key: const Key('11'),
-                controller: _cSociety,
-                focusNode: _fSociety,
-                hintText: AppLocalizations.of(context)!.hnt_select_society,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(_fReferral);
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: MyTextField(
-                  key: const Key('112'),
-                  controller: _cReferral,
-                  focusNode: _fReferral,
-                  hintText: 'Referral Code',
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(_fDismiss);
-                  },
-                ),
-              ),
+              // MyTextField(
+              //   key: const Key('11'),
+              //   controller: _cSociety,
+              //   focusNode: _fSociety,
+              //   hintText: AppLocalizations.of(context)!.hnt_select_society,
+              //   onFieldSubmitted: (val) {
+              //     FocusScope.of(context).requestFocus(_fReferral);
+              //   },
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 10),
+              //   child: MyTextField(
+              //     key: const Key('112'),
+              //     controller: _cReferral,
+              //     focusNode: _fReferral,
+              //     hintText: 'Referral Code',
+              //     onFieldSubmitted: (val) {
+              //       FocusScope.of(context).requestFocus(_fDismiss);
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-  child: SingleChildScrollView(
-    child: Column(
-      mainAxisSize: MainAxisSize.min, // Ensures Column takes minimum space
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 13, right: 13, top: 5),
-          child: BottomButton(
-            loadingState: false,
-            disabledState: false,
-            onPressed: () {
-              _onSignUp();
-            },
-            child: Text(AppLocalizations.of(context)!.btn_signup),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize:
+                MainAxisSize.min, // Ensures Column takes minimum space
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 13, right: 13, top: 5),
+                child: BottomButton(
+                  loadingState: false,
+                  disabledState: false,
+                  onPressed: () {
+                    _onSignUp();
+                  },
+                  child: Text(AppLocalizations.of(context)!.btn_signup),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(AppLocalizations.of(context)!.lbl_already_have_account),
+                  TextButton(
+                    child: Text(AppLocalizations.of(context)!.btn_login),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(AppLocalizations.of(context)!.lbl_already_have_account),
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.btn_login),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ],
-    ),
-  ),
-),
-
+      ),
     );
   }
 
@@ -323,7 +356,9 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
         await apiHelper.getCity().then((result) {
-          if (result != null && result.statusCode == 200 && result.status == '1') {
+          if (result != null &&
+              result.statusCode == 200 &&
+              result.status == '1') {
             _citiesList = result.data;
             _tCityList.addAll(_citiesList!);
           } else {
@@ -343,8 +378,10 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
         await apiHelper.getSociety(_selectedCity!.cityId).then((result) {
-          if(!mounted) return;
-          if (result != null && result.statusCode == 200 && result.status == '1') {
+          if (!mounted) return;
+          if (result != null &&
+              result.statusCode == 200 &&
+              result.status == '1') {
             _societyList = result.data;
             _tSocietyList.addAll(_societyList!);
             Navigator.of(context).pop();
@@ -380,7 +417,20 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
     try {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
-        if (_cName.text.isNotEmpty && EmailValidator.validate(_cEmail.text) && _cEmail.text.isNotEmpty && _cPhoneNumber.text.isNotEmpty && _cPhoneNumber.text.trim().length == global.appInfo!.phoneNumberLength && _cPassword.text.isNotEmpty && _cPassword.text.trim().length >= 8 && _cConfirmPassword.text.isNotEmpty && _cPassword.text.trim().length == _cConfirmPassword.text.trim().length && _cPassword.text.trim() == _cConfirmPassword.text.trim() && _selectedCity != null && _selectedCity!.cityId != null) {
+        if (_cName.text.isNotEmpty &&
+            EmailValidator.validate(_cEmail.text) &&
+            _cEmail.text.isNotEmpty &&
+            _cPhoneNumber.text.isNotEmpty &&
+            _cPhoneNumber.text.trim().length ==
+                global.appInfo!.phoneNumberLength &&
+            _cPassword.text.isNotEmpty &&
+            _cPassword.text.trim().length >= 8 &&
+            _cConfirmPassword.text.isNotEmpty &&
+            _cPassword.text.trim().length ==
+                _cConfirmPassword.text.trim().length &&
+            _cPassword.text.trim() == _cConfirmPassword.text.trim() &&
+            _selectedCity != null &&
+            _selectedCity!.cityId != null) {
           showOnlyLoaderDialog();
           CurrentUser user = CurrentUser();
 
@@ -414,40 +464,79 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                 }
               } else {
                 hideLoader();
-                showSnackBar(key: _scaffoldKey, snackBarMessage: result.message.toString());
+                showSnackBar(
+                    key: _scaffoldKey,
+                    snackBarMessage: result.message.toString());
               }
             }
           });
         } else if (_cName.text.isEmpty) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_your_name);
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_please_enter_your_name);
         } else if (_cEmail.text.isEmpty) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_your_email);
-        } else if (_cEmail.text.isNotEmpty && !EmailValidator.validate(_cEmail.text)) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_your_valid_email);
-        } else if (_cPhoneNumber.text.isEmpty || (_cPhoneNumber.text.isNotEmpty && _cPhoneNumber.text.trim().length != global.appInfo!.phoneNumberLength)) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_valid_mobile_number);
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_please_enter_your_email);
+        } else if (_cEmail.text.isNotEmpty &&
+            !EmailValidator.validate(_cEmail.text)) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_please_enter_your_valid_email);
+        } else if (_cPhoneNumber.text.isEmpty ||
+            (_cPhoneNumber.text.isNotEmpty &&
+                _cPhoneNumber.text.trim().length !=
+                    global.appInfo!.phoneNumberLength)) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_please_enter_valid_mobile_number);
         } else if (_cPassword.text.isEmpty) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_your_password);
-        } else if (_cPassword.text.isNotEmpty && _cPassword.text.trim().length < 8) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_password_should_be_of_minimum_8_character);
-        } else if (_cConfirmPassword.text.isEmpty && _cPassword.text.isNotEmpty) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_reEnter_your_password);
-        } else if (_cConfirmPassword.text.isNotEmpty && _cPassword.text.isNotEmpty && (_cConfirmPassword.text.trim() != _cPassword.text.trim())) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_password_do_not_match);
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_please_enter_your_password);
+        } else if (_cPassword.text.isNotEmpty &&
+            _cPassword.text.trim().length < 8) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_password_should_be_of_minimum_8_character);
+        } else if (_cConfirmPassword.text.isEmpty &&
+            _cPassword.text.isNotEmpty) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_please_reEnter_your_password);
+        } else if (_cConfirmPassword.text.isNotEmpty &&
+            _cPassword.text.isNotEmpty &&
+            (_cConfirmPassword.text.trim() != _cPassword.text.trim())) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_password_do_not_match);
         } else if (_selectedCity!.cityId == null) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_select_city);
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!.txt_select_city);
         } else if (_selectedSociety!.societyId == null) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_select_society);
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_select_society);
         }
       } else {
         showNetworkErrorSnackBar(_scaffoldKey);
@@ -463,7 +552,8 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
           context: context,
           barrierColor: Colors.black38,
           builder: (BuildContext context) => StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) => AlertDialog(
+                builder: (BuildContext context, StateSetter setState) =>
+                    AlertDialog(
                   elevation: 2,
                   scrollable: false,
                   contentPadding: EdgeInsets.zero,
@@ -472,18 +562,24 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                     children: [
                       Text(AppLocalizations.of(context)!.hnt_select_city),
                       Container(
-                        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(0.0))),
+                        decoration: const BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(0.0))),
                         margin: const EdgeInsets.only(top: 5, bottom: 15),
                         padding: const EdgeInsets.only(),
                         child: MyTextField(
                           key: const Key('12'),
                           controller: _cSearchCity,
                           focusNode: _fSearchCity,
-                          hintText: AppLocalizations.of(context)!.hnt_search_city,
+                          hintText:
+                              AppLocalizations.of(context)!.hnt_search_city,
                           onChanged: (val) {
                             _citiesList!.clear();
                             if (val.isNotEmpty && val.length > 2) {
-                              _citiesList!.addAll(_tCityList.where((e) => e.cityName!.toLowerCase().contains(val.toLowerCase())));
+                              _citiesList!.addAll(_tCityList.where((e) => e
+                                  .cityName!
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase())));
                             } else {
                               _citiesList!.addAll(_tCityList);
                             }
@@ -503,7 +599,8 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                             itemCount: _citiesList!.length,
                             itemBuilder: (BuildContext context, int index) {
                               return RadioListTile(
-                                  title: Text('${_citiesList![index].cityName}'),
+                                  title:
+                                      Text('${_citiesList![index].cityName}'),
                                   value: _citiesList![index],
                                   groupValue: _selectedCity,
                                   onChanged: (dynamic value) async {
@@ -543,14 +640,17 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
           barrierDismissible: true,
           barrierColor: Colors.transparent,
           builder: (BuildContext context) => StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) => AlertDialog(
+                builder: (BuildContext context, StateSetter setState) =>
+                    AlertDialog(
                   contentPadding: EdgeInsets.zero,
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   title: Column(
                     children: [
                       Text(AppLocalizations.of(context)!.hnt_select_society),
                       Container(
-                        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(0.0))),
+                        decoration: const BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(0.0))),
                         margin: const EdgeInsets.only(top: 5, bottom: 15),
                         padding: const EdgeInsets.only(),
                         child: TextFormField(
@@ -558,14 +658,20 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                           focusNode: _fSearchSociety,
                           style: Theme.of(context).textTheme.titleMedium,
                           decoration: InputDecoration(
-                            fillColor: Theme.of(context).scaffoldBackgroundColor,
-                            hintText: AppLocalizations.of(context)!.htn_search_society,
-                            contentPadding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                            fillColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            hintText: AppLocalizations.of(context)!
+                                .htn_search_society,
+                            contentPadding: const EdgeInsets.only(
+                                top: 10, left: 10, right: 10),
                           ),
                           onChanged: (val) {
                             _societyList!.clear();
                             if (val.isNotEmpty && val.length > 2) {
-                              _societyList!.addAll(_tSocietyList.where((e) => e.societyName!.toLowerCase().contains(val.toLowerCase())));
+                              _societyList!.addAll(_tSocietyList.where((e) => e
+                                  .societyName!
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase())));
                             } else {
                               _societyList!.addAll(_tSocietyList);
                             }
@@ -580,15 +686,25 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                     height: MediaQuery.of(context).size.height,
                     child: _societyList != null && _societyList!.isNotEmpty
                         ? ListView.builder(
-                            itemCount: _cSearchSociety.text.isNotEmpty && _tSocietyList.isNotEmpty ? _tSocietyList.length : _societyList!.length,
+                            itemCount: _cSearchSociety.text.isNotEmpty &&
+                                    _tSocietyList.isNotEmpty
+                                ? _tSocietyList.length
+                                : _societyList!.length,
                             itemBuilder: (BuildContext context, int index) {
                               return RadioListTile(
-                                  title: Text(_cSearchSociety.text.isNotEmpty && _tSocietyList.isNotEmpty ? '${_tSocietyList[index].societyName}' : '${_societyList![index].societyName}'),
-                                  value: _cSearchSociety.text.isNotEmpty && _tSocietyList.isNotEmpty ? _tSocietyList[index] : _societyList![index],
+                                  title: Text(_cSearchSociety.text.isNotEmpty &&
+                                          _tSocietyList.isNotEmpty
+                                      ? '${_tSocietyList[index].societyName}'
+                                      : '${_societyList![index].societyName}'),
+                                  value: _cSearchSociety.text.isNotEmpty &&
+                                          _tSocietyList.isNotEmpty
+                                      ? _tSocietyList[index]
+                                      : _societyList![index],
                                   groupValue: _selectedSociety,
                                   onChanged: (dynamic value) async {
                                     _selectedSociety = value;
-                                    _cSociety.text = _selectedSociety!.societyName!;
+                                    _cSociety.text =
+                                        _selectedSociety!.societyName!;
                                     Navigator.of(context).pop();
                                     setState(() {});
                                   });
@@ -610,7 +726,8 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                 ),
               ));
     } catch (e) {
-      debugPrint("Exception - signup_screen.dart - _showSocietySelectDialog():$e");
+      debugPrint(
+          "Exception - signup_screen.dart - _showSocietySelectDialog():$e");
     }
   }
 }

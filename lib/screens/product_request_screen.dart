@@ -245,6 +245,7 @@ class _ProductRequestScreenState extends BaseRouteState {
                 hideLoader();
 
                 setState(() {});
+
               },
             ),
             CupertinoActionSheetAction(
