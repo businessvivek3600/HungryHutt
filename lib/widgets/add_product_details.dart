@@ -98,11 +98,10 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
     }
   }
 
-  List<Addon> selectedAddons = [];
+  Set<Addon> selectedAddons = {}; // 🆕 to track all selected globally
+
   final CartController cartController = Get.find<CartController>();
   Widget build(BuildContext context) {
-    print(
-        "---------------------------widget.product.isNonVeg ----${widget.product.isNonVeg}");
     Variant selectedVariant = widget.product.varient[selectedVariantIndex];
     return Stack(
       children: [
@@ -272,11 +271,24 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                     variants[index].price.toString(),
                                     index,
                                     selectedVariantIndex,
-                                    (val) {
-                                      setState(() {
-                                        selectedVariantIndex = val!;
-                                      });
-                                    },
+                                          (val) {
+                                        setState(() {
+                                          selectedVariantIndex = val!;
+
+                                          // ✅ Get new variant's addonCategory IDs
+                                          final currentVariant = widget.product.varient[selectedVariantIndex];
+                                          final currentAddonCategoryIds = currentVariant.addonCategories
+                                              ?.map((cat) => cat.id)
+                                              .toSet() ??
+                                              {};
+
+                                          // ✅ Remove addons that don't belong to the current variant
+                                          selectedAddons.removeWhere((addon) =>
+                                          !currentAddonCategoryIds.contains(addon.id));
+
+                                        });
+                                      },
+
                                   );
                                 },
                               ),
@@ -286,11 +298,17 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
                                     .map((addonCategory) {
                                   return CheckBoxAddon(
                                     addonCategory: addonCategory,
-                                    onSelectionChanged: (selected) {
+                                    onSelectionChanged: (List<Addon> updatedAddons) {
                                       setState(() {
-                                        selectedAddons = selected;
+                                        // Remove old addons from the same category
+                                        selectedAddons.removeWhere((addon) =>
+                                        addon.id == addonCategory.id);
+
+                                        // Add newly selected ones
+                                        selectedAddons.addAll(updatedAddons);
                                       });
                                     },
+
                                     inVeg: widget.product.isNonVeg == 1
                                         ? true
                                         : false,
@@ -354,12 +372,17 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
             child: ElevatedButton(
               onPressed: () async {
                 ATCMS? response = await cartController.addToCart(
-                  widget.product, // Product to add
+                  widget.product, // Product
                   1, // Quantity
-                  false, // isDel (false because we are adding, not deleting)
+                  false, // isDel (not delete)
+                  varient: selectedVariant, // Variant selected
+                  selectedAddons: selectedAddons
+                      .map((e) => e.id.toString())
+                      .toList(), // Convert Addon list to List<String>
                 );
 
                 if (response != null && response.isSuccess == true) {
+                  Get.back();
                   Get.snackbar("Success", "Product added to cart!",
                       backgroundColor: Colors.green, colorText: Colors.white);
                 } else {
@@ -496,7 +519,7 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
         Text(widget.addonCategory.name ?? "Add-ons",
             style: const TextStyle(fontWeight: FontWeight.bold)),
         Text("you can choose up to $selectionLimit option(s)",
-            style: TextStyle(color: Colors.black54, fontSize: 12)),
+            style: const TextStyle(color: Colors.black54, fontSize: 12)),
         ...widget.addonCategory.addons?.map((addon) {
               return Card(
                 elevation: 2,
@@ -588,7 +611,7 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
               );
             }).toList() ??
             [],
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
       ],
@@ -598,9 +621,32 @@ class _CheckBoxAddonState extends State<CheckBoxAddon> {
 
 ///----- Function to Show BottomSheet
 void showProductBottomSheet(BuildContext context, Product product) {
-  if (product.varient.isNotEmpty && product.varient.length == 1) {
-    addToCart(product.varient.first);
+  if (product.varient.length == 1) {
+    final variant = product.varient.first;
+    final hasAddons = variant.addonCategories != null &&
+        variant.addonCategories!.isNotEmpty &&
+        variant.addonCategories!.any((category) =>
+            category.addons != null && category.addons!.isNotEmpty);
+
+    if (hasAddons) {
+      // Show bottom sheet to allow addon selection
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.75,
+            child: ProductBottomSheet(product: product),
+          );
+        },
+      );
+    } else {
+      // No addons, directly add to cart
+      addToCart(product); // Implement actual addToCart logic here
+    }
   } else {
+    // More than one variant, show bottom sheet
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -616,7 +662,29 @@ void showProductBottomSheet(BuildContext context, Product product) {
 }
 
 // 🛒 Dummy function - Isme aap cartController ka logic daal sakte hain
-void addToCart(Variant variant) {
-  print("Adding to cart: ${variant.unit} - ${variant.price}");
-  // Yaha aap cartController ka addItem method call kar sakte ho
+void addToCart(Product product, {VoidCallback? onSuccess}) async {
+  final CartController cartController = Get.find<CartController>();
+
+  final Variant variant = product.varient.first;
+  const qty = 1;
+  const isDel = false;
+  final selectedAddons = <String>[];
+
+  ATCMS? response = await cartController.addToCart(
+    product,
+    qty,
+    isDel,
+    varient: variant,
+    selectedAddons: selectedAddons,
+  );
+
+  if (response != null && response.isSuccess == true) {
+    product.varient.first.cartQty = 1; // ✅ Update cart quantity
+    if (onSuccess != null) onSuccess(); // ✅ Trigger widget rebuild
+    Get.snackbar("Success", "Product added to cart!",
+        backgroundColor: Colors.green, colorText: Colors.white);
+  } else {
+    Get.snackbar("Error", response?.message ?? "Failed to add product",
+        backgroundColor: Colors.red, colorText: Colors.white);
+  }
 }

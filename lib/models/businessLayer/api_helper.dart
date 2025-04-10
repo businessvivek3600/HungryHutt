@@ -160,23 +160,29 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> addToCart({int? qty, int? varientId, int? special}) async {
+  Future<dynamic> addToCart({int? qty, int? varientId, int? special,dynamic? addons}) async {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({
-        'user_id': global.currentUser!.id,
-        'qty': qty,
-        'store_id': global.nearStoreModel!.id,
-        'varient_id': varientId,
-        'special': special,
-      });
+      var formData = FormData();
 
+      formData.fields.add(MapEntry('user_id', global.currentUser!.id.toString()));
+      formData.fields.add(MapEntry('qty', qty.toString()));
+      formData.fields.add(MapEntry('store_id', global.nearStoreModel!.id.toString()));
+      formData.fields.add(MapEntry('varient_id', varientId.toString()));
+      formData.fields.add(MapEntry('selectedAddons', jsonEncode(addons)));
+      // if (addons != null && addons.isNotEmpty) {
+      //   for (var addon in addons) {
+      //     formData.fields.add(MapEntry('selectedAddons', addon));
+      //   }
+      // }
+      print("add to cart ---------${formData.fields}");
       response = await dio.post('${global.baseUrl}add_to_cart',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("add to cart Response --------${response.data}");
       dynamic recordList;
       if (response.statusCode == 200) {
         recordList = Cart.fromJson(response.data["data"]);
@@ -601,13 +607,16 @@ class APIHelper {
       var formData = FormData.fromMap({
         'user_id': global.currentUser!.id,
         'varient_id': varientId,
+        'store_id': global.nearStoreModel!.id
       });
-
+print("Delete Item from cart ------${formData.fields}");
       response = await dio.post('${global.baseUrl}del_frm_cart',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("response of remove from cart or delete -------${response.data}");
+      print("response of remove from cart or delete -------${response.statusMessage}");
       dynamic recordList;
       if (response.statusCode == 200) {
         recordList = Cart.fromJson(response.data);
@@ -1986,7 +1995,7 @@ print("Order  Form field ---${formData.fields}");
             headers: await global.getApiHeaders(true),
           ));
       dynamic recordList;
-      print("************************select address hit");
+
       if (response.statusCode == 200 && response.data["status"] == '1') {
         recordList = response.data;
       } else {

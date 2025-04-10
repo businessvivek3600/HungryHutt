@@ -1,22 +1,28 @@
+import 'dart:convert';
+
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user/controllers/cart_controller.dart';
 import 'package:user/models/address_model.dart';
 import 'package:user/models/businessLayer/base_route.dart';
 import 'package:user/models/businessLayer/global.dart' as global;
+import 'package:user/models/coupons_model.dart';
 import 'package:user/screens/add_address_screen.dart';
 import 'package:user/screens/checkout_screen.dart';
 import 'package:user/controllers/home_controller.dart';
 import 'package:user/utils/navigation_utils.dart';
 import 'package:user/widgets/address_info_card.dart';
-import 'package:user/widgets/cart_coupon.dart';
+import 'package:user/screens/cart_coupon.dart';
 import 'package:user/widgets/cart_menu.dart';
 import 'package:user/widgets/cart_screen_bottom_sheet.dart';
 import 'package:user/widgets/toastfile.dart';
 
+import '../controllers/coupon_controller.dart';
 import '../models/order_model.dart';
 import '../widgets/tip_controller.dart';
 import 'payment_screen.dart';
@@ -34,13 +40,16 @@ class CartScreen extends BaseRoute {
 
 class _CartScreenState extends BaseRouteState {
   final CartController cartController = Get.put(CartController());
+  final CouponController couponController =  Get.put(CouponController());
   final HomeController homeController = Get.find();
+  late ConfettiController _confettiController;
   bool _isDataLoaded = false;
   var isExpanded = true;
   var isTip = false;
   GlobalKey<ScaffoldState>? _scaffoldKey;
   Address? _selectedAddress = Address();
   List<Address> _addressList = [];
+  Coupon? selectedCoupon;
 
   Future<void> _fetchAddresses() async {
     var addressList = await apiHelper.getAddressList();
@@ -54,6 +63,11 @@ class _CartScreenState extends BaseRouteState {
   }
   Order? orderDetails;
 
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
   int? selectedTip;
   TextEditingController tipController = TextEditingController();
   Widget build(BuildContext context) {
@@ -303,7 +317,7 @@ class _CartScreenState extends BaseRouteState {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.grey.shade300),
               ),
-              child:Center(child: Text("+ Add More ITems",style: TextStyle(fontSize: 14),)),
+              child:const Center(child: Text("+ Add More ITems",style: TextStyle(fontSize: 14),)),
             ),
           ),
         ),
@@ -466,6 +480,8 @@ class _CartScreenState extends BaseRouteState {
   }
 
   Widget savingCard() {
+     // Make sure it's initialized before use
+
     return Card(
       elevation: 2,
       color: Colors.white,
@@ -478,44 +494,76 @@ class _CartScreenState extends BaseRouteState {
             Text(
               "SAVINGS CORNER",
               style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                  color: Colors.grey),
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 5),
             _buildListTile(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const CouponPage(),
-                ));
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+                  ),
+                  builder: (context) => Padding(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: CouponPage(
+                      confettiController: _confettiController,
+                      analytics: widget.analytics,
+                      observer: widget.observer,
+                      cartController: cartController,
+                    ),
+                  ),
+                );
               },
               icon: Icons.local_offer,
               iconColor: Colors.orange,
               title: "Apply Coupon",
               trailing: const Icon(Icons.chevron_right, color: Colors.black54),
             ),
-            // Divider(),
-            // _buildListTile(
-            //   icon: Icons.local_offer,
-            //   iconColor: Colors.orange,
-            //   title: "₹166 saved with 'Items at ₹129'",
-            //   trailing: Row(
-            //     mainAxisSize: MainAxisSize.min,
-            //     children: [
-            //       Icon(Icons.check, color: Colors.green, size: 18),
-            //       SizedBox(width: 4),
-            //       Text(
-            //         "Applied",
-            //         style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-            //       ),
-            //     ],
-            //   ),
-            // ),
+            const Divider(),
+            Obx(() {
+              final selectedCoupon = couponController.selectedCoupon.value;
+
+              if (selectedCoupon == null) {
+                return const SizedBox();
+              }
+
+              final isAmount = selectedCoupon.type == "amount";
+              final discountValue = isAmount
+                  ? "${global.appInfo!.currencySign}${selectedCoupon.amount.toString()}"
+                  : "${selectedCoupon.amount.toString()}%";
+
+              final maxDiscountText = selectedCoupon.maxDiscount != 0
+                  ? " up to ${selectedCoupon.maxDiscount}"
+                  : "";
+
+              return _buildListTile(
+                icon: Icons.local_offer,
+                iconColor: Colors.orange,
+                title: "$discountValue Flat off$maxDiscountText",
+                trailing: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check, color: Colors.green, size: 18),
+                    SizedBox(width: 4),
+                    Text(
+                      "Applied",
+                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              );
+            }),
           ],
         ),
       ),
     );
   }
+
 
   Widget _buildListTile({
     required IconData icon,
@@ -802,7 +850,9 @@ class _CartScreenState extends BaseRouteState {
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
     _fetchAddresses();
+   couponController.loadSavedCoupon();
     if (global.nearStoreModel!.storeOpeningTime != null &&
         global.nearStoreModel!.storeOpeningTime != '' &&
         global.nearStoreModel!.storeClosingTime != null &&
@@ -830,7 +880,7 @@ class _CartScreenState extends BaseRouteState {
             style: ElevatedButton.styleFrom(
               fixedSize: const Size.fromWidth(350.0),
               minimumSize: const Size.fromHeight(55),
-              backgroundColor: Color(0xFF68a039),
+              backgroundColor: const Color(0xFF68a039),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
@@ -886,7 +936,7 @@ class _CartScreenState extends BaseRouteState {
                   result.message,
                   textAlign: TextAlign.center,
                 ),
-                duration: Duration(seconds: 2),
+                duration: const Duration(seconds: 2),
               ));
               showToast(result.message);
               setState(() {

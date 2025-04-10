@@ -57,103 +57,95 @@ class _CartMenuItemState extends State<CartMenuItem> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ✅ Veg/Non-Veg Icon + Product Name
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: screenHeight * 0.015,
-                      width: screenHeight * 0.015,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
-                        border: Border.all(color: Colors.green, width: 1.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            color: Colors.green,
-                            size: screenHeight * 0.01,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 3),
-                    SizedBox(
-                      width: screenWidth * 0.42,
-                      child: Text(
-                        widget.product!.productName ?? '',
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
-                        maxLines: 2,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: screenWidth * 0.038,
+                /// ✅ Veg/Non-Veg Icon + Product Name
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: screenHeight * 0.015,
+                        width: screenHeight * 0.015,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(3),
+                          border: Border.all(color: Colors.green, width: 1.0),
+                        ),
+                        child: Icon(
+                          Icons.circle,
+                          color: Colors.green,
+                          size: screenHeight * 0.01,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 10),
-                // ✅ Quantity Adjuster
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: screenHeight * 0.032,
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12),
-                        borderRadius: BorderRadius.circular(6.0),
-                        color: Colors.white,
+                      const SizedBox(width: 3),
+                      /// Make text flexible
+                      Expanded(
+                        child: Text(
+                          widget.product!.productName ?? '',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: screenWidth * 0.038,
+                          ),
+                        ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // 🔽 Decrease Quantity Button
-                          InkWell(
-                            onTap: _qty! > 1 ? _decreaseQuantity : null,
-                            child: Icon(
-                              _qty == 1 ? Icons.remove : MdiIcons.minus,
-                              size: 20,
-                              color: _qty == 1 ? Colors.grey : Colors.black,
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          // 🔽 Quantity Display
-                          Text(
-                            "$_qty",
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          // 🔽 Increase Quantity Button
-                          InkWell(
-                            onTap: _increaseQuantity,
-                            child: Icon(
-                              MdiIcons.plus,
-                              size: 20,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 8),
-                // ✅ Price Display
+
+                const SizedBox(width: 5), // reduce spacing if needed
+
+                /// ✅ Quantity Adjuster
+                Container(
+                  height: screenHeight * 0.032,
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12),
+                    borderRadius: BorderRadius.circular(6.0),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap:  _decreaseQuantity ,
+                        child: Icon(
+                          MdiIcons.minus,
+                          size: 20,
+                          color:  Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        "$_qty",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      InkWell(
+                        onTap: _increaseQuantity,
+                        child: Icon(
+                          MdiIcons.plus,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 5), // reduce spacing if needed
+
+                /// ✅ Price Display
                 Text(
                   "${global.appInfo!.currencySign}${widget.product!.price! * (_qty ?? 1)}",
-                  textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
-            ),
+            )
+
           ],
         ),
       ),
@@ -161,26 +153,32 @@ class _CartMenuItemState extends State<CartMenuItem> {
   }
 
   Future<void> _decreaseQuantity() async {
-    if (_qty! > 1) {
-      setState(() => _qty = _qty! - 1);
+    if (_qty == 1) {
+      setState(() => isLoading = true);
 
-      try {
-        ATCMS? isSuccess = await widget.cartController!.addToCart(
-          widget.product,
-          _qty,
-          true,
-          varientId: widget.product!.varientId,
-          callId: 0,
-        );
-        print("addToCart response: $isSuccess");
-        if (context.mounted) {
-          showToast(isSuccess?.message ?? "Error");
-        }
-      } catch (e) {
-        showToast("Something went wrong");
+      final isDeleted = await widget.cartController!.delFromCart(
+        varientId: widget.product!.varientId!,
+      );
+
+      if (isDeleted) {
+        showToast("Removed from cart");
+      } else {
+        showToast("Failed to remove");
       }
+
+      setState(() => isLoading = false);
+    } else if (_qty! > 1) {
+      setState(() => _qty = _qty! - 1);
+      await widget.cartController!.addToCart(
+        widget.product,
+        _qty,
+        true,
+        varientId: widget.product!.varientId,
+        callId: 0,
+      );
     }
   }
+
 
   Future<void> _increaseQuantity() async {
     setState(() => _qty = _qty! + 1);

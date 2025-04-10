@@ -380,7 +380,8 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
     try {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
-        if (_cName.text.isNotEmpty && EmailValidator.validate(_cEmail.text) && _cEmail.text.isNotEmpty && _cPhoneNumber.text.isNotEmpty && _cPhoneNumber.text.trim().length == global.appInfo!.phoneNumberLength && _cPassword.text.isNotEmpty && _cPassword.text.trim().length >= 8 && _cConfirmPassword.text.isNotEmpty && _cPassword.text.trim().length == _cConfirmPassword.text.trim().length && _cPassword.text.trim() == _cConfirmPassword.text.trim() && _selectedCity != null && _selectedCity!.cityId != null) {
+        if (_cName.text.isNotEmpty && EmailValidator.validate(_cEmail.text) && _cEmail.text.isNotEmpty && _cPhoneNumber.text.isNotEmpty && _cPhoneNumber.text.trim().length == global.appInfo!.phoneNumberLength && _cPassword.text.isNotEmpty && _cPassword.text.trim().length >= 8 && _cConfirmPassword.text.isNotEmpty && _cPassword.text.trim().length == _cConfirmPassword.text.trim().length && _cPassword.text.trim() == _cConfirmPassword.text.trim() && _selectedCity != null && _selectedCity!.cityId != null
+        ) {
           showOnlyLoaderDialog();
           CurrentUser user = CurrentUser();
 
