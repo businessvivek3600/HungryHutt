@@ -47,7 +47,6 @@ import 'package:user/models/wallet_model.dart';
 import 'package:user/utils/stream_formatter.dart';
 import 'package:http/http.dart' as http;
 
-
 class APIHelper {
   static final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   CollectionReference userChatCollectionRef =
@@ -84,7 +83,8 @@ class APIHelper {
       );
 
       // ✅ Print the API Response
-      print("✅ API Response: ${response.statusCode} - ${jsonEncode(response.data)}");
+      print(
+          "✅ API Response: ${response.statusCode} - ${jsonEncode(response.data)}");
 
       if (response.statusCode == 200 && response.data['status'] == '1') {
         return true; // ✅ Success
@@ -96,7 +96,6 @@ class APIHelper {
       return false; // ✅ Return false in case of an error
     }
   }
-
 
   Future<dynamic> addProductRating(
       int? varientId, double rating, String description) async {
@@ -434,7 +433,7 @@ class APIHelper {
       return false;
     }
   }
- 
+
   Future<dynamic> changePassword(String? phoneNumber, String password) async {
     try {
       Response response;
@@ -766,7 +765,8 @@ print("Delete Item from cart ------${formData.fields}");
               .map<Address>((x) => Address.fromJson(x))
               .toList();
 
-          debugPrint("✅ Address List Parsed: ${recordList.length} addresses found");
+          debugPrint(
+              "✅ Address List Parsed: ${recordList.length} addresses found");
           return recordList;
         } else {
           debugPrint("⚠️ API Response Error: ${response.data['message']}");
@@ -781,7 +781,6 @@ print("Delete Item from cart ------${formData.fields}");
       return null;
     }
   }
-
 
   Future<dynamic> getAllNotification(int page) async {
     try {
@@ -1722,7 +1721,7 @@ print("Delete Item from cart ------${formData.fields}");
         // 'time_slot': selectedTime
       });
       print("Make Order-----");
-print("Order  Form field ---${formData.fields}");
+      print("Order  Form field ---${formData.fields}");
       response = await dio.post('${global.baseUrl}make_order',
           data: formData,
           options: Options(
@@ -2113,6 +2112,7 @@ print("Order  Form field ---${formData.fields}");
   }
 
   Future<dynamic> signUp(CurrentUser user) async {
+    print(user.name);
     try {
       Response response;
       var dio = Dio();
@@ -2121,25 +2121,29 @@ print("Order  Form field ---${formData.fields}");
         'user_email': user.email,
         'user_phone': user.userPhone,
         'password': user.password,
-        'user_city': user.userCity,
-        'user_area': user.userArea,
-        'device_id': global.appDeviceId,
-        'user_image': user.userImageFile != null
-            ? await MultipartFile.fromFile(user.userImageFile!.path.toString())
-            : null,
-        'fb_id': user.fbId,
-        'referral_code': user.referralCode,
-        'apple_id': user.appleId,
+        // 'user_city': user.userCity,
+        // 'user_area': user.userArea,
+        // 'device_id': global.appDeviceId,
+        // 'user_image': user.userImageFile != null
+        //     ? await MultipartFile.fromFile(user.userImageFile!.path.toString())
+        //     : null,
+        // 'fb_id': user.fbId,
+        // 'referral_code': user.referralCode,
+        // 'apple_id': user.appleId,
       });
 
-      response = await dio.post('${global.baseUrl}register_details',
-          data: formData,
-          options: Options(
-            headers: await global.getApiHeaders(false),
-          ));
+      response = await dio.post(
+        '${global.baseUrl}register_details',
+        data: formData,
+        // options: Options(
+        //   // headers: await global.getApiHeaders(false),
+        // )
+      );
       debugPrint(response.data);
       dynamic recordList;
-      if (response.statusCode == 200 && response.data['status'] == '1') {
+      if (response.statusCode == 200
+          //  && response.data['status'] == '1'
+          ) {
         recordList = CurrentUser.fromJson(response.data['data']);
       } else {
         recordList = null;
@@ -2149,6 +2153,7 @@ print("Order  Form field ---${formData.fields}");
       debugPrint("Exception - signUp(): $e");
     }
   }
+
   Future<dynamic> socialLogin(
       {String? userEmail,
       String? facebookId,
@@ -2167,7 +2172,6 @@ print("Order  Form field ---${formData.fields}");
 
       var formData = FormData.fromMap({
         "user_email": userEmail,
-
         "user_name": name,
         "user_image": image,
         "fb_id": facebookId,
@@ -2205,7 +2209,6 @@ print("Order  Form field ---${formData.fields}");
       return null;
     }
   }
-
 
   spotLightProduct(int page, ProductFilter productFilter) async {
     try {

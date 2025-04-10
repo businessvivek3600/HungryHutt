@@ -11,14 +11,22 @@ class OrderConfirmationScreen extends BaseRoute {
   final Order? order;
   final int? status;
 
-  const OrderConfirmationScreen({super.key, super.analytics, super.observer, super.routeName = 'OrderConfirmationScreen', this.order, this.screenId, this.status});
+  const OrderConfirmationScreen(
+      {super.key,
+      super.analytics,
+      super.observer,
+      super.routeName = 'OrderConfirmationScreen',
+      this.order,
+      this.screenId,
+      this.status});
 
   @override
-  BaseRouteState<OrderConfirmationScreen> createState() => _OrderConfirmationScreenState();
+  BaseRouteState<OrderConfirmationScreen> createState() =>
+      _OrderConfirmationScreenState();
 }
 
-class _OrderConfirmationScreenState extends BaseRouteState<OrderConfirmationScreen> {
-
+class _OrderConfirmationScreenState
+    extends BaseRouteState<OrderConfirmationScreen> {
   _OrderConfirmationScreenState();
 
   @override
@@ -55,14 +63,17 @@ class _OrderConfirmationScreenState extends BaseRouteState<OrderConfirmationScre
               padding: const EdgeInsets.all(15),
               child: Text(
                 widget.screenId == 3
-                    ? AppLocalizations.of(context)!.txt_wallet_recharge_successfully
+                    ? AppLocalizations.of(context)!
+                        .txt_wallet_recharge_successfully
                     : widget.screenId == 0
                         ? AppLocalizations.of(context)!.txt_reward_to_wallet
                         : widget.screenId == 2
                             ? widget.status == 5
-                                ? AppLocalizations.of(context)!.tle_membership_expiry
+                                ? AppLocalizations.of(context)!
+                                    .tle_membership_expiry
                                 : "${AppLocalizations.of(context)!.tle_membership_bought_sucessfully} "
-                            : AppLocalizations.of(context)!.txt_order_success_description,
+                            : AppLocalizations.of(context)!
+                                .txt_order_success_description,
                 style: textTheme.titleLarge,
               ),
             ),
@@ -81,21 +92,23 @@ class _OrderConfirmationScreenState extends BaseRouteState<OrderConfirmationScre
             child: SizedBox(
               height: 50,
               child: ElevatedButton(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                    child: Text(AppLocalizations.of(context)!.btn_go_home),
-                  ),
-                  onPressed: () {
-                    if (widget.screenId != 1 || widget.screenId != 0 || widget.screenId != 2) {
-                      global.cartCount = 0;
-                    }
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  child: Text(AppLocalizations.of(context)!.btn_go_home),
+                ),
+                onPressed: () {
+                  if (widget.screenId != 1 &&
+                      widget.screenId != 0 &&
+                      widget.screenId != 2) {
+                    global.cartCount = 0;
+                  }
 
-                    Get.offAll(() => HomeScreen(
-                          analytics: widget.analytics,
-                          observer: widget.observer,
-                        ));
-                    setState(() {});
-                  }),
+                  Get.offAll(() => HomeScreen(
+                        analytics: widget.analytics,
+                        observer: widget.observer,
+                      ));
+                },
+              ),
             ),
           ),
         ],

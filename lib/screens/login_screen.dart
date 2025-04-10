@@ -34,7 +34,11 @@ import 'package:user/widgets/my_ink_well.dart';
 import 'package:user/widgets/my_text_field.dart';
 
 class LoginScreen extends BaseRoute {
-  const LoginScreen({super.key, super.analytics, super.observer, super.routeName = 'LoginScreen'});
+  const LoginScreen(
+      {super.key,
+      super.analytics,
+      super.observer,
+      super.routeName = 'LoginScreen'});
 
   @override
   BaseRouteState createState() => _LoginScreenState();
@@ -43,10 +47,10 @@ class LoginScreen extends BaseRoute {
 class _LoginScreenState extends BaseRouteState {
   // static final FacebookLogin facebookSignIn = new FacebookLogin();
   final fb = FacebookLogin();
-  bool isLoginWithEmail = false;
+  bool isLoginWithEmail = true;
   List<SimCard> _simCard = <SimCard>[];
-  final TextEditingController _countryCodeController = TextEditingController(
-      text: '+${global.appInfo!.countryCode}');
+  final TextEditingController _countryCodeController =
+      TextEditingController(text: '+${global.appInfo!.countryCode}');
   final TextEditingController _cPhone = TextEditingController();
   final TextEditingController _cEmail = TextEditingController();
   final TextEditingController _cPassword = TextEditingController();
@@ -63,277 +67,369 @@ class _LoginScreenState extends BaseRouteState {
     double screenHeight = MediaQuery.of(context).size.height;
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
-      key: _scaffoldKey1,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        actions: [
-          TextButton(
-              onPressed: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => HomeScreen(
-                            analytics: widget.analytics,
-                            observer: widget.observer,
-                          )),
-                );
-              },
-              child: Text(AppLocalizations.of(context)!.btn_skip_now))
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Visibility(
-                visible: !isKeyboardOpen,
-                child: Container(height: screenHeight * 0.18)),
-            Text(
-              isLoginWithEmail
-                  ? AppLocalizations.of(context)!.txt_email_pass
-                  : AppLocalizations.of(context)!.txt_enter_mobile,
-              style: normalHeadingStyle(context),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 48.0),
-              child: MyInkWell(
-                onPressed: null,
-                introText: "${AppLocalizations.of(context)!.txt_for} ",
-                mainText: AppLocalizations.of(context)!.txt_login_reg,
-              ),
-            ),
-            Text(
-              isLoginWithEmail
-                  ? AppLocalizations.of(context)!.lbl_email
-                  : AppLocalizations.of(context)!.lbl_phone_number,
-              style: textTheme.bodyLarge,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 48.0),
-              child: isLoginWithEmail
-                  ? Column(
-                      children: [
-                        MyTextField(
-                          key: const Key('17'),
-                          controller: _cEmail,
-                          hintText: 'user@gmail.com',
-                          focusNode: _fEmail,
-                          autofocus: false,
-                          maxLines: 1,
-                          inputTextFontWeight: FontWeight.bold,
-                          keyboardType: TextInputType.emailAddress,
-                          onFieldSubmitted: (val) {
-                            setState(() {
-                              FocusScope.of(context).requestFocus(_fPassword);
-                            });
-                          },
+        key: _scaffoldKey1,
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false,
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        //   actions: [
+        //     TextButton(
+        //         onPressed: () async {
+        //           Navigator.of(context).push(
+        //             MaterialPageRoute(
+        //                 builder: (context) => HomeScreen(
+        //                       analytics: widget.analytics,
+        //                       observer: widget.observer,
+        //                     )),
+        //           );
+        //         },
+        //         child: Text(AppLocalizations.of(context)!.btn_skip_now))
+        //   ],
+        // ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Column(children: [
+                      // const SizedBox(height: 60),
+                      // Food image
+                      SizedBox(
+                        height: 200, // Adjust height as needed
+                        width: double.infinity,
+                        child: Image.asset(
+                          'assets/images/signup.png',
+                          fit: BoxFit.cover, // covers the top nicely
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "${AppLocalizations.of(context)!.lbl_password} ",
-                              style: textTheme.bodyLarge,
+                      ),
+
+                      const SizedBox(height: 60),
+                      // Foodie logo
+                      RichText(
+                        text: const TextSpan(
+                          text: 'Lo',
+                          style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54),
+                          children: [
+                            TextSpan(
+                              text: 'g',
+                              style:
+                                  TextStyle(color: Colors.green, fontSize: 36),
                             ),
-                          ),
+                            TextSpan(
+                              text: 'in',
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                          ],
                         ),
-                        TextFormField(
-                          cursorColor: Colors.black,
-                          controller: _cPassword,
-                          focusNode: _fPassword,
-                          autofocus: false,
-                          obscureText: _showPassword,
-                          obscuringCharacter: '*',
-                          keyboardType: TextInputType.emailAddress,
-                          style: textFieldInputStyle(context, FontWeight.bold),
-                          decoration: InputDecoration(
-                            hintText:
-                                AppLocalizations.of(context)!.lbl_password,
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                width: 2.0,
-                                color: Colors.black,
+                      ),
+                    ])),
+                SizedBox(height: 20),
+                // Visibility(
+                //     visible: !isKeyboardOpen,
+                //     child: Container(height: screenHeight * 0.18)),
+                // Text(
+                //   isLoginWithEmail
+                //       ? AppLocalizations.of(context)!.txt_email_pass
+                //       : AppLocalizations.of(context)!.txt_enter_mobile,
+                //   style: normalHeadingStyle(context),
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.only(bottom: 48.0),
+                //   child: MyInkWell(
+                //     onPressed: null,
+                //     introText: "${AppLocalizations.of(context)!.txt_for} ",
+                //     mainText: AppLocalizations.of(context)!.txt_login_reg,
+                //   ),
+                // ),
+                // Text(
+                //   isLoginWithEmail
+                //       ? AppLocalizations.of(context)!.lbl_email
+                //       : AppLocalizations.of(context)!.lbl_phone_number,
+                //   style: textTheme.bodyLarge,
+                // ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 18.0),
+                  child: isLoginWithEmail
+                      ? Column(
+                          children: [
+                            TextFormField(
+                              key: const Key('17'),
+                              controller: _cEmail,
+                              focusNode: _fEmail,
+                              autofocus: false,
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                hintText: 'Email',
+                                prefixStyle: textFieldInputStyle(
+                                    context, FontWeight.normal),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: const BorderSide(
+                                      color: Colors.black54, width: 2),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: const BorderSide(
+                                      color: Colors.grey, width: 1),
+                                ),
                               ),
-                            ),
-                            enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                width: 0.7,
-                                color: Colors.black,
-                              ),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                  _showPassword
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: IconTheme.of(context).color),
-                              onPressed: () {
+                              keyboardType: TextInputType.emailAddress,
+                              onFieldSubmitted: (val) {
                                 setState(() {
-                                  _showPassword = !_showPassword;
+                                  FocusScope.of(context)
+                                      .requestFocus(_fPassword);
                                 });
                               },
                             ),
-                            hintStyle: textFieldHintStyle(context),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            child: Text(
-                              AppLocalizations.of(context)!.lbl_forgot_password,
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                            onPressed: () {
-                              Get.to(() => ForgotPasswordScreen(
-                                    analytics: widget.analytics,
-                                    observer: widget.observer,
-                                  ));
-                            },
-                          ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: MyTextField(
-                            key: const Key('14'),
-                            controller: _countryCodeController,
-                            inputTextFontWeight: FontWeight.bold,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          flex: 5,
-                          child: MyTextField(
-                            key: const Key('15'),
-                            controller: _cPhone,
-                            hintText:
-                                AppLocalizations.of(context)!.txt_0XXXXXXXXX,
-                            autofocus: false,
-                            focusNode: _fPhone,
-                            maxLines: 1,
-                            inputTextFontWeight: FontWeight.bold,
-                            keyboardType: const TextInputType.numberWithOptions(
-                                signed: true, decimal: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(
-                                  global.appInfo!.phoneNumberLength)
-                            ],
-                            onChanged: (value) {
-                              setState(() {});
-                            },
-                            onFieldSubmitted: (val) {
-                              // FocusScope.of(context).dispose();
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
-            Visibility(
-              visible: !isKeyboardOpen,
-              child: BottomButton(
-                loadingState: false,
-                disabledState: false,
-                onPressed: () =>
-                    isLoginWithEmail ? loginWithEmail() : login(_cPhone.text),
-                child: Text(isLoginWithEmail
-                    ? AppLocalizations.of(context)!.btn_login
-                    : AppLocalizations.of(context)!.txt_get_otp),
-              ),
-            ),
-            Visibility(
-              visible: !isKeyboardOpen,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(AppLocalizations.of(context)!.txt_connect,
-                        style: textTheme.bodyLarge),
-                    const SizedBox(width: 16),
-                    GestureDetector(
-                      onTap: () {
-                        _loginS(context, _scaffoldKey1);
-                        // signInWithFacebook(_scaffoldKey1);
-                      },
-                      child: const CircularImageCover(
-                        imageUrl: ImageConstants.facebookLogoImageUrl,
-                        backgroundColor: ColorConstants.veryLightBlue,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Platform.isAndroid
-                        ? GestureDetector(
-                            onTap: () {
-                              signInWithGoogle(_scaffoldKey1);
-                            },
-                            child: const CircularImageCover(
-                              imageUrl: ImageConstants.googleLogoImageUrl,
-                              backgroundColor: ColorConstants.peach,
-                            ),
-                          )
-                        : GestureDetector(
-                            onTap: () {
-                              _signInWithApple();
-                            },
-                            child: CircularImageCover(
-                              imageUrl: ImageConstants.appleLogoImageUrl,
-                              backgroundColor: Theme.of(context).brightness == Brightness.light ? ColorConstants.black : Colors.white,
-                            ),
-                          ),
-                    const SizedBox(width: 16),
-                    isLoginWithEmail
-                        ? GestureDetector(
-                            onTap: () {
-                              isLoginWithEmail = false;
-                              setState(() {});
-                            },
-                            child: const CircularImageCover(
-                              icon: Icon(
-                                Icons.phone_outlined,
-                                color: Colors.blue,
-                                size: 20,
+                            SizedBox(height: 20),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(top: 20),
+                            //   child: Align(
+                            //     alignment: Alignment.centerLeft,
+                            //     child: Text(
+                            //       "${AppLocalizations.of(context)!.lbl_password} ",
+                            //       style: textTheme.bodyLarge,
+                            //     ),
+                            //   ),
+                            // ),
+                            TextFormField(
+                              cursorColor: Colors.black,
+                              controller: _cPassword,
+                              focusNode: _fPassword,
+                              autofocus: false,
+                              obscureText: _showPassword,
+                              obscuringCharacter: '*',
+                              keyboardType: TextInputType.emailAddress,
+                              style:
+                                  textFieldInputStyle(context, FontWeight.bold),
+                              decoration: InputDecoration(
+                                hintText:
+                                    AppLocalizations.of(context)!.lbl_password,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: const BorderSide(
+                                      color: Colors.black54, width: 2),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: const BorderSide(
+                                      color: Colors.grey, width: 1),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                      _showPassword
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: IconTheme.of(context).color),
+                                  onPressed: () {
+                                    setState(() {
+                                      _showPassword = !_showPassword;
+                                    });
+                                  },
+                                ),
+                                hintStyle: textFieldHintStyle(context),
                               ),
-                              backgroundColor: ColorConstants.veryLightBlue,
                             ),
-                          )
-                        : const SizedBox(),
-                    isLoginWithEmail
-                        ? const SizedBox()
-                        : GestureDetector(
-                            onTap: () {
-                              isLoginWithEmail = true;
-                              setState(() {});
-                            },
-                            child: const CircularImageCover(
-                              icon: Icon(
-                                Icons.mail_outline,
-                                color: Colors.red,
-                                size: 20,
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .lbl_forgot_password,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                                onPressed: () {
+                                  Get.to(() => ForgotPasswordScreen(
+                                        analytics: widget.analytics,
+                                        observer: widget.observer,
+                                      ));
+                                },
                               ),
-                              backgroundColor: ColorConstants.peach,
                             ),
-                          ),
-                  ],
+                          ],
+                        )
+                      : SizedBox(),
+                  // : Row(
+                  //     children: [
+                  //       Expanded(
+                  //         flex: 1,
+                  //         child: MyTextField(
+                  //           key: const Key('14'),
+                  //           controller: _countryCodeController,
+                  //           inputTextFontWeight: FontWeight.bold,
+                  //           keyboardType: TextInputType.number,
+                  //           inputFormatters: [
+                  //             FilteringTextInputFormatter.digitsOnly,
+                  //           ],
+                  //         ),
+                  //       ),
+                  // // const SizedBox(width: 10),
+                  // Expanded(
+                  //   flex: 5,
+                  //   child: MyTextField(
+                  //     key: const Key('15'),
+                  //     controller: _cPhone,
+                  //     hintText: AppLocalizations.of(context)!
+                  //         .txt_0XXXXXXXXX,
+                  //     autofocus: false,
+                  //     focusNode: _fPhone,
+                  //     maxLines: 1,
+                  //     inputTextFontWeight: FontWeight.bold,
+                  //     keyboardType:
+                  //         const TextInputType.numberWithOptions(
+                  //             signed: true, decimal: true),
+                  //     inputFormatters: [
+                  //       FilteringTextInputFormatter.digitsOnly,
+                  //       LengthLimitingTextInputFormatter(
+                  //           global.appInfo!.phoneNumberLength)
+                  //     ],
+                  //     onChanged: (value) {
+                  //       setState(() {});
+                  //     },
+                  //     onFieldSubmitted: (val) {
+                  //       // FocusScope.of(context).dispose();
+                  //     },
+                  //   ),
+                  // ),
                 ),
-              ),
+
+                Visibility(
+                  visible: !isKeyboardOpen,
+                  child: BottomButton(
+                    loadingState: false,
+                    disabledState: false,
+                    onPressed: () => isLoginWithEmail
+                        ? loginWithEmail()
+                        : login(_cPhone.text),
+                    child: Text(isLoginWithEmail
+                        ? AppLocalizations.of(context)!.btn_login
+                        : AppLocalizations.of(context)!.txt_get_otp),
+                  ),
+                ),
+                Visibility(
+                  visible: !isKeyboardOpen,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Dont have an Account?',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Get.to(() => SignUpScreen(
+                                      analytics: widget.analytics,
+                                      observer: widget.observer,
+                                    ));
+                              },
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.only(
+                                    left: 3,
+                                    right: 10), // Short space to the left
+                              ),
+                              child: const Text(
+                                'Register Here',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Text(AppLocalizations.of(context)!.txt_connect,
+                        //     style: textTheme.bodyLarge),
+                        // const SizedBox(width: 16),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     _loginS(context, _scaffoldKey1);
+                        //     // signInWithFacebook(_scaffoldKey1);
+                        //   },
+                        //   child: const CircularImageCover(
+                        //     imageUrl: ImageConstants.facebookLogoImageUrl,
+                        //     backgroundColor: ColorConstants.veryLightBlue,
+                        //   ),
+                        // ),
+                        const SizedBox(width: 16),
+                        // Platform.isAndroid
+                        // ? GestureDetector(
+                        //     onTap: () {
+                        //       signInWithGoogle(_scaffoldKey1);
+                        //     },
+                        //     child: const CircularImageCover(
+                        //       imageUrl: ImageConstants.googleLogoImageUrl,
+                        //       backgroundColor: ColorConstants.peach,
+                        //     ),
+                        //   )
+                        // : GestureDetector(
+                        //     onTap: () {
+                        //       _signInWithApple();
+                        //     },
+                        //     child: CircularImageCover(
+                        //       imageUrl: ImageConstants.appleLogoImageUrl,
+                        //       backgroundColor: Theme.of(context).brightness ==
+                        //               Brightness.light
+                        //           ? ColorConstants.black
+                        //           : Colors.white,
+                        //     ),
+                        //   ),
+                        // const SizedBox(width: 16),
+                        // isLoginWithEmail
+                        //     ? GestureDetector(
+                        //         onTap: () {
+                        //           isLoginWithEmail = false;
+                        //           setState(() {});
+                        //         },
+                        //         child: const CircularImageCover(
+                        //           icon: Icon(
+                        //             Icons.phone_outlined,
+                        //             color: Colors.blue,
+                        //             size: 20,
+                        //           ),
+                        //           backgroundColor: ColorConstants.veryLightBlue,
+                        //         ),
+                        //       )
+                        //     : const SizedBox(),
+                        // isLoginWithEmail
+                        //     ? const SizedBox()
+                        //     : GestureDetector(
+                        //         onTap: () {
+                        //           isLoginWithEmail = true;
+                        //           setState(() {});
+                        //         },
+                        //         child: const CircularImageCover(
+                        //           icon: Icon(
+                        //             Icons.mail_outline,
+                        //             color: Colors.red,
+                        //             size: 20,
+                        //           ),
+                        //           backgroundColor: ColorConstants.peach,
+                        //         ),
+                        //       ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Future<void> initMobileNumberState() async {
@@ -403,13 +499,14 @@ class _LoginScreenState extends BaseRouteState {
             }
           });
         } else if (_cPhone.text.trim().isEmpty) {
-          if(!mounted) return;
+          if (!mounted) return;
           showSnackBar(
               key: _scaffoldKey1,
               snackBarMessage:
                   AppLocalizations.of(context)!.txt_please_enter_mobile_number);
         } else if (_cPhone.text.trim().length !=
-            global.appInfo!.phoneNumberLength && mounted) {
+                global.appInfo!.phoneNumberLength &&
+            mounted) {
           showSnackBar(
               key: _scaffoldKey1,
               snackBarMessage:
@@ -433,10 +530,10 @@ class _LoginScreenState extends BaseRouteState {
             _cPassword.text.trim().isNotEmpty) {
           showOnlyLoaderDialog();
           global.currentUser = CurrentUser();
-          await apiHelper.loginWithEmail(_cEmail.text.trim(), _cPassword.text.trim())
+          await apiHelper
+              .loginWithEmail(_cEmail.text.trim(), _cPassword.text.trim())
               .then((result) async {
             if (result != null) {
-
               if (result.status == "1") {
                 global.currentUser = result.data;
                 global.userProfileController.currentUser = global.currentUser;
@@ -470,20 +567,20 @@ class _LoginScreenState extends BaseRouteState {
           });
           // hideLoader();
         } else if (_cEmail.text.isEmpty) {
-          if(!mounted) return;
+          if (!mounted) return;
           showSnackBar(
               key: _scaffoldKey1,
               snackBarMessage:
                   AppLocalizations.of(context)!.txt_please_enter_your_email);
         } else if (_cEmail.text.isNotEmpty &&
             !EmailValidator.validate(_cEmail.text)) {
-          if(!mounted) return;
+          if (!mounted) return;
           showSnackBar(
               key: _scaffoldKey1,
-              snackBarMessage:
-                  AppLocalizations.of(context)!.txt_please_enter_your_valid_email);
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_please_enter_your_valid_email);
         } else if (_cPassword.text.isEmpty) {
-          if(!mounted) return;
+          if (!mounted) return;
           showSnackBar(
               key: _scaffoldKey1,
               snackBarMessage:
@@ -518,12 +615,12 @@ class _LoginScreenState extends BaseRouteState {
           title: Text(AppLocalizations.of(context)!.txt_select_phonenumber),
           actions: _simCard
               .map((e) => CupertinoActionSheetAction(
-                    child: Text(
-                        e.number!.substring(e.number!.length - global.appInfo!.phoneNumberLength!)),
+                    child: Text(e.number!.substring(
+                        e.number!.length - global.appInfo!.phoneNumberLength!)),
                     onPressed: () async {
                       setState(() {
-                        _cPhone.text = e.number!.substring(
-                            e.number!.length - global.appInfo!.phoneNumberLength!);
+                        _cPhone.text = e.number!.substring(e.number!.length -
+                            global.appInfo!.phoneNumberLength!);
                       });
                       Navigator.pop(context);
                     },
@@ -538,7 +635,8 @@ class _LoginScreenState extends BaseRouteState {
         ),
       );
     } catch (e) {
-      debugPrint("Exception - login_screen.dart - _showCupertinoModalSheet():$e");
+      debugPrint(
+          "Exception - login_screen.dart - _showCupertinoModalSheet():$e");
     }
   }
 
@@ -583,7 +681,8 @@ class _LoginScreenState extends BaseRouteState {
           hideLoader();
           throw Future.error(error);
         });
-        await apiHelper.socialLogin(
+        await apiHelper
+            .socialLogin(
                 userEmail: credential.email,
                 type: 'apple',
                 appleId: authResult.user!.uid)
@@ -623,8 +722,7 @@ class _LoginScreenState extends BaseRouteState {
       }
     } catch (e) {
       hideLoader();
-      debugPrint(
-          "Exception - login_screen.dart - _signinWithApple():$e");
+      debugPrint("Exception - login_screen.dart - _signinWithApple():$e");
     }
   }
 
@@ -638,7 +736,8 @@ class _LoginScreenState extends BaseRouteState {
         case FacebookLoginStatus.success:
           final FacebookAccessToken accessToken = res.accessToken!;
           debugPrint('Access token: ${accessToken.token}');
-          final profile = await (fb.getUserProfile() as FutureOr<FacebookUserProfile>);
+          final profile =
+              await (fb.getUserProfile() as FutureOr<FacebookUserProfile>);
           final email =
               await fb.getUserEmail() != null ? fb.getUserEmail() : '';
 
@@ -668,7 +767,7 @@ class _LoginScreenState extends BaseRouteState {
               currentuser.name = profile.name;
               currentuser.facebookId = profile.userId;
               hideLoader();
-              if(!mounted) return;
+              if (!mounted) return;
 
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -685,11 +784,11 @@ class _LoginScreenState extends BaseRouteState {
             }
           } else {
             hideLoader();
-            if(!mounted) return;
+            if (!mounted) return;
             showSnackBar(
                 key: scaffoldKey1,
-                snackBarMessage:
-                    AppLocalizations.of(context)!.txt_please_try_again_after_sometime);
+                snackBarMessage: AppLocalizations.of(context)!
+                    .txt_please_try_again_after_sometime);
           }
 
           break;
