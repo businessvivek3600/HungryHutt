@@ -84,15 +84,18 @@ class _RewardScreenState extends BaseRouteState {
 
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
     if (global.currentUser!.id != null) {
       getMyProfile(true);
-    }else{
-      isProcessing = false;
-      setState(() { });
+    } else {
+      setState(() {
+        isProcessing = false;
+      });
     }
-  }
+  });
+}
 
   getMyProfile(bool initTure) async {
     try {

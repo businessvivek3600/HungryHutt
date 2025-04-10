@@ -10,6 +10,7 @@ import 'package:user/models/businessLayer/global.dart' as global;
 import 'package:user/models/city_model.dart';
 import 'package:user/models/society_model.dart';
 import 'package:user/models/user_model.dart';
+import 'package:user/screens/login_screen.dart';
 import 'package:user/screens/otp_verification_screen.dart';
 import 'package:user/theme/style.dart';
 import 'package:user/widgets/bottom_button.dart';
@@ -19,7 +20,13 @@ import 'package:user/widgets/profile_picture.dart';
 class SignUpScreen extends BaseRoute {
   final CurrentUser? user;
   final int? loginType;
-  const SignUpScreen({super.key, super.analytics, super.observer, super.routeName = 'SignUpScreen', this.user, this.loginType});
+  const SignUpScreen(
+      {super.key,
+      super.analytics,
+      super.observer,
+      super.routeName = 'SignUpScreen',
+      this.user,
+      this.loginType});
 
   @override
   BaseRouteState<SignUpScreen> createState() => _SignUpScreenState();
@@ -32,30 +39,30 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
   final TextEditingController _cEmail = TextEditingController();
   final TextEditingController _cPassword = TextEditingController();
   final TextEditingController _cConfirmPassword = TextEditingController();
-  final TextEditingController _cCity = TextEditingController();
-  final TextEditingController _cSociety = TextEditingController();
+  // final TextEditingController _cCity = TextEditingController();
+  // final TextEditingController _cSociety = TextEditingController();
   final TextEditingController _cReferral = TextEditingController();
-  final TextEditingController _cSearchCity = TextEditingController();
-  final TextEditingController _cSearchSociety = TextEditingController();
+  // final TextEditingController _cSearchCity = TextEditingController();
+  // final TextEditingController _cSearchSociety = TextEditingController();
   final FocusNode _fName = FocusNode();
   final FocusNode _fPhoneNumber = FocusNode();
   final FocusNode _fEmail = FocusNode();
-  final FocusNode _fCity = FocusNode();
-  final FocusNode _fSociety = FocusNode();
+  // final FocusNode _fCity = FocusNode();
+  // final FocusNode _fSociety = FocusNode();
   final FocusNode _fReferral = FocusNode();
   final FocusNode _fPassword = FocusNode();
   final FocusNode _fConfirmPassword = FocusNode();
-  final FocusNode _fSearchCity = FocusNode();
-  final FocusNode _fSearchSociety = FocusNode();
+  // final FocusNode _fSearchCity = FocusNode();
+  // final FocusNode _fSearchSociety = FocusNode();
   final FocusNode _fDismiss = FocusNode();
   bool _isPasswordVisible = true;
 
   bool _isConfirmPasswordVisible = true;
-  List<City>? _citiesList = [];
-  List<Society>? _societyList = [];
-  final List<City> _tCityList = [];
-  final List<Society> _tSocietyList = [];
-  City? _selectedCity = City();
+  // List<City>? _citiesList = [];
+  // List<Society>? _societyList = [];
+  // final List<City> _tCityList = [];
+  // final List<Society> _tSocietyList = [];
+  // City? _selectedCity = City();
   Society? _selectedSociety = Society();
   GlobalKey<ScaffoldState>? _scaffoldKey;
   _SignUpScreenState();
@@ -63,6 +70,7 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: SingleChildScrollView(
@@ -71,24 +79,65 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 60),
-                child: Center(
-                  child: ProfilePicture(
-                    isShow: true,
-                  ),
-                ),
-              ),
+              Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Column(children: [
+                    // const SizedBox(height: 60),
+                    // Food image
+                    SizedBox(
+                      height: 200, // Adjust height as needed
+                      width: double.infinity,
+                      child: Image.asset(
+                        'assets/images/login.png',
+                        fit: BoxFit.cover, // covers the top nicely
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+                    // Foodie logo
+                    RichText(
+                      text: const TextSpan(
+                        text: 'Reg',
+                        style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54),
+                        children: [
+                          TextSpan(
+                            text: 'is',
+                            style: TextStyle(color: Colors.green, fontSize: 36),
+                          ),
+                          TextSpan(
+                            text: 'ter',
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ])),
+
               const SizedBox(
                 height: 20,
               ),
-              MyTextField(
+              TextFormField(
                 key: const Key('6'),
                 controller: _cName,
                 focusNode: _fName,
-                hintText: AppLocalizations.of(context)!.lbl_name,
                 autofocus: false,
                 maxLines: 1,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.lbl_name,
+                  prefixStyle: textFieldInputStyle(context, FontWeight.normal),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide:
+                        const BorderSide(color: Colors.black54, width: 2),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: const BorderSide(color: Colors.grey, width: 1),
+                  ),
+                ),
                 keyboardType: TextInputType.emailAddress,
                 onFieldSubmitted: (val) {
                   FocusScope.of(context).requestFocus(_fPhoneNumber);
@@ -97,16 +146,33 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
               const SizedBox(
                 height: 20,
               ),
-              MyTextField(
+              TextFormField(
                 key: const Key('7'),
                 controller: _cPhoneNumber,
                 focusNode: _fPhoneNumber,
-                hintText: 'Mobile No.',
-                readOnly: widget.loginType==0,
+                readOnly: widget.loginType == 0,
                 autofocus: false,
                 maxLines: 1,
-                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(global.appInfo!.phoneNumberLength)],
+                decoration: InputDecoration(
+                  hintText: 'Mobile No.',
+                  prefixStyle: textFieldInputStyle(context, FontWeight.normal),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide:
+                        const BorderSide(color: Colors.black54, width: 2),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: const BorderSide(color: Colors.grey, width: 1),
+                  ),
+                ),
+                keyboardType: const TextInputType.numberWithOptions(
+                    signed: true, decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(
+                      global.appInfo!.phoneNumberLength)
+                ],
                 onFieldSubmitted: (val) {
                   FocusScope.of(context).requestFocus(_fEmail);
                 },
@@ -114,19 +180,42 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
               const SizedBox(
                 height: 20,
               ),
-              MyTextField(
+              TextFormField(
                 key: const Key('8'),
                 controller: _cEmail,
                 focusNode: _fEmail,
-                hintText: AppLocalizations.of(context)!.lbl_email,
                 autofocus: false,
                 maxLines: 1,
-                readOnly: widget.loginType==1,
+                readOnly: false,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.lbl_email,
+                  prefixStyle: textFieldInputStyle(context, FontWeight.normal),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide:
+                        const BorderSide(color: Colors.black54, width: 2),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: const BorderSide(color: Colors.grey, width: 1),
+                  ),
+                ),
                 keyboardType: TextInputType.emailAddress,
+                onChanged: (val) {
+                  if (!val.endsWith('@gmail.com')) {
+                    print('Invalid: Only Gmail addresses allowed');
+                    // You can also show a warning via setState/snackbar here
+                  }
+                },
                 onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(_fPassword);
+                  if (val.endsWith('@gmail.com')) {
+                    FocusScope.of(context).requestFocus(_fPassword);
+                  } else {
+                    // showSnackBarMessage('Please enter a valid Gmail address');
+                  }
                 },
               ),
+
               const SizedBox(
                 height: 20,
               ),
@@ -141,21 +230,22 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                 obscuringCharacter: '*',
                 decoration: InputDecoration(
                   prefixStyle: textFieldInputStyle(context, FontWeight.normal),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 2.0,
-                      color: Colors.black,
-                    ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide:
+                        const BorderSide(color: Colors.black54, width: 2),
                   ),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.7,
-                      color: Colors.black,
-                    ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: const BorderSide(color: Colors.grey, width: 1),
                   ),
                   hintText: AppLocalizations.of(context)!.lbl_password,
                   suffixIcon: IconButton(
-                    icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off, color: IconTheme.of(context).color),
+                    icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: IconTheme.of(context).color),
                     onPressed: () {
                       _isPasswordVisible = !_isPasswordVisible;
                       setState(() {});
@@ -181,21 +271,22 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                 obscuringCharacter: '*',
                 decoration: InputDecoration(
                   prefixStyle: textFieldInputStyle(context, FontWeight.normal),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 2.0,
-                      color: Colors.black,
-                    ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide:
+                        const BorderSide(color: Colors.black54, width: 2),
                   ),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0.7,
-                      color: Colors.black,
-                    ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: const BorderSide(color: Colors.grey, width: 1),
                   ),
                   hintText: AppLocalizations.of(context)!.lbl_confirm_password,
                   suffixIcon: IconButton(
-                    icon: Icon(_isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off, color: IconTheme.of(context).color),
+                    icon: Icon(
+                        _isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: IconTheme.of(context).color),
                     onPressed: () {
                       _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
                       setState(() {});
@@ -203,102 +294,175 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                   ),
                   hintStyle: textFieldHintStyle(context),
                 ),
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(_fCity);
-                },
+                // onFieldSubmitted: (val) {
+                //   FocusScope.of(context).requestFocus(_fCity);
+                // },
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              InkWell(
-                child: MyTextField(
-                  key: const Key('111'),
-                  controller: _cCity,
-                  focusNode: _fCity,
-                  readOnly: true,
-                  autofocus: false,
-                  hintText: AppLocalizations.of(context)!.hnt_select_city,
-                  onTap: () {
-                    if (_citiesList != null && _citiesList!.isNotEmpty) {
-                      _cCity.clear();
-                      _cSociety.clear();
-                      _cSearchCity.clear();
-                      _cSearchSociety.clear();
-                      _selectedCity = City();
-                      _selectedSociety = Society();
-                      _showCitySelectDialog();
-                    } else {
-                      showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_no_city);
-                    }
+              // const SizedBox(
+              //   height: 20,
+              // ),
+              // const SizedBox(height: 20),
+              // MyTextField(
+              //   controller:
+              //       _cSociety, // or create a new `_cAddress` if preferred
+              //   focusNode: _fSociety, // or create a new `FocusNode` for address
+              //   hintText: 'Address',
+              //   maxLines: 2,
+              //   keyboardType: TextInputType.streetAddress,
+              //   autofocus: false,
+              //   onFieldSubmitted: (val) {
+              //     FocusScope.of(context).unfocus(); // dismiss keyboard
+              //   },
+              // ),
 
-                    setState(() {});
-                  },
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(_fSociety);
-                  },
-                ),
-              ),
-              const SizedBox(
+              // InkWell(
+              //   child: MyTextField(
+              //     key: const Key('111'),
+              //     controller: _cCity,
+              //     focusNode: _fCity,
+              //     readOnly: true,
+              //     autofocus: false,
+              //     hintText: AppLocalizations.of(context)!.hnt_select_city,
+              //     onTap: () {
+              //       if (_citiesList != null && _citiesList!.isNotEmpty) {
+              //         _cCity.clear();
+              //         _cSociety.clear();
+              //         _cSearchCity.clear();
+              //         _cSearchSociety.clear();
+              //         _selectedCity = City();
+              //         _selectedSociety = Society();
+              //         _showCitySelectDialog();
+              //       } else {
+              //         showSnackBar(
+              //             key: _scaffoldKey,
+              //             snackBarMessage:
+              //                 AppLocalizations.of(context)!.txt_no_city);
+              //       }
+
+              //       setState(() {});
+              //     },
+              //     onFieldSubmitted: (val) {
+              //       FocusScope.of(context).requestFocus(_fSociety);
+              //     },
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 20,
+              // ),
+              // MyTextField(
+              //   key: const Key('11'),
+              //   controller: _cSociety,
+              //   focusNode: _fSociety,
+              //   hintText: AppLocalizations.of(context)!.hnt_select_society,
+              //   onFieldSubmitted: (val) {
+              //     FocusScope.of(context).requestFocus(_fReferral);
+              //   },
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 10),
+              //   child: MyTextField(
+              //     key: const Key('112'),
+              //     controller: _cReferral,
+              //     focusNode: _fReferral,
+              //     hintText: 'Referral Code',
+              //     onFieldSubmitted: (val) {
+              //       FocusScope.of(context).requestFocus(_fDismiss);
+              //     },
+              //   ),
+              // ),
+              // Sign up button
+              SizedBox(
                 height: 20,
               ),
-              MyTextField(
-                key: const Key('11'),
-                controller: _cSociety,
-                focusNode: _fSociety,
-                hintText: AppLocalizations.of(context)!.hnt_select_society,
-                onFieldSubmitted: (val) {
-                  FocusScope.of(context).requestFocus(_fReferral);
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: MyTextField(
-                  key: const Key('112'),
-                  controller: _cReferral,
-                  focusNode: _fReferral,
-                  hintText: 'Referral Code',
-                  onFieldSubmitted: (val) {
-                    FocusScope.of(context).requestFocus(_fDismiss);
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    _onSignUp();
                   },
+                  child: const Text('SIGN UP',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500, color: Colors.white)),
                 ),
               ),
+
+              const SizedBox(height: 10),
+              // Login link
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Already have an Account?',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Get.to(() => LoginScreen(
+                            analytics: widget.analytics,
+                            observer: widget.observer,
+                          ));
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.only(
+                          left: 1, right: 12), // Short space to the left
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-  child: SingleChildScrollView(
-    child: Column(
-      mainAxisSize: MainAxisSize.min, // Ensures Column takes minimum space
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 13, right: 13, top: 5),
-          child: BottomButton(
-            loadingState: false,
-            disabledState: false,
-            onPressed: () {
-              _onSignUp();
-            },
-            child: Text(AppLocalizations.of(context)!.btn_signup),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(AppLocalizations.of(context)!.lbl_already_have_account),
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.btn_login),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ],
-    ),
-  ),
-),
-
+      // bottomNavigationBar: BottomAppBar(
+      //   color: Colors.green.withOpacity(0.1), // Transparent green background
+      //   elevation: 0,
+      //   child: SingleChildScrollView(
+      //     child: Column(
+      //       mainAxisSize:
+      //           MainAxisSize.min, // Ensures Column takes minimum space
+      //       children: [
+      //         Padding(
+      //           padding: const EdgeInsets.only(left: 13, right: 13, top: 5),
+      //           child: BottomButton(
+      //             loadingState: false,
+      //             disabledState: false,
+      //             onPressed: () {
+      //               _onSignUp();
+      //             },
+      //             child: Text(AppLocalizations.of(context)!.btn_signup),
+      //           ),
+      //         ),
+      //         Row(
+      //           mainAxisAlignment: MainAxisAlignment.center,
+      //           children: [
+      //             Text(AppLocalizations.of(context)!.lbl_already_have_account),
+      //             TextButton(
+      //               child: Text(AppLocalizations.of(context)!.btn_login),
+      //               onPressed: () {
+      //                 Navigator.of(context).pop();
+      //               },
+      //             ),
+      //           ],
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
     );
   }
 
@@ -318,58 +482,62 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
     }
   }
 
-  _getCities() async {
-    try {
-      bool isConnected = await br.checkConnectivity();
-      if (isConnected) {
-        await apiHelper.getCity().then((result) {
-          if (result != null && result.statusCode == 200 && result.status == '1') {
-            _citiesList = result.data;
-            _tCityList.addAll(_citiesList!);
-          } else {
-            _citiesList = [];
-          }
-        });
-      } else {
-        showNetworkErrorSnackBar(_scaffoldKey);
-      }
-    } catch (e) {
-      debugPrint("Exception - signup_screen.dart - _getCities():$e");
-    }
-  }
+  // _getCities() async {
+  //   try {
+  //     bool isConnected = await br.checkConnectivity();
+  //     if (isConnected) {
+  //       await apiHelper.getCity().then((result) {
+  //         if (result != null &&
+  //             result.statusCode == 200 &&
+  //             result.status == '1') {
+  //           _citiesList = result.data;
+  //           _tCityList.addAll(_citiesList!);
+  //         } else {
+  //           _citiesList = [];
+  //         }
+  //       });
+  //     } else {
+  //       showNetworkErrorSnackBar(_scaffoldKey);
+  //     }
+  //   } catch (e) {
+  //     debugPrint("Exception - signup_screen.dart - _getCities():$e");
+  //   }
+  // }
 
-  _getSociety() async {
-    try {
-      bool isConnected = await br.checkConnectivity();
-      if (isConnected) {
-        await apiHelper.getSociety(_selectedCity!.cityId).then((result) {
-          if(!mounted) return;
-          if (result != null && result.statusCode == 200 && result.status == '1') {
-            _societyList = result.data;
-            _tSocietyList.addAll(_societyList!);
-            Navigator.of(context).pop();
-            _cSearchCity.clear();
-            _showSocietySelectDialog();
-            setState(() {});
-          } else {
-            Navigator.of(context).pop();
-            _cSearchCity.clear();
-            _societyList = [];
-            showSnackBar(key: _scaffoldKey, snackBarMessage: result.message);
-          }
-        });
-      } else {
-        showNetworkErrorSnackBar(_scaffoldKey);
-      }
-    } catch (e) {
-      debugPrint("Exception - signup_screen.dart - _getSociety():$e");
-    }
-  }
+  // _getSociety() async {
+  //   try {
+  //     bool isConnected = await br.checkConnectivity();
+  //     if (isConnected) {
+  //       await apiHelper.getSociety(_selectedCity!.cityId).then((result) {
+  //         if (!mounted) return;
+  //         if (result != null &&
+  //             result.statusCode == 200 &&
+  //             result.status == '1') {
+  //           _societyList = result.data;
+  //           _tSocietyList.addAll(_societyList!);
+  //           Navigator.of(context).pop();
+  //           _cSearchCity.clear();
+  //           // _showSocietySelectDialog();
+  //           setState(() {});
+  //         } else {
+  //           Navigator.of(context).pop();
+  //           _cSearchCity.clear();
+  //           _societyList = [];
+  //           showSnackBar(key: _scaffoldKey, snackBarMessage: result.message);
+  //         }
+  //       });
+  //     } else {
+  //       showNetworkErrorSnackBar(_scaffoldKey);
+  //     }
+  //   } catch (e) {
+  //     debugPrint("Exception - signup_screen.dart - _getSociety():$e");
+  //   }
+  // }
 
   _init() async {
     try {
       _filldata();
-      await _getCities();
+      // await _getCities();
       setState(() {});
     } catch (e) {
       debugPrint("Exception - signup_screen.dart - _init():$e");
@@ -380,7 +548,22 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
     try {
       bool isConnected = await br.checkConnectivity();
       if (isConnected) {
-        if (_cName.text.isNotEmpty && EmailValidator.validate(_cEmail.text) && _cEmail.text.isNotEmpty && _cPhoneNumber.text.isNotEmpty && _cPhoneNumber.text.trim().length == global.appInfo!.phoneNumberLength && _cPassword.text.isNotEmpty && _cPassword.text.trim().length >= 8 && _cConfirmPassword.text.isNotEmpty && _cPassword.text.trim().length == _cConfirmPassword.text.trim().length && _cPassword.text.trim() == _cConfirmPassword.text.trim() && _selectedCity != null && _selectedCity!.cityId != null) {
+        if (_cName.text.isNotEmpty &&
+                EmailValidator.validate(_cEmail.text) &&
+                _cEmail.text.isNotEmpty &&
+                _cPhoneNumber.text.isNotEmpty &&
+                _cPhoneNumber.text.trim().length ==
+                    global.appInfo!.phoneNumberLength &&
+                _cPassword.text.isNotEmpty &&
+                _cPassword.text.trim().length >= 8 &&
+                _cConfirmPassword.text.isNotEmpty &&
+                _cPassword.text.trim().length ==
+                    _cConfirmPassword.text.trim().length &&
+                _cPassword.text.trim() == _cConfirmPassword.text.trim()
+            // &&
+            //  _selectedCity != null &&
+            // _selectedCity!.cityId != null
+            ) {
           showOnlyLoaderDialog();
           CurrentUser user = CurrentUser();
 
@@ -390,8 +573,8 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
           user.password = _cPassword.text.trim();
           user.userImage = global.selectedImage;
           user.referralCode = _cReferral.text.trim();
-          user.userCity = _selectedCity!.cityId;
-          user.userArea = _selectedSociety!.societyId;
+          // user.userCity = _selectedCity!.cityId;
+          // user.userArea = _selectedSociety!.societyId;
           user.facebookId = user.facebookId;
 
           await apiHelper.signUp(user).then((result) async {
@@ -414,40 +597,79 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
                 }
               } else {
                 hideLoader();
-                showSnackBar(key: _scaffoldKey, snackBarMessage: result.message.toString());
+                showSnackBar(
+                    key: _scaffoldKey,
+                    snackBarMessage: result.message.toString());
               }
             }
           });
         } else if (_cName.text.isEmpty) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_your_name);
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_please_enter_your_name);
         } else if (_cEmail.text.isEmpty) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_your_email);
-        } else if (_cEmail.text.isNotEmpty && !EmailValidator.validate(_cEmail.text)) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_your_valid_email);
-        } else if (_cPhoneNumber.text.isEmpty || (_cPhoneNumber.text.isNotEmpty && _cPhoneNumber.text.trim().length != global.appInfo!.phoneNumberLength)) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_valid_mobile_number);
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_please_enter_your_email);
+        } else if (_cEmail.text.isNotEmpty &&
+            !EmailValidator.validate(_cEmail.text)) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_please_enter_your_valid_email);
+        } else if (_cPhoneNumber.text.isEmpty ||
+            (_cPhoneNumber.text.isNotEmpty &&
+                _cPhoneNumber.text.trim().length !=
+                    global.appInfo!.phoneNumberLength)) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_please_enter_valid_mobile_number);
         } else if (_cPassword.text.isEmpty) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_enter_your_password);
-        } else if (_cPassword.text.isNotEmpty && _cPassword.text.trim().length < 8) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_password_should_be_of_minimum_8_character);
-        } else if (_cConfirmPassword.text.isEmpty && _cPassword.text.isNotEmpty) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_please_reEnter_your_password);
-        } else if (_cConfirmPassword.text.isNotEmpty && _cPassword.text.isNotEmpty && (_cConfirmPassword.text.trim() != _cPassword.text.trim())) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_password_do_not_match);
-        } else if (_selectedCity!.cityId == null) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_select_city);
-        } else if (_selectedSociety!.societyId == null) {
-          if(!mounted) return;
-          showSnackBar(key: _scaffoldKey, snackBarMessage: AppLocalizations.of(context)!.txt_select_society);
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_please_enter_your_password);
+        } else if (_cPassword.text.isNotEmpty &&
+            _cPassword.text.trim().length < 8) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_password_should_be_of_minimum_8_character);
+        } else if (_cConfirmPassword.text.isEmpty &&
+            _cPassword.text.isNotEmpty) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage: AppLocalizations.of(context)!
+                  .txt_please_reEnter_your_password);
+        } else if (_cConfirmPassword.text.isNotEmpty &&
+            _cPassword.text.isNotEmpty &&
+            (_cConfirmPassword.text.trim() != _cPassword.text.trim())) {
+          if (!mounted) return;
+          showSnackBar(
+              key: _scaffoldKey,
+              snackBarMessage:
+                  AppLocalizations.of(context)!.txt_password_do_not_match);
+          // } else if (_selectedCity!.cityId == null) {
+          //   if (!mounted) return;
+          //   showSnackBar(
+          //       key: _scaffoldKey,
+          //       snackBarMessage: AppLocalizations.of(context)!.txt_select_city);
+          // } else if (_selectedSociety!.societyId == null) {
+          //   if (!mounted) return;
+          //   showSnackBar(
+          // key: _scaffoldKey,
+          // snackBarMessage:
+          //     AppLocalizations.of(context)!.txt_select_society);
         }
       } else {
         showNetworkErrorSnackBar(_scaffoldKey);
@@ -457,160 +679,186 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
     }
   }
 
-  _showCitySelectDialog() {
-    try {
-      showDialog(
-          context: context,
-          barrierColor: Colors.black38,
-          builder: (BuildContext context) => StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) => AlertDialog(
-                  elevation: 2,
-                  scrollable: false,
-                  contentPadding: EdgeInsets.zero,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  title: Column(
-                    children: [
-                      Text(AppLocalizations.of(context)!.hnt_select_city),
-                      Container(
-                        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(0.0))),
-                        margin: const EdgeInsets.only(top: 5, bottom: 15),
-                        padding: const EdgeInsets.only(),
-                        child: MyTextField(
-                          key: const Key('12'),
-                          controller: _cSearchCity,
-                          focusNode: _fSearchCity,
-                          hintText: AppLocalizations.of(context)!.hnt_search_city,
-                          onChanged: (val) {
-                            _citiesList!.clear();
-                            if (val.isNotEmpty && val.length > 2) {
-                              _citiesList!.addAll(_tCityList.where((e) => e.cityName!.toLowerCase().contains(val.toLowerCase())));
-                            } else {
-                              _citiesList!.addAll(_tCityList);
-                            }
+  // _showCitySelectDialog() {
+  //   try {
+  //     showDialog(
+  //         context: context,
+  //         barrierColor: Colors.black38,
+  //         builder: (BuildContext context) => StatefulBuilder(
+  //               builder: (BuildContext context, StateSetter setState) =>
+  //                   AlertDialog(
+  //                 elevation: 2,
+  //                 scrollable: false,
+  //                 contentPadding: EdgeInsets.zero,
+  //                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+  //                 title: Column(
+  //                   children: [
+  //                     Text(AppLocalizations.of(context)!.hnt_select_city),
+  //                     Container(
+  //                       decoration: const BoxDecoration(
+  //                           borderRadius:
+  //                               BorderRadius.all(Radius.circular(0.0))),
+  //                       margin: const EdgeInsets.only(top: 5, bottom: 15),
+  //                       padding: const EdgeInsets.only(),
+  //                       child: MyTextField(
+  //                         key: const Key('12'),
+  //                         controller: _cSearchCity,
+  //                         focusNode: _fSearchCity,
+  //                         hintText:
+  //                             AppLocalizations.of(context)!.hnt_search_city,
+  //                         onChanged: (val) {
+  //                           _citiesList!.clear();
+  //                           if (val.isNotEmpty && val.length > 2) {
+  //                             _citiesList!.addAll(_tCityList.where((e) => e
+  //                                 .cityName!
+  //                                 .toLowerCase()
+  //                                 .contains(val.toLowerCase())));
+  //                           } else {
+  //                             _citiesList!.addAll(_tCityList);
+  //                           }
 
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  content: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: _citiesList != null && _citiesList!.isNotEmpty
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: _citiesList!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return RadioListTile(
-                                  title: Text('${_citiesList![index].cityName}'),
-                                  value: _citiesList![index],
-                                  groupValue: _selectedCity,
-                                  onChanged: (dynamic value) async {
-                                    _selectedCity = value;
-                                    _cCity.text = _selectedCity!.cityName!;
-                                    await _getSociety();
-                                    setState(() {});
-                                  });
-                            })
-                        : Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.txt_no_city,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          setState(() {});
-                        },
-                        child: Text(AppLocalizations.of(context)!.btn_close))
-                  ],
-                ),
-              ));
-    } catch (e) {
-      debugPrint("Exception - signup_screen.dart - _showCitySelectDialog():$e");
-    }
-  }
+  //                           setState(() {});
+  //                         },
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 content: SizedBox(
+  //                   width: MediaQuery.of(context).size.width,
+  //                   height: MediaQuery.of(context).size.height,
+  //                   child: _citiesList != null && _citiesList!.isNotEmpty
+  //                       ? ListView.builder(
+  //                           shrinkWrap: true,
+  //                           itemCount: _citiesList!.length,
+  //                           itemBuilder: (BuildContext context, int index) {
+  //                             return RadioListTile(
+  //                                 title:
+  //                                     Text('${_citiesList![index].cityName}'),
+  //                                 value: _citiesList![index],
+  //                                 groupValue: _selectedCity,
+  //                                 onChanged: (dynamic value) async {
+  //                                   _selectedCity = value;
+  //                                   _cCity.text = _selectedCity!.cityName!;
+  //                                   await _getSociety();
+  //                                   setState(() {});
+  //                                 });
+  //                           })
+  //                       : Center(
+  //                           child: Text(
+  //                             AppLocalizations.of(context)!.txt_no_city,
+  //                             textAlign: TextAlign.center,
+  //                           ),
+  //                         ),
+  //                 ),
+  //                 actions: [
+  //                   ElevatedButton(
+  //                       onPressed: () {
+  //                         Navigator.of(context).pop();
+  //                         setState(() {});
+  //                       },
+  //                       child: Text(AppLocalizations.of(context)!.btn_close))
+  //                 ],
+  //               ),
+  //             ));
+  //   } catch (e) {
+  //     debugPrint("Exception - signup_screen.dart - _showCitySelectDialog():$e");
+  //   }
+  // }
 
-  _showSocietySelectDialog() {
-    try {
-      showDialog(
-          context: context,
-          useRootNavigator: true,
-          barrierDismissible: true,
-          barrierColor: Colors.transparent,
-          builder: (BuildContext context) => StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) => AlertDialog(
-                  contentPadding: EdgeInsets.zero,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  title: Column(
-                    children: [
-                      Text(AppLocalizations.of(context)!.hnt_select_society),
-                      Container(
-                        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(0.0))),
-                        margin: const EdgeInsets.only(top: 5, bottom: 15),
-                        padding: const EdgeInsets.only(),
-                        child: TextFormField(
-                          controller: _cSearchSociety,
-                          focusNode: _fSearchSociety,
-                          style: Theme.of(context).textTheme.titleMedium,
-                          decoration: InputDecoration(
-                            fillColor: Theme.of(context).scaffoldBackgroundColor,
-                            hintText: AppLocalizations.of(context)!.htn_search_society,
-                            contentPadding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                          ),
-                          onChanged: (val) {
-                            _societyList!.clear();
-                            if (val.isNotEmpty && val.length > 2) {
-                              _societyList!.addAll(_tSocietyList.where((e) => e.societyName!.toLowerCase().contains(val.toLowerCase())));
-                            } else {
-                              _societyList!.addAll(_tSocietyList);
-                            }
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  content: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: _societyList != null && _societyList!.isNotEmpty
-                        ? ListView.builder(
-                            itemCount: _cSearchSociety.text.isNotEmpty && _tSocietyList.isNotEmpty ? _tSocietyList.length : _societyList!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return RadioListTile(
-                                  title: Text(_cSearchSociety.text.isNotEmpty && _tSocietyList.isNotEmpty ? '${_tSocietyList[index].societyName}' : '${_societyList![index].societyName}'),
-                                  value: _cSearchSociety.text.isNotEmpty && _tSocietyList.isNotEmpty ? _tSocietyList[index] : _societyList![index],
-                                  groupValue: _selectedSociety,
-                                  onChanged: (dynamic value) async {
-                                    _selectedSociety = value;
-                                    _cSociety.text = _selectedSociety!.societyName!;
-                                    Navigator.of(context).pop();
-                                    setState(() {});
-                                  });
-                            })
-                        : Center(
-                            child: Text(
-                            AppLocalizations.of(context)!.txt_no_society,
-                            textAlign: TextAlign.center,
-                          )),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          setState(() {});
-                        },
-                        child: Text(AppLocalizations.of(context)!.btn_close))
-                  ],
-                ),
-              ));
-    } catch (e) {
-      debugPrint("Exception - signup_screen.dart - _showSocietySelectDialog():$e");
-    }
-  }
+  // _showSocietySelectDialog() {
+  //   try {
+  //     showDialog(
+  //         context: context,
+  //         useRootNavigator: true,
+  //         barrierDismissible: true,
+  //         barrierColor: Colors.transparent,
+  //         builder: (BuildContext context) => StatefulBuilder(
+  //               builder: (BuildContext context, StateSetter setState) =>
+  //                   AlertDialog(
+  //                 contentPadding: EdgeInsets.zero,
+  //                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+  //                 title: Column(
+  //                   children: [
+  //                     Text(AppLocalizations.of(context)!.hnt_select_society),
+  //                     Container(
+  //                       decoration: const BoxDecoration(
+  //                           borderRadius:
+  //                               BorderRadius.all(Radius.circular(0.0))),
+  //                       margin: const EdgeInsets.only(top: 5, bottom: 15),
+  //                       padding: const EdgeInsets.only(),
+  //                       child: TextFormField(
+  //                         controller: _cSearchSociety,
+  //                         focusNode: _fSearchSociety,
+  //                         style: Theme.of(context).textTheme.titleMedium,
+  //                         decoration: InputDecoration(
+  //                           fillColor:
+  //                               Theme.of(context).scaffoldBackgroundColor,
+  //                           hintText: AppLocalizations.of(context)!
+  //                               .htn_search_society,
+  //                           contentPadding: const EdgeInsets.only(
+  //                               top: 10, left: 10, right: 10),
+  //                         ),
+  //                         onChanged: (val) {
+  //                           _societyList!.clear();
+  //                           if (val.isNotEmpty && val.length > 2) {
+  //                             _societyList!.addAll(_tSocietyList.where((e) => e
+  //                                 .societyName!
+  //                                 .toLowerCase()
+  //                                 .contains(val.toLowerCase())));
+  //                           } else {
+  //                             _societyList!.addAll(_tSocietyList);
+  //                           }
+  //                           setState(() {});
+  //                         },
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 );}}}
+  //                 content: SizedBox(
+  //                   width: MediaQuery.of(context).size.width,
+  //                   height: MediaQuery.of(context).size.height,
+  //                   child: _societyList != null && _societyList!.isNotEmpty
+  //                       ? ListView.builder(
+  //                           itemCount: _cSearchSociety.text.isNotEmpty &&
+  //                                   _tSocietyList.isNotEmpty
+  //                               ? _tSocietyList.length
+  //                               : _societyList!.length,
+  //                           itemBuilder: (BuildContext context, int index) {
+  //                             return RadioListTile(
+  //                                 title: Text(_cSearchSociety.text.isNotEmpty &&
+  //                                         _tSocietyList.isNotEmpty
+  //                                     ? '${_tSocietyList[index].societyName}'
+  //                                     : '${_societyList![index].societyName}'),
+  //                                 value: _cSearchSociety.text.isNotEmpty &&
+  //                                         _tSocietyList.isNotEmpty
+  //                                     ? _tSocietyList[index]
+  //                                     : _societyList![index],
+  //                                 groupValue: _selectedSociety,
+  //                                 onChanged: (dynamic value) async {
+  //                                   _selectedSociety = value;
+  //                                   _cSociety.text =
+  //                                       _selectedSociety!.societyName!;
+  //                                   Navigator.of(context).pop();
+  //                                   setState(() {});
+  //                                 });
+  //                           })
+  //                       : Center(
+  //                           child: Text(
+  //                           AppLocalizations.of(context)!.txt_no_society,
+  //                           textAlign: TextAlign.center,
+  //                         )),
+  //                 ),
+  //                 actions: [
+  //                   ElevatedButton(
+  //                       onPressed: () {
+  //                         Navigator.of(context).pop();
+  //                         setState(() {});
+  //                       },
+  //                       child: Text(AppLocalizations.of(context)!.btn_close))
+  //                 ],
+  //               ),
+  //             ));
+  //   } catch (e) {
+  //     debugPrint(
+  //         "Exception - signup_screen.dart - _showSocietySelectDialog():$e");
 }
