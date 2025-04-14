@@ -159,23 +159,29 @@ class APIHelper {
     }
   }
 
-  Future<dynamic> addToCart({int? qty, int? varientId, int? special}) async {
+  Future<dynamic> addToCart({int? qty, int? varientId, int? special,dynamic? addons}) async {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({
-        'user_id': global.currentUser!.id,
-        'qty': qty,
-        'store_id': global.nearStoreModel!.id,
-        'varient_id': varientId,
-        'special': special,
-      });
+      var formData = FormData();
 
+      formData.fields.add(MapEntry('user_id', global.currentUser!.id.toString()));
+      formData.fields.add(MapEntry('qty', qty.toString()));
+      formData.fields.add(MapEntry('store_id', global.nearStoreModel!.id.toString()));
+      formData.fields.add(MapEntry('varient_id', varientId.toString()));
+      formData.fields.add(MapEntry('selectedAddons', jsonEncode(addons)));
+      // if (addons != null && addons.isNotEmpty) {
+      //   for (var addon in addons) {
+      //     formData.fields.add(MapEntry('selectedAddons', addon));
+      //   }
+      // }
+      print("add to cart ---------${formData.fields}");
       response = await dio.post('${global.baseUrl}add_to_cart',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("add to cart Response --------${response.data}");
       dynamic recordList;
       if (response.statusCode == 200) {
         recordList = Cart.fromJson(response.data["data"]);
@@ -600,13 +606,16 @@ class APIHelper {
       var formData = FormData.fromMap({
         'user_id': global.currentUser!.id,
         'varient_id': varientId,
+        'store_id': global.nearStoreModel!.id
       });
-
+print("Delete Item from cart ------${formData.fields}");
       response = await dio.post('${global.baseUrl}del_frm_cart',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("response of remove from cart or delete -------${response.data}");
+      print("response of remove from cart or delete -------${response.statusMessage}");
       dynamic recordList;
       if (response.statusCode == 200) {
         recordList = Cart.fromJson(response.data);
@@ -1702,14 +1711,13 @@ class APIHelper {
   }
 
   Future<dynamic> makeOrder(
-      {DateTime? selectedDate, String? selectedTime}) async {
+      {String? couponCode}) async {
     try {
       Response response;
       var dio = Dio();
       var formData = FormData.fromMap({
         'user_id': global.currentUser!.id,
-        // 'delivery_date': selectedDate,
-        // 'time_slot': selectedTime
+        if (couponCode != null) 'coupon_code': couponCode,
       });
       print("Make Order-----");
       print("Order  Form field ---${formData.fields}");
@@ -1718,9 +1726,11 @@ class APIHelper {
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("Make Order-----Response");
+      print(response.data);;
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = models.Order.fromJson(response.data["data"]);
+        recordList = models.Order.fromJson(response.data["data"]["data"]);
       } else {
         recordList = null;
       }
@@ -1977,15 +1987,15 @@ class APIHelper {
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'address_id': addressId});
-
+      var formData = FormData.fromMap({'address_id': addressId,'store_id': global.nearStoreModel!.id});
       response = await dio.post('${global.baseUrl}select_address',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("one API Response: ${response.data}");
       dynamic recordList;
-      print("************************select address hit");
+
       if (response.statusCode == 200 && response.data["status"] == '1') {
         recordList = response.data;
       } else {
@@ -2038,6 +2048,7 @@ class APIHelper {
                 headers: await global.getApiHeaders(true),
               ))
           .timeout(const Duration(seconds: 60));
+      print("Show Cart Form field ---${response.data}");
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
         recordList = Cart.fromJson(response.data["data"]);

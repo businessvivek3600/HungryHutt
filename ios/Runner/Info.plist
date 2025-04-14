@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>GoGrocer</string>
+	<string>Hungry Hut</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -72,19 +72,15 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera permission to upload profile pic as well as for upload your grocery or medician item list via image. We don't store and fetch any other data via our app.</string>
-	<key>NSCameraUsageDescription</key>
-    <string>Scan your card to add it automatically</string>
-    <key>NSCameraUsageDescription</key>
-    <string>To scan cards</string>
+	<string>To scan cards</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We want your location to provide you your nearest stores by which you will make your order and get your delivery at your home our app does\'t store your location or share your location at any cost to anyone.</string>
+	<string>We want your location to provide you your nearest stores by which you will make your order and get your delivery at your home our app does\&apos;t store your location or share your location at any cost to anyone.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We want your location to provide you your nearest stores by which you will make your order and get your delivery at your home our app does\'t store your location or share your location at any cost to anyone.</string>
+	<string>We want your location to provide you your nearest stores by which you will make your order and get your delivery at your home our app does\&apos;t store your location or share your location at any cost to anyone.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app does not require access to the microphone. please ignore and deny the permissioin if by chance app ask you in any sense.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the camera permission to upload profile pic as well as for upload your grocery or medician item list via image. We don't store and fetch any other data via our app.</string>
+	<string>This app requires access to the camera permission to upload profile pic as well as for upload your grocery or medician item list via image. We don&apos;t store and fetch any other data via our app.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

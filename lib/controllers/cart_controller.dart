@@ -7,6 +7,8 @@ import 'package:user/models/cart_model.dart';
 import 'package:user/models/category_product_model.dart';
 import 'package:user/models/variant_model.dart';
 
+import '../models/coupons_model.dart';
+
 class CartController extends GetxController {
   Cart? cartItemsList;
   APIHelper apiHelper = APIHelper();
@@ -14,7 +16,9 @@ class CartController extends GetxController {
   var isReorderDataLoaded = false.obs;
   var isReOrderSuccess = false.obs;
 
-  Future<ATCMS?> addToCart(Product? product, int? cartQty, bool isDel, {Variant? varient, int? varientId, int? callId}) async {
+  var selectedCoupon = Rxn<Coupon>();
+
+  Future<ATCMS?> addToCart(Product? product, int? cartQty, bool isDel, {Variant? varient, int? varientId, int? callId, List<String>? selectedAddons,}) async {
     try {
       bool isSuccess = false;
       String message = '--';
@@ -25,7 +29,7 @@ class CartController extends GetxController {
         vId = varientId;
       }
 
-      await apiHelper.addToCart(qty: cartQty, varientId: vId, special: 0).then((result) {
+      await apiHelper.addToCart(qty: cartQty, varientId: vId, addons: selectedAddons).then((result) {
         if (result != null) {
           if (result.status == '1') {
             message = '${result.message}';
@@ -123,6 +127,10 @@ class CartController extends GetxController {
       return null;
     }
   }
+  void updateSelectedCoupon(Coupon coupon) {
+    selectedCoupon.value = coupon;
+    update();
+  }
 
   getCartList() async {
     try {
@@ -146,4 +154,27 @@ class CartController extends GetxController {
       debugPrint("Exception -  cart_controller.dart - getCartList():$e");
     }
   }
+  Future<bool> delFromCart({required int varientId}) async {
+    try {
+      final result = await apiHelper.delFromCart(varientId: varientId);
+
+      if (result != null && result.status == '1') {
+        // Remove the item from the local cart list
+        cartItemsList?.cartList.removeWhere((item) => item.varientId == varientId);
+
+        // Update global cart count
+        global.cartCount = cartItemsList?.cartList.length ?? 0;
+
+        update(); // Notify listeners
+        return true;
+      } else {
+        debugPrint("Failed to remove from cart: ${result?.message}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Exception - CartController - delFromCart(): $e");
+      return false;
+    }
+  }
+
 }

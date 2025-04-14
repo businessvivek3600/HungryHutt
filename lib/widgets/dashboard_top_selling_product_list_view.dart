@@ -8,6 +8,8 @@ import 'package:user/models/category_product_model.dart';
 import 'package:user/screens/productlist_screen.dart';
 import 'package:user/widgets/products_menu.dart';
 
+import 'gradient_heading_row.dart';
+
 class DashboardTopSellingProductList extends StatelessWidget {
   final FirebaseAnalytics? analytics;
   final FirebaseAnalyticsObserver? observer;
@@ -24,39 +26,7 @@ class DashboardTopSellingProductList extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 16.0,
-            bottom: 8,
-            left: 16,
-            right: 16,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.tle_popular_products,
-                style: textTheme.titleLarge,
-              ),
-              InkWell(
-                onTap: () {
-                  Get.to(() => ProductListScreen(
-                        analytics: analytics,
-                        observer: observer,
-                        categoryName:
-                            AppLocalizations.of(context)!.tle_popular_products,
-                      ));
-                },
-                child: Text(
-                  "${AppLocalizations.of(context)!.btn_view_all} ",
-                  style: textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 14),
-                ),
-              ),
-            ],
-          ),
-        ),
+        buildGradientHeadingRow(context, '${AppLocalizations.of(context)!.lbl_top_selling} ',),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: ProductsMenu(

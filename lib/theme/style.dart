@@ -25,16 +25,38 @@ TextStyle textFieldInputStyle(BuildContext context, FontWeight? fontWeight) => T
 );
 
 class ThemeUtils {
+  static const Color primaryColor = Color(0xFF68a039);
+
   static final ThemeData defaultAppThemeData = ThemeData(
-      fontFamily: "Google-Sans",
+    fontFamily: "Google-Sans",
+    brightness: Brightness.light,
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primaryColor,
       brightness: Brightness.light,
-      colorSchemeSeed: const Color(0xffFF0000),
-      useMaterial3: true
+    ),
+    scaffoldBackgroundColor: Colors.white,
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: Colors.black),
+      bodyMedium: TextStyle(color: Colors.black),
+      bodySmall: TextStyle(color: Colors.black),
+    ),
   );
+
   static final ThemeData darkAppThemData = ThemeData(
     fontFamily: "Google-Sans",
     brightness: Brightness.dark,
-    colorSchemeSeed: const Color(0xffFF0000),
-    useMaterial3: true
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primaryColor,
+      brightness: Brightness.dark,
+    ),
+    scaffoldBackgroundColor: Colors.black,
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.white),
+      bodySmall: TextStyle(color: Colors.white),
+    ),
   );
 }
+

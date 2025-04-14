@@ -8,6 +8,10 @@ class Order {
   int? addressid;
   String? cartid;
   double? totalprice;
+  ///New Parameter
+  int? walletUsed;
+  double? restorantCharge;
+  ///--------------
   double? priceWithoutDelivery;
   double? totalProductsMrp;
   String? paymentMethod;
@@ -116,6 +120,11 @@ class Order {
       storeLng = json['store_lng'] != null ? double.parse(json['store_lng'].toString()) : null;
       userLat = json['user_lat'] != null ? double.parse(json['user_lat'].toString()) : null;
       userLng = json['user_lng'] != null ? double.parse(json['user_lng'].toString()) : null;
+   ///New Parameter
+      walletUsed = json['wallet_used'] != null ? double.parse(json['wallet_used'].toString()).round() : null;
+      restorantCharge = json['restorant_charges'] != null ? double.parse('${json['restorant_charges']}') : null;
+
+
     } catch (e) {
       debugPrint("Exception - order_model.dart - Order.fromJson():$e");
     }

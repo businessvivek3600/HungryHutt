@@ -68,30 +68,30 @@ class _LoginScreenState extends BaseRouteState {
     double screenHeight = MediaQuery.of(context).size.height;
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
-      key: _scaffoldKey1,
-      // appBar: AppBar(
-      //   automaticallyImplyLeading: false,
-      //   elevation: 0,
-      //   backgroundColor: Colors.transparent,
-      //   actions: [
-      //     TextButton(
-      //         onPressed: () async {
-      //           Navigator.of(context).push(
-      //             MaterialPageRoute(
-      //                 builder: (context) => HomeScreen(
-      //                       analytics: widget.analytics,
-      //                       observer: widget.observer,
-      //                     )),
-      //           );
-      //         },
-      //         child: Text(AppLocalizations.of(context)!.btn_skip_now))
-      //   ],
-      // ),
-      body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5),
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
+        key: _scaffoldKey1,
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false,
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        //   actions: [
+        //     TextButton(
+        //         onPressed: () async {
+        //           Navigator.of(context).push(
+        //             MaterialPageRoute(
+        //                 builder: (context) => HomeScreen(
+        //                       analytics: widget.analytics,
+        //                       observer: widget.observer,
+        //                     )),
+        //           );
+        //         },
+        //         child: Text(AppLocalizations.of(context)!.btn_skip_now))
+        //   ],
+        // ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
+              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -361,7 +361,7 @@ class _LoginScreenState extends BaseRouteState {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              'Dont have an Account?',
+                              "Don't have an Account?",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),

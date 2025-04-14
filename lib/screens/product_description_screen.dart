@@ -358,8 +358,8 @@ class _ProductDescriptionScreenState
                             ),
                           )
                         : const SizedBox(),
-                    _subHeading(textTheme, "Related Products"),
-                    _relatedProducts(textTheme),
+                    // _subHeading(textTheme, "Related Products"),
+                    // _relatedProducts(textTheme),
                     _productDetail!.productDetail!.tags.isNotEmpty
                         ? _subHeading(textTheme, "Tags")
                         : const SizedBox(),

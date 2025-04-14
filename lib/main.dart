@@ -39,8 +39,6 @@ void main() async {
   }
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   HttpOverrides.global = MyHttpOverrides();
-  print("PAYMENT KEYS DATA----${AppConst.stripeSecretKey}");
-  print("PAYMENT Currency DATA----${global.appInfo!.paymentCurrency}");
   runApp(const App());
 }
 

@@ -10,6 +10,8 @@ class Cart {
   double? totalTax;
   double? avgTax;
   double? discountonmrp;
+  double? restorantCharge;
+  double? deliveryCharge;
   List<Product> cartList = [];
 
   Cart();
@@ -21,6 +23,8 @@ class Cart {
       totalTax = json['total_tax'] != null ? double.parse('${json['total_tax']}') : null;
       avgTax = json['avg_tax'] != null ? double.parse('${json['avg_tax']}') : null;
       discountonmrp = json['discountonmrp'] != null ? double.parse('${json['discountonmrp']}') : null;
+      deliveryCharge = json['delivery_charge'] != null ? double.parse('${json['delivery_charge']}') : null; // ✅ NEW
+      restorantCharge = json['restorant_charge'] != null ? double.parse('${json['restorant_charge']}') : null; // ✅ Add this
       cartList = json['data'] != null ? List<Product>.from(json['data'].map((x) => Product.fromJson(x))) : [];
     } catch (e) {
       debugPrint("Exception - cart_model.dart - Cart.fromJson():$e");

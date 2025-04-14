@@ -435,9 +435,9 @@
     "@txt_show_offers": {
         "description": "show offers"
     },
-    "lbl_forgot_password": "Forgot Password",
+    "lbl_forgot_password": "Forgot Password ?",
     "@lbl_forgot_password": {
-        "description": "Forgot Password"
+        "description": "Forgot Password ? "
     },
     "btn_skip_now": "Skip",
     "@btn_skip_now": {
@@ -679,9 +679,9 @@
     "@txt_in_stock": {
         "description": "In Stock"
     },
-    "txt_out_of_stock": "Out of Stock",
+    "txt_out_of_stock": "Currently Unavailable",
     "@txt_out_of_stock": {
-        "description": "Out of Stock"
+        "description": "Currently Unavailable"
     },
     "btn_apply_filter": "Apply Filter",
     "@btn_apply_filter": {

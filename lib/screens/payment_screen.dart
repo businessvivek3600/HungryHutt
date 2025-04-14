@@ -11,8 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:http/http.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -29,6 +27,7 @@ import 'package:user/screens/coupons_screen.dart';
 import 'package:user/screens/home_screen.dart';
 import 'package:user/screens/order_confirmation_screen.dart';
 import 'package:user/screens/stripe_payment_screen.dart';
+
 
 import 'package:user/utils/navigation_utils.dart';
 
@@ -188,187 +187,189 @@ class _PaymentGatewayScreenState extends BaseRouteState<PaymentGatewayScreen> {
                         );
                       },
                     ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: TextButton.icon(
-                          onPressed: () => Navigator.of(context).push(
-                            NavigationUtils.createAnimatedRoute(
-                              1.0,
-                              CouponsScreen(
-                                analytics: widget.analytics,
-                                observer: widget.observer,
-                                screenId: 1,
-                                screenIdO: widget.screenId,
-                                cartId: widget.order!.cartid,
-                                cartController: widget.cartController,
-                              ),
-                            ),
-                          ),
-                          icon: Icon(
-                            Icons.local_offer_outlined,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          label: Text(
-                            AppLocalizations.of(context)!.txt_apply_coupon_code,
-                            style: textTheme.titleMedium,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: widget.screenId! > 1 ? 0 : 50,
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 15, right: 15, top: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.txt_items_in_cart,
-                            style: textTheme.bodyLarge,
-                          ),
-                          Text(
-                            "${widget.cartController!.cartItemsList!.totalItems}",
-                            style: textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 15, right: 15, top: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.txt_total_price,
-                            style: textTheme.bodyLarge,
-                          ),
-                          Text(
-                            "${global.appInfo!.currencySign} ${widget.order!.totalProductsMrp!.toStringAsFixed(2)}",
-                            style: textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 15, right: 15, top: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.txt_discount_price,
-                            style: textTheme.bodyLarge,
-                          ),
-                          Text(
-                            "${global.appInfo!.currencySign} ${widget.order!.discountonmrp!.toStringAsFixed(2)}",
-                            style: textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 15, right: 15, top: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Discounted Price",
-                            style: textTheme.bodyLarge,
-                          ),
-                          Text(
-                            "${global.appInfo!.currencySign} ${widget.order!.priceWithoutDelivery!.toStringAsFixed(2)}",
-                            style: textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 15, right: 15, top: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.txt_coupon_discount,
-                            style: textTheme.bodyLarge,
-                          ),
-                          Text(
-                            widget.order!.couponDiscount != null &&
-                                    widget.order!.couponDiscount! > 0
-                                ? "- ${global.appInfo!.currencySign} ${widget.order!.couponDiscount!.toStringAsFixed(2)}"
-                                : '- ${global.appInfo!.currencySign}0',
-                            style: textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 15, right: 15, top: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.txt_delivery_charges,
-                            style: textTheme.bodyLarge,
-                          ),
-                          Text(
-                            "${global.appInfo!.currencySign} ${widget.order!.deliveryCharge!.toStringAsFixed(2)}",
-                            style: textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                    ),
-                    widget.screenId! > 1
-                        ? const SizedBox()
-                        : Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 15, top: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!.txt_tax,
-                                  style: textTheme.bodyLarge,
-                                ),
-                                Text(
-                                  "${global.appInfo!.currencySign} ${widget.order!.totalTaxPrice!.toStringAsFixed(2)}",
-                                  style: textTheme.titleSmall,
-                                )
-                              ],
-                            ),
-                          ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15, right: 15, top: 8, bottom: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            widget.screenId == 3
-                                ? AppLocalizations.of(context)!
-                                    .lbl_wallet_recharge
-                                : widget.screenId == 2
-                                    ? AppLocalizations.of(context)!
-                                        .tle_subscription
-                                    : AppLocalizations.of(context)!
-                                        .lbl_total_amount,
-                            style: textTheme.bodyLarge,
-                          ),
-                          Text(
-                            "${global.appInfo!.currencySign} ${widget.totalAmount}",
-                            style: textTheme.titleSmall,
-                          )
-                        ],
-                      ),
-                    ),
+                    // Align(
+                    //   alignment: Alignment.centerLeft,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    //     child: TextButton.icon(
+                    //       onPressed: () => Navigator.of(context).push(
+                    //         NavigationUtils.createAnimatedRoute(
+                    //           1.0,
+                    //           CouponsScreen(
+                    //             analytics: widget.analytics,
+                    //             observer: widget.observer,
+                    //             screenId: 1,
+                    //             screenIdO: widget.screenId,
+                    //             cartId: widget.order!.cartid,
+                    //             cartController: widget.cartController,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       icon: Icon(
+                    //         Icons.local_offer_outlined,
+                    //         color: Theme.of(context).colorScheme.primary,
+                    //       ),
+                    //       label: Text(
+                    //         AppLocalizations.of(context)!.txt_apply_coupon_code,
+                    //         style: textTheme.titleMedium,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: widget.screenId! > 1 ? 0 : 50,
+                    // ),
+                    // Padding(
+                    //   padding:
+                    //       const EdgeInsets.only(left: 15, right: 15, top: 8),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         AppLocalizations.of(context)!.txt_items_in_cart,
+                    //         style: textTheme.bodyLarge,
+                    //       ),
+                    //       Text(
+                    //         "${widget.cartController!.cartItemsList!.totalItems}",
+                    //         style: textTheme.titleSmall,
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding:
+                    //       const EdgeInsets.only(left: 15, right: 15, top: 8),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         AppLocalizations.of(context)!.txt_total_price,
+                    //         style: textTheme.bodyLarge,
+                    //       ),
+                    //       Text(
+                    //         "${global.appInfo!.currencySign} ${widget.order!.totalProductsMrp!.toStringAsFixed(2)}",
+                    //         style: textTheme.titleSmall,
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding:
+                    //       const EdgeInsets.only(left: 15, right: 15, top: 8),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         AppLocalizations.of(context)!.txt_discount_price,
+                    //         style: textTheme.bodyLarge,
+                    //       ),
+                    //       Text(
+                    //         "${global.appInfo!.currencySign} ${widget.order!.discountonmrp!.toStringAsFixed(2)}",
+                    //         style: textTheme.titleSmall,
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding:
+                    //       const EdgeInsets.only(left: 15, right: 15, top: 8),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         "Discounted Price",
+                    //         style: textTheme.bodyLarge,
+                    //       ),
+                    //       Text(
+                    //         "${global.appInfo!.currencySign} ${widget.order!.priceWithoutDelivery!.toStringAsFixed(2)}",
+                    //         style: textTheme.titleSmall,
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding:
+                    //       const EdgeInsets.only(left: 15, right: 15, top: 8),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         AppLocalizations.of(context)!.txt_coupon_discount,
+                    //         style: textTheme.bodyLarge,
+                    //       ),
+                    //       Text(
+                    //         widget.order!.couponDiscount != null &&
+                    //                 widget.order!.couponDiscount! > 0
+                    //             ? "- ${global.appInfo!.currencySign} ${widget.order!.couponDiscount!.toStringAsFixed(2)}"
+                    //             : '- ${global.appInfo!.currencySign}0',
+                    //         style: textTheme.titleSmall,
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding:
+                    //       const EdgeInsets.only(left: 15, right: 15, top: 8),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         AppLocalizations.of(context)!.txt_delivery_charges,
+                    //         style: textTheme.bodyLarge,
+                    //       ),
+                    //       Text(
+                    //         "${global.appInfo!.currencySign} ${widget.order!.deliveryCharge!.toStringAsFixed(2)}",
+                    //         style: textTheme.titleSmall,
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // widget.screenId! > 1
+                    //     ? const SizedBox()
+                    //     : Padding(
+                    //         padding: const EdgeInsets.only(
+                    //             left: 15, right: 15, top: 8),
+                    //         child: Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Text(
+                    //               AppLocalizations.of(context)!.txt_tax,
+                    //               style: textTheme.bodyLarge,
+                    //             ),
+                    //             Text(
+                    //               "${global.appInfo!.currencySign} ${widget.order!.totalTaxPrice!.toStringAsFixed(2)}",
+                    //               style: textTheme.titleSmall,
+                    //             )
+                    //           ],
+                    //         ),
+                    //       ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(
+                    //       left: 15, right: 15, top: 8, bottom: 8),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         widget.screenId == 3
+                    //             ? AppLocalizations.of(context)!
+                    //                 .lbl_wallet_recharge
+                    //             : widget.screenId == 2
+                    //                 ? AppLocalizations.of(context)!
+                    //                     .tle_subscription
+                    //                 : AppLocalizations.of(context)!
+                    //                     .lbl_total_amount,
+                    //         style: textTheme.bodyLarge,
+                    //       ),
+                    //       Text(
+                    //         "${global.appInfo!.currencySign} ${widget.totalAmount}",
+                    //         style: textTheme.titleSmall,
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
                     const SizedBox(height: 16.0),
+                    /// ✅ Inject the breakdown UI here
+                    buildBillingBreakdownSection(),
                   ],
                 ),
               )
@@ -398,6 +399,50 @@ class _PaymentGatewayScreenState extends BaseRouteState<PaymentGatewayScreen> {
                 ),
               )),
         ),
+      ),
+    );
+  }
+  Widget buildBillingBreakdownSection() {
+    final order = widget.order!;
+    final cart = widget.cartController?.cartItemsList;
+    final currency = global.appInfo!.currencySign;
+
+    final double subtotal = order.totalProductsMrp ?? 0;
+    final double mrpDiscount = order.discountonmrp ?? 0;
+    final double couponDiscount = order.couponDiscount ?? 0;
+     final double restaurantCharges =
+        order.restorantCharge ??
+            0;
+    final double deliveryCharge = order.deliveryCharge ?? 0;
+    final double finalPayable = widget.totalAmount ?? 0;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildRow("SubTotal", "$currency${subtotal.toStringAsFixed(2)}"),
+          _buildRow("Total Items", "${cart?.totalItems ?? 0}"),
+          _buildRow("Extra discount for you", "-$currency${mrpDiscount.toStringAsFixed(2)}", color: Colors.green),
+          if (couponDiscount > 0)
+            _buildRow("Coupon Discount", "-$currency${couponDiscount.toStringAsFixed(2)}", color: Colors.green),
+          _buildRow("Restaurant Charges", "$currency${restaurantCharges.toStringAsFixed(2)}"),
+          _buildRow("Delivery Fee", "$currency${deliveryCharge.toStringAsFixed(2)}"),
+          const Divider(),
+          _buildRow("To Pay", "$currency${finalPayable.toStringAsFixed(2)}", bold: true),
+        ],
+      ),
+    );
+  }
+  Widget _buildRow(String label, String value, {Color color = Colors.black, bool bold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(fontSize: 13, fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
+          Text(value, style: TextStyle(color: color, fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
+        ],
       ),
     );
   }
