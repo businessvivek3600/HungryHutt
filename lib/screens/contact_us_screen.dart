@@ -135,6 +135,7 @@ class _ContactUsScreenState extends BaseRouteState {
                     controller: _cFeedback,
                     focusNode: _fFeedback,
                     maxLines: 3,
+                    textInputAction: TextInputAction.done,
                     style: Theme.of(context).textTheme.bodyLarge,
                     decoration: InputDecoration(
                       fillColor: Theme.of(context).scaffoldBackgroundColor,

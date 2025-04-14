@@ -53,6 +53,7 @@ class _CouponPageState extends BaseRouteState<CouponPage> {
       if (isConnected) {
         await apiHelper.getStoreCoupons().then((result) async {
           if (result != null && result.status == "1") {
+            print("✅ Coupon API Response Data: ${result.data}");
             await couponController.setCouponList(result.data!);
           }
         });
@@ -196,135 +197,148 @@ class _CouponPageState extends BaseRouteState<CouponPage> {
   }
 
   Widget cartCoupon(double cardWidth, Coupon coupon) {
+    final isAvailable = coupon.available ?? true;
+
     return SizedBox(
       width: cardWidth,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  ClipPath(
-                    clipper: TicketClipper(),
-                    child: Container(
-                      width: 50,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF68a039),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          bottomLeft: Radius.circular(12),
+      child: Opacity(
+        opacity: isAvailable ? 1.0 : 0.5, // Dim unavailable cards
+        child: Card(
+          color: isAvailable ? Colors.white : Colors.grey[200], // Grayed background
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // LEFT COUPON CODE TICKET STRIP
+                Stack(
+                  children: [
+                    Container(width: 50),
+                    ClipPath(
+                      clipper: TicketClipper(),
+                      child: Container(
+                        width: 50,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isAvailable ? const Color(0xFF68a039) : Colors.grey,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            bottomLeft: Radius.circular(12),
+                          ),
                         ),
-                      ),
-                      child: RotatedBox(
-                        quarterTurns: -1,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            coupon.couponCode?.toUpperCase() ?? "",
-                            style: const TextStyle(
+                        child: RotatedBox(
+                          quarterTurns: -1,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              coupon.couponCode?.toUpperCase() ?? "",
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        coupon.couponName?.toUpperCase() ?? "",
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      RichText(
-                        text: TextSpan(
-                          text: coupon.type == "amount"
-                              ? "${global.appInfo!.currencySign}${coupon.amount}"
-                              : "${coupon.amount}%",
-                          style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold),
-                          children: [
-                            const TextSpan(
-                              text: ' Flat off ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                                fontSize: 14,
+                              ),
                             ),
-                            if (coupon.maxDiscount != 0)
-                              TextSpan(
-                                  text: "up to ${coupon.maxDiscount.toString()}")
-                          ],
+                          ),
                         ),
                       ),
-                      Divider(color: Colors.grey.shade300, thickness: 1),
-                      Text(
-                        coupon.couponDescription?.toUpperCase() ?? "",
-                        style:
-                        TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ),
-              Container(
-                color: Colors.white,
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 12, right: 12),
-                    child: GestureDetector(
-                      onTap: () async {
-                        if (couponController.selectedCouponCode.value ==
-                            coupon.couponCode) {
-                          await couponController.removeSelectedCoupon();
-                          Get.back();
-                        } else {
-                          await couponController.saveSelectedCoupon(coupon);
-                          Get.back();
-                          showCouponAppliedDialog(coupon);
-                        }
-                      },
-                      child: Obx(() {
-                        bool isSelected = couponController.selectedCouponCode.value == coupon.couponCode;
-                        return Text(
-                          isSelected ? "REMOVE" : "APPLY",
-                          style: TextStyle(
-                            color: isSelected ? Colors.orange : Colors.green,
+
+                // COUPON BODY
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          coupon.couponName?.toUpperCase() ?? "",
+                          style: const TextStyle(
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
                           ),
-                        );
-                      }),
+                        ),
+                        const SizedBox(height: 5),
+                        RichText(
+                          text: TextSpan(
+                            text: coupon.type == "amount"
+                                ? "${global.appInfo!.currencySign}${coupon.amount}"
+                                : "${coupon.amount}%",
+                            style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold),
+                            children: [
+                              const TextSpan(
+                                text: ' Flat off ',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              if (coupon.maxDiscount != 0)
+                                TextSpan(text: "up to ${coupon.maxDiscount.toString()}")
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        if (!isAvailable && coupon.statusMessage != null)
+                          Text(
+                            coupon.statusMessage!,
+                            style: const TextStyle(color: Colors.red, fontSize: 12),
+                          ),
+                        Divider(color: Colors.grey.shade300, thickness: 1),
+                        Text(
+                          coupon.couponDescription?.toUpperCase() ?? "",
+                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+
+                // APPLY/REMOVE BUTTON
+                Container(
+                  color: Colors.white,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 12, right: 12),
+                      child: GestureDetector(
+                        onTap: isAvailable
+                            ? () async {
+                          if (couponController.selectedCouponCode.value == coupon.couponCode) {
+                            await couponController.removeSelectedCoupon();
+                            Get.back();
+                          } else {
+                            await couponController.saveSelectedCoupon(coupon);
+                            Get.back();
+                            showCouponAppliedDialog(coupon);
+                          }
+                        }
+                            : null,
+                        child: Obx(() {
+                          bool isSelected = couponController.selectedCouponCode.value == coupon.couponCode;
+                          return Text(
+                            isSelected ? "REMOVE" : isAvailable ? "APPLY" : "",
+                            style: TextStyle(
+                              color: isSelected ? Colors.orange : Colors.green,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
 
   void showCouponAppliedDialog(Coupon coupon) {
     if (widget.confettiController != null) {

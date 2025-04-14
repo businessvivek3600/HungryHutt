@@ -97,17 +97,21 @@ class _OrderConfirmationScreenState
                   child: Text(AppLocalizations.of(context)!.btn_go_home),
                 ),
                 onPressed: () {
-                  if (widget.screenId != 1 &&
-                      widget.screenId != 0 &&
-                      widget.screenId != 2) {
-                    global.cartCount = 0;
-                  }
+                    if (widget.screenId != 1 &&
+                        widget.screenId != 0 &&
+                        widget.screenId != 2) {
+                      global.cartCount = 0;
+                    }
 
-                  Get.offAll(() => HomeScreen(
+                    // ✅ Delay navigation until after this frame finishes building
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Get.offAll(() => HomeScreen(
                         analytics: widget.analytics,
                         observer: widget.observer,
                       ));
-                },
+                    });
+                  }
+
               ),
             ),
           ),

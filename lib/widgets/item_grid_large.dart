@@ -188,11 +188,11 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                 const Spacer(),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                  child: (product.varient != null &&
-                                      product.varient.isNotEmpty &&
-                                      (product.varient.first.cartQty ?? 0) > 0)
+                                  child:(product.varient.any((v) => (v.cartQty ?? 0) > 0))
+
                                       ? StatefulBuilder(
                                     builder: (context, setStateInner) {
+                                      final selectedVariant = product.varient.firstWhereOrNull((v) => (v.cartQty ?? 0) > 0) ?? product.varient.first;
                                       return Container(
                                         height: MediaQuery.of(context).size.height * 0.032,
                                         padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -208,15 +208,17 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                           children: [
                                             InkWell(
                                               onTap: () async {
-                                                final newQty = product.varient.first.cartQty! - 1;
+
+
+                                                final newQty = (selectedVariant.cartQty ?? 1) - 1;
 
                                                 if (newQty <= 0) {
                                                   final isDeleted = await cartController.delFromCart(
-                                                    varientId: product.varient.first.varientId!,
+                                                    varientId: selectedVariant.varientId!,
                                                   );
 
                                                   if (isDeleted) {
-                                                    product.varient.first.cartQty = 0;
+                                                    selectedVariant.cartQty = 0;
                                                     setState(() {});
                                                   }
                                                 } else {
@@ -224,12 +226,13 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                                     product,
                                                     newQty,
                                                     true,
-                                                    varient: product.varient.first,
+                                                    varient: selectedVariant,
                                                   );
-                                                  product.varient.first.cartQty = newQty;
+                                                  selectedVariant.cartQty = newQty;
                                                   setState(() {});
                                                 }
                                               },
+
                                               child: Icon(
                                                 MdiIcons.minus,
                                                 size: 20,
@@ -238,7 +241,7 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                             ),
                                             const SizedBox(width: 15),
                                             Text(
-                                              "${product.varient.first.cartQty}",
+                                              "${selectedVariant.cartQty}",
                                               style: const TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold,
@@ -249,20 +252,21 @@ class _NewlyProductGridState extends State<NewlyProductGrid> {
                                             InkWell(
                                               onTap: () async {
 
-                                                final newQty = product.varient.first.cartQty! + 1;
+                                                final newQty = (selectedVariant.cartQty ?? 0) + 1;
 
                                                 final isSuccess = await cartController.addToCart(
                                                   product,
                                                   newQty,
                                                   false,
-                                                  varient: product.varient.first,
+                                                  varient: selectedVariant,
                                                 );
 
                                                 if (isSuccess?.isSuccess == true) {
-                                                  product.varient.first.cartQty = newQty;
+                                                  selectedVariant.cartQty = newQty;
                                                   setState(() {});
                                                 }
                                               },
+
                                               child: Icon(
                                                 MdiIcons.plus,
                                                 size: 20,

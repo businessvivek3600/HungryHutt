@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:user/constants/image_constants.dart';
 import 'package:user/models/businessLayer/base_route.dart';
 import 'package:user/models/businessLayer/global.dart' as global;
@@ -21,6 +23,9 @@ import 'package:user/screens/wishlist_screen.dart';
 import 'package:user/widgets/app_menu_list_tile.dart';
 import 'package:user/widgets/swiper_drawer.dart';
 
+import '../controllers/cart_controller.dart';
+import 'cart_coupon.dart';
+
 class AppMenuScreen extends BaseRoute {
   final Function()? onBackPressed;
   final GlobalKey<SwiperDrawerState>? drawerKey;
@@ -34,7 +39,8 @@ class AppMenuScreen extends BaseRoute {
 class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
 
   _AppMenuScreenState();
-
+  final CartController cartController = Get.put(CartController());
+  late ConfettiController _confettiController;
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -122,16 +128,31 @@ class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
                         },
                       )
                           : const SizedBox(),
-                      const SizedBox(height: 8.0),
-                      global.nearStoreModel != null
-                          ? AppMenuListTile(
-                        label: "${AppLocalizations.of(context)!.lbl_coupons}  ",
-                        leadingIconUrl: ImageConstants.couponsLogoUrl,
-                        onPressed: () => Get.to(() => CouponsScreen(analytics: widget.analytics, observer: widget.observer)),
-                      )
-                          : const SizedBox(),
+                      // const SizedBox(height: 8.0),
+                      // global.nearStoreModel != null
+                      //     ? AppMenuListTile(
+                      //   label: "${AppLocalizations.of(context)!.lbl_coupons}  ",
+                      //   leadingIconUrl: ImageConstants.couponsLogoUrl,
+                      //   onPressed: () => Get.to(() => showModalBottomSheet(
+                      //     context: context,
+                      //     isScrollControlled: true,
+                      //     shape: const RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+                      //     ),
+                      //     builder: (context) => Padding(
+                      //       padding: MediaQuery.of(context).viewInsets,
+                      //       child: CouponPage(
+                      //         confettiController: _confettiController,
+                      //         analytics: widget.analytics,
+                      //         observer: widget.observer,
+                      //         cartController: cartController,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ))
+                      //     : const SizedBox(),
                       // SizedBox(height: 8.0),
-                      const SizedBox(height: 8.0),
+                      // const SizedBox(height: 8.0),
                       // AppMenuListTile(
                       //     label: "${AppLocalizations.of(context)!.btn_membership}  ",
                       //     icon: Icons.card_membership_sharp,
@@ -142,40 +163,40 @@ class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
                       //         Get.to(() => MemberShipScreen(analytics: widget.analytics, observer: widget.observer));
                       //       }
                       //     }),
+                      const SizedBox(height: 8.0),
+                      // AppMenuListTile(
+                      //     label: "${AppLocalizations.of(context)!.lbl_reward}  ",
+                      //     icon: Icons.wallet_giftcard_sharp,
+                      //     onPressed: () {
+                      //       if (global.currentUser!.id == null) {
+                      //         Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       } else {
+                      //         Get.to(() => RewardScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       }
+                      //     }),
                       // const SizedBox(height: 8.0),
-                      AppMenuListTile(
-                          label: "${AppLocalizations.of(context)!.lbl_reward}  ",
-                          icon: Icons.wallet_giftcard_sharp,
-                          onPressed: () {
-                            if (global.currentUser!.id == null) {
-                              Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
-                            } else {
-                              Get.to(() => RewardScreen(analytics: widget.analytics, observer: widget.observer));
-                            }
-                          }),
-                      const SizedBox(height: 8.0),
-                      AppMenuListTile(
-                          label: "${AppLocalizations.of(context)!.btn_my_wallet}  ",
-                          icon: Icons.account_balance_wallet_outlined,
-                          onPressed: () {
-                            if (global.currentUser!.id == null) {
-                              Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
-                            } else {
-                              Get.to(() => WalletScreen(analytics: widget.analytics, observer: widget.observer));
-                            }
-                          }),
-                      const SizedBox(height: 8.0),
-                      AppMenuListTile(
-                          label: "${AppLocalizations.of(context)!.btn_refer_earn}  ",
-                          icon: MdiIcons.giftOutline,
-                          onPressed: () {
-                            if (global.currentUser!.id == null) {
-                              Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
-                            } else {
-                              Get.to(() => ReferAndEarnScreen(analytics: widget.analytics, observer: widget.observer));
-                            }
-                          }),
-                      const SizedBox(height: 8.0),
+                      // AppMenuListTile(
+                      //     label: "${AppLocalizations.of(context)!.btn_my_wallet}  ",
+                      //     icon: Icons.account_balance_wallet_outlined,
+                      //     onPressed: () {
+                      //       if (global.currentUser!.id == null) {
+                      //         Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       } else {
+                      //         Get.to(() => WalletScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       }
+                      //     }),
+                      // const SizedBox(height: 8.0),
+                      // AppMenuListTile(
+                      //     label: "${AppLocalizations.of(context)!.btn_refer_earn}  ",
+                      //     icon: MdiIcons.giftOutline,
+                      //     onPressed: () {
+                      //       if (global.currentUser!.id == null) {
+                      //         Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       } else {
+                      //         Get.to(() => ReferAndEarnScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       }
+                      //     }),
+                      // const SizedBox(height: 8.0),
                       // AppMenuListTile(
                       //   label: "${AppLocalizations.of(context)!.btn_app_setting}  ",
                       //   icon: Icons.settings_outlined,
@@ -202,18 +223,18 @@ class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
                             }
                           })
                           : const SizedBox(),
-                      const SizedBox(height: 8.0),
-                      AppMenuListTile(
-                          label: "${AppLocalizations.of(context)!.tle_contact_us}  ",
-                          icon: Icons.contact_page_outlined,
-                          onPressed: () {
-                            if (global.currentUser!.id == null) {
-                              Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
-                            } else {
-                              Get.to(() => ContactUsScreen(analytics: widget.analytics, observer: widget.observer));
-                            }
-                          }),
-                      const SizedBox(height: 8.0),
+                      // const SizedBox(height: 8.0),
+                      // AppMenuListTile(
+                      //     label: "${AppLocalizations.of(context)!.tle_contact_us}  ",
+                      //     icon: Icons.contact_page_outlined,
+                      //     onPressed: () {
+                      //       if (global.currentUser!.id == null) {
+                      //         Get.to(() => LoginScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       } else {
+                      //         Get.to(() => ContactUsScreen(analytics: widget.analytics, observer: widget.observer));
+                      //       }
+                      //     }),
+                      // const SizedBox(height: 8.0),
                       AppMenuListTile(
                           label: "${AppLocalizations.of(context)!.tle_about_us}  ",
                           icon: Icons.info_outline,
@@ -228,6 +249,17 @@ class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
                             Get.to(() => AboutUsAndTermsOfServiceScreen(false, analytics: widget.analytics, observer: widget.observer));
                           }),
                       const SizedBox(height: 8.0),
+                   if(global.currentUser?.id == 9)  Column(
+                        children: [
+                          AppMenuListTile(
+                            label: "Delete Account",
+                            icon: Icons.delete_outline,
+                            onPressed: _confirmDeleteAccount,
+                          ),
+                          const SizedBox(height: 8.0),
+                        ],
+                      ),
+
                       AppMenuListTile(
                         label: global.currentUser?.id == null ? '${AppLocalizations.of(context)!.btn_signup}  ' : "${AppLocalizations.of(context)!.btn_logout} ",
                         leadingIconUrl: ImageConstants.logoutLogoUrl,
@@ -245,6 +277,36 @@ class _AppMenuScreenState extends BaseRouteState<AppMenuScreen> {
                 ))
           ],
         ),
+      ),
+    );
+  }
+  void _confirmDeleteAccount() {
+    showAdaptiveDialog(
+      context: context,
+      builder: (context) => AlertDialog.adaptive(
+        title: const Text("Delete Account"),
+        content: const Text("Are you sure you want to delete your account?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // Cancel
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Close dialog
+              const url = 'http://hungryhutt.com/delete-account';
+              if (await canLaunchUrl(Uri.parse(url))) {
+                await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+              } else {
+                debugPrint("Could not launch $url");
+              }
+            },
+            child: const Text(
+              "Yes, Delete",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }

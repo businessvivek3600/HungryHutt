@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:user/controllers/cart_controller.dart';
@@ -46,8 +47,9 @@ class _CartScreenState extends BaseRouteState {
   bool _isDataLoaded = false;
   var isExpanded = true;
   var isTip = false;
+  dynamic  distance;
   GlobalKey<ScaffoldState>? _scaffoldKey;
-  Address? _selectedAddress = Address();
+  Address? _selectedAddress;
   List<Address> _addressList = [];
   Coupon? selectedCoupon;
 
@@ -140,7 +142,8 @@ class _CartScreenState extends BaseRouteState {
                                   const SizedBox(width: 7),
                                   Expanded(
                                     child: Text(
-                                      _selectedAddress?.fullAddress ??
+                                      _selectedAddress?.fullAddress?.trim().isNotEmpty == true
+                                          ? _selectedAddress!.fullAddress! :
                                           "No Address Selected",
                                       style: textTheme.titleMedium,
                                       overflow: TextOverflow.ellipsis,
@@ -207,11 +210,11 @@ class _CartScreenState extends BaseRouteState {
                                             ),
                                             const SizedBox(height: 10),
                                             //  Square-Shaped Food Cards ListView
-                                            cartProductCard(),
-                                            const SizedBox(height: 7),
+                                            // cartProductCard(),
+                                            // const SizedBox(height: 7),
                                             savingCard(),
                                             isTip ?  TipContainer() : const SizedBox(),
-                                            const SizedBox(height: 5),
+                                            const SizedBox(height: 10),
                                             billingCard(context),
                                           ],
                                         ),
@@ -326,8 +329,28 @@ class _CartScreenState extends BaseRouteState {
   }
 
   Padding billingCard(BuildContext context) {
+    final selectedCoupon = Get.find<CouponController>().selectedCoupon.value;
+
+    final double subtotal = cartController.cartItemsList!.totalPrice ?? 0;
+    final double restaurantCharge = cartController.cartItemsList!.restorantCharge ?? 0;
+    final double deliveryCharge = cartController.cartItemsList!.deliveryCharge ?? 0;
+    final double mrpDiscount = cartController.cartItemsList!.discountonmrp ?? 0;
+
+    double couponDiscount = 0;
+    if (selectedCoupon != null) {
+      if (selectedCoupon.type == "amount") {
+        couponDiscount = selectedCoupon.amount?.toDouble() ?? 0;
+      } else if (selectedCoupon.type == "percent") {
+        couponDiscount = subtotal * (selectedCoupon.amount! / 100);
+      }
+    }
+
+    final double totalSaving = mrpDiscount + couponDiscount;
+
+    /// ✅ Calculate the final total payable amount
+    final double finalPayable = subtotal + restaurantCharge + deliveryCharge - couponDiscount;
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(1.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -344,140 +367,194 @@ class _CartScreenState extends BaseRouteState {
                 ),
               ],
             ),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.receipt_long, color: Colors.green),
-                          const SizedBox(width: 8),
-                          const Text(
-                            "To Pay",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top Row (To Pay + Total)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Left side
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.receipt_long, color: Colors.green),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "To Pay",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text:
-                                      "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalMrp!.toStringAsFixed(2)} ",
-                                  style: const TextStyle(
-                                    decoration: TextDecoration.lineThrough,
-                                    color: Colors.grey,
+                            const SizedBox(width: 8),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text:
+                                    "${global.appInfo!.currencySign}${finalPayable.toStringAsFixed(2)}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
                                   ),
-                                ),
-                                TextSpan(
-                                  text:
-                                      "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        /// total Checkout Amount---Here
+                        Text(
+                          "${global.appInfo!.currencySign}${totalSaving} saved on the total!",
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        "${global.appInfo!.currencySign}${cartController.cartItemsList!.discountonmrp!.toStringAsFixed(2)} saved on the total!",
-                        style: const TextStyle(
-                            color: Colors.green, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  IconButton(
+                        ),
+                      ],
+                    ),
+                    IconButton(
                       onPressed: () {
                         setState(() {
                           isExpanded = !isExpanded;
                         });
                       },
                       icon: Icon(
-                          isExpanded
-                              ? Icons.keyboard_arrow_up_rounded
-                              : Icons.keyboard_arrow_down_rounded,
-                          color: Colors.grey[700],
-                          size: 25)),
-                ],
-              ),
-
-              ///-----Hide or show this data on tap drop down
-              if (isExpanded) ...[
-                const Divider(),
-                _buildRow(
-                    "Total Items",
-                    cartController.cartItemsList!.totalItems!
-                        .toStringAsFixed(2)),
-                _buildRow("Delivery Fee | 5.9 kms",
-                    "${global.appInfo!.currencySign}57.00"),
-                _buildRow("Extra discount for you",
-                    "-${global.appInfo!.currencySign}20.00",
-                    color: Colors.green),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Delivery Tip",
-                        style: TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.w500)),
-                    selectedTip == null ?  InkWell(
-                      onTap: () {
-                        setState(() {
-                          isTip = !isTip;
-                        });
-                      },
-                      child: const Text("Add tip",
-                          style: TextStyle(
-                              color: Colors.orange, fontWeight: FontWeight.bold)),
-                    ) : Text( "${global.appInfo!.currencySign}${selectedTip.toString()}",
-                        style: const TextStyle(
-                            color: Colors.orange, fontWeight: FontWeight.bold)),
+                        isExpanded
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        color: Colors.grey[700],
+                        size: 25,
+                      ),
+                    ),
                   ],
                 ),
-                _buildRow(
-                    "Platform Fee", "${global.appInfo!.currencySign}9.00"),
-                _buildRow("GST and Restaurant Charges",
-                    "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalTax!.toStringAsFixed(2)}"),
-                const Divider(),
-                _buildRow("To Pay",
-                    "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
-                    bold: true),
+
+                // Expanded Breakdown Section
+                if (isExpanded) ...[
+                  const Divider(),
+                  _buildRow(
+                    "SubTotal",
+                    "",
+                    richValue: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalMrp!.toStringAsFixed(2)} ",
+                            style: const TextStyle(
+                              decoration: TextDecoration.lineThrough,
+                              color: Colors.grey,
+                              fontSize: 13,
+                            ),
+                          ),
+                          TextSpan(
+                            text: "${global.appInfo!.currencySign}${cartController.cartItemsList!.totalPrice!.toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  _buildRow("Total Items", cartController.cartItemsList!.totalItems.toString()),
+                  _buildRow("Extra discount for you", "-${global.appInfo!.currencySign}${cartController.cartItemsList!.discountonmrp!.toStringAsFixed(2)}", color: Colors.green),
+                  if (selectedCoupon != null)
+                    _buildRow(
+                      selectedCoupon.type == "amount"
+                          ? "Coupon Discount"
+                          : "${selectedCoupon.amount}% Coupon Discount",
+                      selectedCoupon.type == "amount"
+                          ? "-${global.appInfo!.currencySign}${selectedCoupon.amount}"
+                          : "-${global.appInfo!.currencySign}${(cartController.cartItemsList!.totalPrice! * (selectedCoupon.amount! / 100)).toStringAsFixed(2)}",
+                      color: Colors.green,
+                    ),
+                  ///Delivery Tip Section
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     const Text(
+                  //       "Delivery Tip",
+                  //       style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                  //     ),
+                  //     selectedTip == null
+                  //         ? InkWell(
+                  //       onTap: () {
+                  //         setState(() {
+                  //           isTip = !isTip;
+                  //         });
+                  //       },
+                  //       child: const Text(
+                  //         "Add tip",
+                  //         style: TextStyle(
+                  //             color: Colors.orange, fontWeight: FontWeight.bold),
+                  //       ),
+                  //     )
+                  //         : Text(
+                  //       "${global.appInfo!.currencySign}${selectedTip.toString()}",
+                  //       style: const TextStyle(
+                  //           color: Colors.orange, fontWeight: FontWeight.bold),
+                  //     ),
+                  //   ],
+                  // ),
+
+                  // _buildRow("Platform Fee", "${global.appInfo!.currencySign}9.00"),
+                  _buildRow(
+                    "Restaurant Charges",
+                    "${global.appInfo!.currencySign}${(cartController.cartItemsList?.restorantCharge ?? 0).toStringAsFixed(2)}",
+                  ),
+                  _buildRow("Delivery Fee ${distance != null ? "| ${distance!.toStringAsFixed(1)} KM" : ""}", "${global.appInfo!.currencySign}${(cartController.cartItemsList?.deliveryCharge ?? 0).toStringAsFixed(2)}"),
+                  // ✅ Coupon Discount (if applied)
+
+
+                  const Divider(),
+                  /// total Checkout Amount---Here
+                  _buildRow(
+                    "To Pay",
+                    "${global.appInfo!.currencySign}${finalPayable.toStringAsFixed(2)}",
+                    bold: true,
+                  ),
+                ],
               ],
-            ]),
+            ),
           ),
         ],
       ),
     );
   }
 
+
   Widget _buildRow(String label, String value,
-      {Color color = Colors.black, bool bold = false}) {
+      {Color color = Colors.black, bool bold = false, Widget? richValue}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
-          Text(value,
-              style: TextStyle(
-                  color: color,
-                  fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
+          Text(
+            label,
+            style: TextStyle(
+                fontSize: 13, fontWeight: bold ? FontWeight.bold : FontWeight.w500),
+          ),
+          richValue ??
+              Text(
+                value,
+                style: TextStyle(
+                    color: color,
+                    fontWeight: bold ? FontWeight.bold : FontWeight.w500),
+              ),
         ],
       ),
     );
   }
+
 
   Widget savingCard() {
      // Make sure it's initialized before use
@@ -519,12 +596,12 @@ class _CartScreenState extends BaseRouteState {
                   ),
                 );
               },
-              icon: Icons.local_offer,
+              icon: MdiIcons.tagTextOutline,
               iconColor: Colors.orange,
               title: "Apply Coupon",
               trailing: const Icon(Icons.chevron_right, color: Colors.black54),
             ),
-            const Divider(),
+
             Obx(() {
               final selectedCoupon = couponController.selectedCoupon.value;
 
@@ -541,21 +618,26 @@ class _CartScreenState extends BaseRouteState {
                   ? " up to ${selectedCoupon.maxDiscount}"
                   : "";
 
-              return _buildListTile(
-                icon: Icons.local_offer,
-                iconColor: Colors.orange,
-                title: "$discountValue Flat off$maxDiscountText",
-                trailing: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.check, color: Colors.green, size: 18),
-                    SizedBox(width: 4),
-                    Text(
-                      "Applied",
-                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              return Column(
+                children: [
+                  const Divider(),
+                  _buildListTile(
+                    icon: MdiIcons.ticketPercent,
+                    iconColor: Colors.orange,
+                    title: "$discountValue Flat off$maxDiscountText",
+                    trailing: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check, color: Colors.green, size: 18),
+                        SizedBox(width: 4),
+                        Text(
+                          "Applied",
+                          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             }),
           ],
@@ -936,9 +1018,14 @@ class _CartScreenState extends BaseRouteState {
                   result.message,
                   textAlign: TextAlign.center,
                 ),
-                duration: const Duration(seconds: 2),
+                duration: const Duration(seconds: 1),
               ));
-              showToast(result.message);
+              setState(() {
+                cartController.cartItemsList!.deliveryCharge =
+                    double.tryParse(result.data['delivery_charge'].toString()) ?? 0.0;
+                distance = double.tryParse(result.data['distance'].toString());
+
+              });
               setState(() {
                 _selectedAddress = addressSelected;
                 global.userProfileController.addressList[index!].isSelected =
@@ -1013,11 +1100,12 @@ class _CartScreenState extends BaseRouteState {
         if (isConnected) {
           await apiHelper
               .makeOrder(
-
+            couponCode: couponController.selectedCoupon.value?.couponCode,
           )
               .then((result) async {
             if (result != null) {
               if (result.status == "1") {
+                print("make Order REsult data -----${result.data}");
                 orderDetails = result.data;
                 hideLoader();
                 Get.to(() => PaymentGatewayScreen(

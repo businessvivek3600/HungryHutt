@@ -15,6 +15,7 @@ class CartController extends GetxController {
   var isDataLoaded = false.obs;
   var isReorderDataLoaded = false.obs;
   var isReOrderSuccess = false.obs;
+
   var selectedCoupon = Rxn<Coupon>();
 
   Future<ATCMS?> addToCart(Product? product, int? cartQty, bool isDel, {Variant? varient, int? varientId, int? callId, List<String>? selectedAddons,}) async {

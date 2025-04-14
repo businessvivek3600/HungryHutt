@@ -1711,14 +1711,13 @@ print("Delete Item from cart ------${formData.fields}");
   }
 
   Future<dynamic> makeOrder(
-      {DateTime? selectedDate, String? selectedTime}) async {
+      {String? couponCode}) async {
     try {
       Response response;
       var dio = Dio();
       var formData = FormData.fromMap({
         'user_id': global.currentUser!.id,
-        // 'delivery_date': selectedDate,
-        // 'time_slot': selectedTime
+        if (couponCode != null) 'coupon_code': couponCode,
       });
       print("Make Order-----");
       print("Order  Form field ---${formData.fields}");
@@ -1727,9 +1726,11 @@ print("Delete Item from cart ------${formData.fields}");
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("Make Order-----Response");
+      print(response.data);;
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
-        recordList = models.Order.fromJson(response.data["data"]);
+        recordList = models.Order.fromJson(response.data["data"]["data"]);
       } else {
         recordList = null;
       }
@@ -1986,13 +1987,13 @@ print("Delete Item from cart ------${formData.fields}");
     try {
       Response response;
       var dio = Dio();
-      var formData = FormData.fromMap({'address_id': addressId});
-
+      var formData = FormData.fromMap({'address_id': addressId,'store_id': global.nearStoreModel!.id});
       response = await dio.post('${global.baseUrl}select_address',
           data: formData,
           options: Options(
             headers: await global.getApiHeaders(true),
           ));
+      print("one API Response: ${response.data}");
       dynamic recordList;
 
       if (response.statusCode == 200 && response.data["status"] == '1') {
@@ -2047,6 +2048,7 @@ print("Delete Item from cart ------${formData.fields}");
                 headers: await global.getApiHeaders(true),
               ))
           .timeout(const Duration(seconds: 60));
+      print("Show Cart Form field ---${response.data}");
       dynamic recordList;
       if (response.statusCode == 200 && response.data["status"] == '1') {
         recordList = Cart.fromJson(response.data["data"]);

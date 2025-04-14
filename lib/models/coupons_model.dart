@@ -15,7 +15,8 @@ class Coupon {
   int? userUses;
   int? storeId;
   int? maxDiscount;
-
+  bool? available;
+  String? statusMessage;
   Coupon();
 
   Coupon.fromJson(Map<String, dynamic> json) {
@@ -34,6 +35,8 @@ class Coupon {
       storeId = json["store_id"] != null ? int.parse(json["store_id"].toString()) : null;
       startDate = json["start_date"] != null ? DateTime.parse(json["start_date"]) : null;
       endDate = json["end_date"] != null ? DateTime.parse(json["end_date"]) : null;
+      available = json["available"] ?? true;
+      statusMessage = json["status_message"];
     } catch (e) {
       debugPrint("Exception - coupons_model.dart - Coupon.fromJson():$e");
     }

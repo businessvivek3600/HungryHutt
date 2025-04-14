@@ -86,11 +86,11 @@ class _LoginScreenState extends BaseRouteState {
         //         child: Text(AppLocalizations.of(context)!.btn_skip_now))
         //   ],
         // ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
+              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -244,7 +244,7 @@ class _LoginScreenState extends BaseRouteState {
                                 child: Text(
                                   AppLocalizations.of(context)!
                                       .lbl_forgot_password,
-                                  style: const TextStyle(fontSize: 13),
+                                  style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w600),
                                 ),
                                 onPressed: () {
                                   Get.to(() => ForgotPasswordScreen(
@@ -325,7 +325,7 @@ class _LoginScreenState extends BaseRouteState {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              'Dont have an Account?',
+                              "Don't have an Account?",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
