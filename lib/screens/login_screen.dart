@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
-import 'dart:io';
+import 'dart:io' show Platform;
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 // import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile_number/mobile_number.dart';
@@ -67,70 +68,75 @@ class _LoginScreenState extends BaseRouteState {
     double screenHeight = MediaQuery.of(context).size.height;
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
-        key: _scaffoldKey1,
-        // appBar: AppBar(
-        //   automaticallyImplyLeading: false,
-        //   elevation: 0,
-        //   backgroundColor: Colors.transparent,
-        //   actions: [
-        //     TextButton(
-        //         onPressed: () async {
-        //           Navigator.of(context).push(
-        //             MaterialPageRoute(
-        //                 builder: (context) => HomeScreen(
-        //                       analytics: widget.analytics,
-        //                       observer: widget.observer,
-        //                     )),
-        //           );
-        //         },
-        //         child: Text(AppLocalizations.of(context)!.btn_skip_now))
-        //   ],
-        // ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      key: _scaffoldKey1,
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   elevation: 0,
+      //   backgroundColor: Colors.transparent,
+      //   actions: [
+      //     TextButton(
+      //         onPressed: () async {
+      //           Navigator.of(context).push(
+      //             MaterialPageRoute(
+      //                 builder: (context) => HomeScreen(
+      //                       analytics: widget.analytics,
+      //                       observer: widget.observer,
+      //                     )),
+      //           );
+      //         },
+      //         child: Text(AppLocalizations.of(context)!.btn_skip_now))
+      //   ],
+      // ),
+      body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5),
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                    padding: const EdgeInsets.only(top: 30),
-                    child: Column(children: [
-                      // const SizedBox(height: 60),
-                      // Food image
-                      SizedBox(
-                        height: 200, // Adjust height as needed
-                        width: double.infinity,
-                        child: Image.asset(
-                          'assets/images/signup.png',
-                          fit: BoxFit.cover, // covers the top nicely
-                        ),
-                      ),
+                Column(children: [
+                  ClipPath(
+                    clipper: BottomWaveClipper(),
+                    child: Image.asset(
+                      'assets/images/signup.png', // Replace with your image path
+                      width: double.infinity,
+                      // height: 400,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  // Positioned(
+                  //   bottom: 0,
+                  //   child: Container(
+                  //     height: 100,
+                  //     width: MediaQuery.of(context).size.width,
+                  //     color: Colors.brown.shade300, // Match with image tone
+                  //   ),
+                  // ),
 
-                      const SizedBox(height: 60),
-                      // Foodie logo
-                      RichText(
-                        text: const TextSpan(
-                          text: 'Lo',
-                          style: TextStyle(
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black54),
-                          children: [
-                            TextSpan(
-                              text: 'g',
-                              style:
-                                  TextStyle(color: Colors.green, fontSize: 36),
-                            ),
-                            TextSpan(
-                              text: 'in',
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                          ],
+                  const SizedBox(height: 40),
+                  // Foodie logo
+                  RichText(
+                    text: const TextSpan(
+                      text: 'Lo',
+                      style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54),
+                      children: [
+                        TextSpan(
+                          text: 'g',
+                          style:
+                              TextStyle(color: Color(0xFF68a039), fontSize: 36),
                         ),
-                      ),
-                    ])),
+                        TextSpan(
+                          text: 'in',
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                      ],
+                    ),
+                  ),
+                ]),
                 SizedBox(height: 20),
                 // Visibility(
                 //     visible: !isKeyboardOpen,
@@ -155,151 +161,105 @@ class _LoginScreenState extends BaseRouteState {
                 //       : AppLocalizations.of(context)!.lbl_phone_number,
                 //   style: textTheme.bodyLarge,
                 // ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 18.0),
-                  child: isLoginWithEmail
-                      ? Column(
-                          children: [
-                            TextFormField(
-                              key: const Key('17'),
-                              controller: _cEmail,
-                              focusNode: _fEmail,
-                              autofocus: false,
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                hintText: 'Email',
-                                prefixStyle: textFieldInputStyle(
-                                    context, FontWeight.normal),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.black54, width: 2),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.grey, width: 1),
-                                ),
+                isLoginWithEmail
+                    ? Column(
+                        children: [
+                          TextFormField(
+                            key: const Key('17'),
+                            controller: _cEmail,
+                            focusNode: _fEmail,
+                            autofocus: false,
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                              hintText: 'Email',
+                              prefixStyle: textFieldInputStyle(
+                                  context, FontWeight.normal),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.black54, width: 2),
                               ),
-                              keyboardType: TextInputType.emailAddress,
-                              onFieldSubmitted: (val) {
-                                setState(() {
-                                  FocusScope.of(context)
-                                      .requestFocus(_fPassword);
-                                });
-                              },
-                            ),
-                            SizedBox(height: 20),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(top: 20),
-                            //   child: Align(
-                            //     alignment: Alignment.centerLeft,
-                            //     child: Text(
-                            //       "${AppLocalizations.of(context)!.lbl_password} ",
-                            //       style: textTheme.bodyLarge,
-                            //     ),
-                            //   ),
-                            // ),
-                            TextFormField(
-                              cursorColor: Colors.black,
-                              controller: _cPassword,
-                              focusNode: _fPassword,
-                              autofocus: false,
-                              obscureText: _showPassword,
-                              obscuringCharacter: '*',
-                              keyboardType: TextInputType.emailAddress,
-                              style:
-                                  textFieldInputStyle(context, FontWeight.bold),
-                              decoration: InputDecoration(
-                                hintText:
-                                    AppLocalizations.of(context)!.lbl_password,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.black54, width: 2),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.grey, width: 1),
-                                ),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                      _showPassword
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: IconTheme.of(context).color),
-                                  onPressed: () {
-                                    setState(() {
-                                      _showPassword = !_showPassword;
-                                    });
-                                  },
-                                ),
-                                hintStyle: textFieldHintStyle(context),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.grey, width: 1),
                               ),
                             ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                child: Text(
-                                  AppLocalizations.of(context)!
-                                      .lbl_forgot_password,
-                                  style: const TextStyle(fontSize: 13),
-                                ),
+                            keyboardType: TextInputType.emailAddress,
+                            onFieldSubmitted: (val) {
+                              setState(() {
+                                FocusScope.of(context).requestFocus(_fPassword);
+                              });
+                            },
+                          ),
+                          SizedBox(height: 20),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(top: 20),
+                          //   child: Align(
+                          //     alignment: Alignment.centerLeft,
+                          //     child: Text(
+                          //       "${AppLocalizations.of(context)!.lbl_password} ",
+                          //       style: textTheme.bodyLarge,
+                          //     ),
+                          //   ),
+                          // ),
+                          TextFormField(
+                            cursorColor: Colors.black,
+                            controller: _cPassword,
+                            focusNode: _fPassword,
+                            autofocus: false,
+                            obscureText: _showPassword,
+                            obscuringCharacter: '*',
+                            keyboardType: TextInputType.emailAddress,
+                            style:
+                                textFieldInputStyle(context, FontWeight.bold),
+                            decoration: InputDecoration(
+                              hintText:
+                                  AppLocalizations.of(context)!.lbl_password,
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.black54, width: 2),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: const BorderSide(
+                                    color: Colors.grey, width: 1),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                    _showPassword
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: IconTheme.of(context).color),
                                 onPressed: () {
-                                  Get.to(() => ForgotPasswordScreen(
-                                        analytics: widget.analytics,
-                                        observer: widget.observer,
-                                      ));
+                                  setState(() {
+                                    _showPassword = !_showPassword;
+                                  });
                                 },
                               ),
+                              hintStyle: textFieldHintStyle(context),
                             ),
-                          ],
-                        )
-                      : SizedBox(),
-                  // : Row(
-                  //     children: [
-                  //       Expanded(
-                  //         flex: 1,
-                  //         child: MyTextField(
-                  //           key: const Key('14'),
-                  //           controller: _countryCodeController,
-                  //           inputTextFontWeight: FontWeight.bold,
-                  //           keyboardType: TextInputType.number,
-                  //           inputFormatters: [
-                  //             FilteringTextInputFormatter.digitsOnly,
-                  //           ],
-                  //         ),
-                  //       ),
-                  // // const SizedBox(width: 10),
-                  // Expanded(
-                  //   flex: 5,
-                  //   child: MyTextField(
-                  //     key: const Key('15'),
-                  //     controller: _cPhone,
-                  //     hintText: AppLocalizations.of(context)!
-                  //         .txt_0XXXXXXXXX,
-                  //     autofocus: false,
-                  //     focusNode: _fPhone,
-                  //     maxLines: 1,
-                  //     inputTextFontWeight: FontWeight.bold,
-                  //     keyboardType:
-                  //         const TextInputType.numberWithOptions(
-                  //             signed: true, decimal: true),
-                  //     inputFormatters: [
-                  //       FilteringTextInputFormatter.digitsOnly,
-                  //       LengthLimitingTextInputFormatter(
-                  //           global.appInfo!.phoneNumberLength)
-                  //     ],
-                  //     onChanged: (value) {
-                  //       setState(() {});
-                  //     },
-                  //     onFieldSubmitted: (val) {
-                  //       // FocusScope.of(context).dispose();
-                  //     },
-                  //   ),
-                  // ),
-                ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              child: Text(
+                                AppLocalizations.of(context)!
+                                    .lbl_forgot_password,
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                              onPressed: () {
+                                Get.to(() => ForgotPasswordScreen(
+                                      analytics: widget.analytics,
+                                      observer: widget.observer,
+                                    ));
+                              },
+                            ),
+                          ),
+                        ],
+                      )
+                    : SizedBox(),
 
                 Visibility(
                   visible: !isKeyboardOpen,
@@ -312,6 +272,82 @@ class _LoginScreenState extends BaseRouteState {
                     child: Text(isLoginWithEmail
                         ? AppLocalizations.of(context)!.btn_login
                         : AppLocalizations.of(context)!.txt_get_otp),
+                  ),
+                ),
+
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: <Widget>[
+                    const Expanded(
+                      child: Divider(
+                        thickness: 1,
+                        color: Colors.grey,
+                        endIndent: 12,
+                      ),
+                    ),
+                    const Text(
+                      "or continue with",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    const Expanded(
+                      child: Divider(
+                        thickness: 1,
+                        color: Colors.grey,
+                        indent: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Platform.isAndroid
+                        ? signInWithGoogle(_scaffoldKey1)
+                        : _signInWithApple();
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.06,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.transparent,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Platform.isAndroid
+                              ? SvgPicture.asset(
+                                  'assets/images/google_logo.svg',
+                                  fit: BoxFit.contain,
+                                )
+                              : SvgPicture.asset(
+                                  'assets/images/apple_logo.svg',
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Log in with ${Platform.isAndroid ? "Google" : "Apple"}',
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Visibility(
@@ -344,7 +380,7 @@ class _LoginScreenState extends BaseRouteState {
                               child: const Text(
                                 'Register Here',
                                 style: TextStyle(
-                                  color: Colors.green,
+                                  color: Color(0xFF68a039),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                 ),
@@ -366,30 +402,7 @@ class _LoginScreenState extends BaseRouteState {
                         //     backgroundColor: ColorConstants.veryLightBlue,
                         //   ),
                         // ),
-                        const SizedBox(width: 16),
-                        // Platform.isAndroid
-                        // ? GestureDetector(
-                        //     onTap: () {
-                        //       signInWithGoogle(_scaffoldKey1);
-                        //     },
-                        //     child: const CircularImageCover(
-                        //       imageUrl: ImageConstants.googleLogoImageUrl,
-                        //       backgroundColor: ColorConstants.peach,
-                        //     ),
-                        //   )
-                        // : GestureDetector(
-                        //     onTap: () {
-                        //       _signInWithApple();
-                        //     },
-                        //     child: CircularImageCover(
-                        //       imageUrl: ImageConstants.appleLogoImageUrl,
-                        //       backgroundColor: Theme.of(context).brightness ==
-                        //               Brightness.light
-                        //           ? ColorConstants.black
-                        //           : Colors.white,
-                        //     ),
-                        //   ),
-                        // const SizedBox(width: 16),
+
                         // isLoginWithEmail
                         //     ? GestureDetector(
                         //         onTap: () {
@@ -428,8 +441,8 @@ class _LoginScreenState extends BaseRouteState {
                 ),
               ],
             ),
-          ),
-        ));
+          )),
+    );
   }
 
   Future<void> initMobileNumberState() async {
@@ -893,4 +906,29 @@ class _LoginScreenState extends BaseRouteState {
 //     debugPrint(e);
 //   }
 // }
+}
+
+class BottomWaveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 40);
+
+    var firstControlPoint = Offset(size.width / 4, size.height);
+    var firstEndPoint = Offset(size.width / 2, size.height - 30);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
+        firstEndPoint.dx, firstEndPoint.dy);
+
+    var secondControlPoint = Offset(size.width * 3 / 4, size.height - 60);
+    var secondEndPoint = Offset(size.width, size.height - 20);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
+        secondEndPoint.dx, secondEndPoint.dy);
+
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
