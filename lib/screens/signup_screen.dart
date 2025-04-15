@@ -564,7 +564,7 @@ class _SignUpScreenState extends BaseRouteState<SignUpScreen> {
             //  _selectedCity != null &&
             // _selectedCity!.cityId != null
             ) {
-          showOnlyLoaderDialog();
+          showOnlyLoaderDialog(); 
           CurrentUser user = CurrentUser();
 
           user.name = _cName.text.trim();
